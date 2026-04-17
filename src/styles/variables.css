@@ -1,0 +1,44 @@
+/* Centralizar valores reutilizables del diseño. */
+/* Definir materiales (colores, tamaños) */
+:root {
+  /* Colores */
+    --color-red: #FC6767; /* Rojo - botones, status crítico */
+    --color-yellow: #E8E338; /* Amarillo - status riesgo */
+    --color-green: #12D439; /* Verde - status bueno */
+    --color-text-secundary: #C6C6C6; /* Texto secundario */
+
+  /* Gradientes */
+--gradient-primary-green: linear-gradient( /* Verde - color principal marca */
+    135deg,
+    #14B8A6,
+    #6EE7B7
+  );  
+  
+--gradient-primary-blue: linear-gradient(  /* Azul - color secundario marca */
+    135deg,
+    135deg,
+    #1F3A8A,
+    #1E4F9C
+  ); 
+
+  --gradient-primary-red: linear-gradient(  /* Rojo - prioridad alta */
+    135deg,
+    135deg,
+    #963D3D,
+    #FC6767
+  ); 
+
+  /* Tipografía */
+  --font-primary: 'Fredoka', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600; 
+  --font-weight-bold: 700;
+
+  /* Espaciados */
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+
+  /* Bordes */
+  --radius-md: 8px;
+}
