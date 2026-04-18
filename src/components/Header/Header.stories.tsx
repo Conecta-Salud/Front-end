@@ -15,7 +15,6 @@ type Story = StoryObj<typeof Header>;
 export const Default: Story = {
   args: {
     subtitle: "Tu salud conectada en un solo lugar",
-    logo: "https://via.placeholder.com/56",
   },
 };
 
@@ -23,10 +22,13 @@ export const Default: Story = {
 export const WithoutLogo: Story = {
   args: {
     subtitle: "Sin logo pero con subtítulo",
+    logo: false,
   },
 };
 
 // Solo título
 export const OnlyTitle: Story = {
-  args: {},
+  args: {
+    logo: false,
+  },
 };
