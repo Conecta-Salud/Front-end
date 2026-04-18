@@ -1,3 +1,4 @@
+
 /* Centralizar valores reutilizables del diseño. */
 /* Definir materiales (colores, tamaños) */
 :root {
@@ -6,24 +7,23 @@
     --color-yellow: #E8E338; /* Amarillo - status riesgo */
     --color-green: #12D439; /* Verde - status bueno */
     --color-text-secundary: #C6C6C6; /* Texto secundario */
+    --color-primary-green-solid: #14B8A6;
 
   /* Gradientes */
 --gradient-primary-green: linear-gradient( /* Verde - color principal marca */
-    135deg,
+    180deg,
     #14B8A6,
     #6EE7B7
   );  
   
 --gradient-primary-blue: linear-gradient(  /* Azul - color secundario marca */
-    135deg,
-    135deg,
+    180deg,
     #1F3A8A,
     #1E4F9C
   ); 
 
   --gradient-primary-red: linear-gradient(  /* Rojo - prioridad alta */
-    135deg,
-    135deg,
+    180deg,
     #963D3D,
     #FC6767
   ); 
