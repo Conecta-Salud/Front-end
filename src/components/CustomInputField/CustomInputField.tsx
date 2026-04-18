@@ -1,9 +1,9 @@
 import React from "react";
 //import { User, Mail, Lock } from "lucide-react-native";
-import { Label, Input, TextField} from '@heroui/react';
+import { Label, Input, TextField } from "@heroui/react";
 
 type CustomInputFieldProps = {
-    name: string;
+  name: string;
   label: string;
   placeholder?: string;
   value?: string;
@@ -11,11 +11,10 @@ type CustomInputFieldProps = {
   type?: "text" | "password" | "email";
   //iconType?: "user" | "mail" | "lock";
   importance?: boolean;
-
 };
 
 const CustomInputField: React.FC<CustomInputFieldProps> = ({
-    name,
+  name,
   label,
   placeholder,
   value,
@@ -39,23 +38,21 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
   //const SelectedIcon = renderIcon();
 
   return (
-        <TextField 
-            isRequired={importance} 
-            name={name} 
-            value={value}
-            onChange={(value: string) => onChange?.(value)}
-            className="gap-2 rounded-xl border border-border/60 bgsurface p-4 shadow-sm"
-        >
-            <Label className="text-sm font-semibold text-default-700">
-                {label}
-            </Label>
+    <TextField
+      isRequired={importance}
+      name={name}
+      value={value}
+      onChange={(value: string) => onChange?.(value)}
+      className="gap-2 rounded-xl border border-border/60 bgsurface p-4 shadow-sm"
+    >
+      <Label className="text-sm font-semibold text-default-700">{label}</Label>
 
-            <Input 
-                placeholder={placeholder} 
-                type={type}
-                className="rounded-lg border border-border/60 bgsurface px-3 py-2"
-            />
-        </TextField>
+      <Input
+        placeholder={placeholder}
+        type={type}
+        className="rounded-lg border border-border/60 bgsurface px-3 py-2"
+      />
+    </TextField>
   );
 };
 
