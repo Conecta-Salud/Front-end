@@ -1,6 +1,7 @@
-import { Button, Label } from '@heroui/react';
-import { Input } from '@heroui/react';
+import { Button,  } from '@heroui/react';
 import { useState } from 'react';
+
+import CustomInputField from './components/CustomInputField/CustomInputField';
 
 function App() {
   const [form, setForm] = useState({
@@ -17,16 +18,11 @@ function App() {
   };
   
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       <h1 className="text-3xl font-bold underline">Hello, World!</h1>
       <Button variant="primary"> My Buttonn </Button>
 
       <Button variant="secondary">Edit</Button> 
-
-        <div className="flex flex-col gap-1">
-        <Label htmlFor="input-type-password">Password</Label>
-        <Input id="input-type-password" placeholder="••••••••" type="password" />
-      </div>  
 
       <CustomInputField
         name="email"
@@ -35,7 +31,15 @@ function App() {
         placeholder="correo@ejemplo.com"
         value={form.email}
         onChange={(value) => handleChange("email", value)}
-        importance
+      />
+
+      <CustomInputField
+        name="password"
+        label="Contraseña"
+        placeholder="Ingresa tu contraseña"
+        type="password"
+        value={form.password}
+        onChange={(value) => handleChange("password", value)}
       />
         
         </div>
