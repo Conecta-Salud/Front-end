@@ -1,0 +1,32 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import Header from "./Header";
+
+const meta: Meta<typeof Header> = {
+  title: "Components/Header",
+  component: Header,
+  tags: ["autodocs"],
+};
+
+export default meta;
+
+type Story = StoryObj<typeof Header>;
+
+// variante con subtítulo y logo
+export const Default: Story = {
+  args: {
+    subtitle: "Tu salud conectada en un solo lugar",
+    logo: "https://via.placeholder.com/56",
+  },
+};
+
+// Sin logo
+export const WithoutLogo: Story = {
+  args: {
+    subtitle: "Sin logo pero con subtítulo",
+  },
+};
+
+// Solo título
+export const OnlyTitle: Story = {
+  args: {},
+};
