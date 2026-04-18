@@ -5,7 +5,7 @@
 
 body {
   font-family: var(--font-primary);
-  font-weight: var(--font-weight-regular);    
+  font-weight: var(--font-weight-regular);
   background-color: #f9fafb;
   color: #111;
 }
