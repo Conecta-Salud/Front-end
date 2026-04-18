@@ -1,8 +1,8 @@
-import { Button } from "@heroui/react";
 import Header from "./components/Header/Header";
 import SearchBar from "./components/SearchBar/SearchBar";
 import Filter from "./components/Filter/Filter";
-import logo from "./assets/ConectaSalud.png";
+import CustomInputField from "./components/CustomInputField/CustomInputField";
+
 import { useState } from "react";
 
 function App() {
@@ -24,11 +24,10 @@ function App() {
   };
   
   return (
-    <div className="flex flex-col gap-4">
+    <div className="min-h-screen flex flex-col">
+      <Header subtitle="Panel Usuario Estratégico"/>
+    <div className="p-6 flex flex-col gap-4">
       <h1 className="text-3xl font-bold underline">Hello, World!</h1>
-      <Button variant="primary"> My Buttonn </Button>
-
-      <Button variant="secondary">Edit</Button> 
 
       <CustomInputField
         name="email"
@@ -48,11 +47,9 @@ function App() {
         onChange={(value) => handleChange("password", value)}
       />
         
-        </div>
-    <div className="min-h-screen flex flex-col">
-      <Header subtitle="Panel Usuario Estratégico" logo={logo} />
+    
 
-      <main className="p-6 flex flex-col gap-6">
+      <main className="flex flex-col gap-6">
         <div className="flex items-center gap-4 flex-wrap">
           <Filter
             title="Categoría"
@@ -94,10 +91,10 @@ function App() {
             <strong>Año:</strong> {year}
           </p>
         </div>
-        <Button variant="primary">My Button</Button>
-        <Button variant="secondary">Edit</Button>
       </main>
     </div>
+    </div>
+    
   );
 }
 

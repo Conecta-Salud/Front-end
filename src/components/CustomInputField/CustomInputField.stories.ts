@@ -1,46 +1,28 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
 
-import CustomInputField from './CustomInputField';
+import CustomInputField from "./CustomInputField";
 
 const meta = {
-  title: 'Components/CustomInputField',
+  title: "Components/CustomInputField",
   component: CustomInputField,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    name: {
-      control: 'text',
-    },
-    label: {
-      control: 'text',
-    },
-    placeholder: {
-      control: 'text',
-    },
-    value: {
-      control: 'text',
-    },
     type: {
-      control: 'select',
-      options: ['text', 'password', 'email'],
+      control: "select",
+      options: ["text", "password", "email"],
     },
     importance: {
-      control: 'boolean',
+      control: "boolean",
     },
     onChange: {
-      action: 'changed',
+      action: "changed",
     },
   },
   args: {
-    name: 'email',
-    label: 'Correo electrónico',
-    placeholder: 'Usuario_admin@conectasalud.com',
-    value: '',
-    type: 'email',
-    importance: false,
     onChange: fn(),
   },
 } satisfies Meta<typeof CustomInputField>;
@@ -48,41 +30,57 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const Email: Story = {
+export const Default: Story = {
   args: {
-    name: 'email',
-    label: 'Correo electrónico',
-    placeholder: 'Usuario_admin@conectasalud.com',
-    type: 'email',
-  },
-};
-
-export const Password: Story = {
-  args: {
-    name: 'password',
-    label: 'Contraseña',
-    placeholder: 'Ingresa tu contraseña',
-    type: 'password',
+    name: "username",
+    label: "Username",
+    placeholder: "Enter your username",
+    value: "",
+    type: "text",
+    importance: false,
   },
 };
 
 export const Required: Story = {
   args: {
-    name: 'email',
-    label: 'Correo electrónico',
-    placeholder: 'usuario@correo.com',
-    type: 'email',
+    name: "fullName",
+    label: "Full Name",
+    placeholder: "Enter your full name",
+    value: "",
+    type: "text",
+    importance: true,
+  },
+};
+
+export const Email: Story = {
+  args: {
+    name: "email",
+    label: "Email",
+    placeholder: "Enter your email",
+    value: "",
+    type: "email",
+    importance: true,
+  },
+};
+
+export const Password: Story = {
+  args: {
+    name: "password",
+    label: "Password",
+    placeholder: "Enter your password",
+    value: "",
+    type: "password",
     importance: true,
   },
 };
 
 export const WithValue: Story = {
   args: {
-    name: 'email',
-    label: 'Correo electrónico',
-    value: 'usuario@correo.com',
-    type: 'email',
+    name: "user",
+    label: "User",
+    placeholder: "Enter your user",
+    value: "Gabriel",
+    type: "text",
+    importance: false,
   },
 };
