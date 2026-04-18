@@ -12,7 +12,6 @@ export default meta;
 
 type Story = StoryObj<typeof SearchBar>;
 
-// 🔹 Variante interactiva (la importante)
 export const Default: Story = {
   render: (args) => {
     const [value, setValue] = useState("");
@@ -29,7 +28,6 @@ export const Default: Story = {
   },
 };
 
-// 🔹 Variante con valor inicial
 export const WithValue: Story = {
   render: (args) => {
     const [value, setValue] = useState("Ciudad de México");

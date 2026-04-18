@@ -12,14 +12,12 @@ export default meta;
 
 type Story = StoryObj<typeof Filter>;
 
-// 🔹 Datos de ejemplo
 const options = [
   { label: "Cobertura Médica", value: "medica" },
   { label: "Hospitales", value: "hospitales" },
   { label: "Clínicas", value: "clinicas" },
 ];
 
-// 🔹 Variante básica
 export const Default: Story = {
   render: (args) => {
     const [value, setValue] = useState("");
@@ -37,7 +35,6 @@ export const Default: Story = {
   },
 };
 
-// 🔹 Variante con selección inicial
 export const WithSelection: Story = {
   render: (args) => {
     const [value, setValue] = useState("medica,hospitales");
@@ -54,7 +51,6 @@ export const WithSelection: Story = {
   },
 };
 
-// 🔹 Variante tipo Año (como tu UI)
 export const YearFilter: Story = {
   render: (args) => {
     const [value, setValue] = useState("2026");
