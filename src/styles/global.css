@@ -1,10 +1,11 @@
 /* Aplicar estilos generales y comportamiento base de la UI. */
 @import "tailwindcss";
-@import './variables.css';
+@import "./variables.css";
+@import "@heroui/styles";
 
 body {
   font-family: var(--font-primary);
-  font-weight: var(--font-weight-regular);    
+  font-weight: var(--font-weight-regular);
   background-color: #f9fafb;
   color: #111;
 }
