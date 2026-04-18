@@ -39,9 +39,11 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
   //const SelectedIcon = renderIcon();
 
   return (
+    <div className="flex flex-col gap-1">
+
         <TextField 
-            isRequired={importance} 
-            name={name} 
+          isRequired={importance} 
+          name={name} 
             value={value}
             onChange={(value: string) => onChange?.(value)}
             className="gap-2 rounded-xl border border-border/60 bgsurface p-4 shadow-sm"
@@ -56,6 +58,7 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
                 className="rounded-lg border border-border/60 bgsurface px-3 py-2"
             />
         </TextField>
+        </div>
   );
 };
 
