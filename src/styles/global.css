@@ -1,6 +1,6 @@
 /* Aplicar estilos generales y comportamiento base de la UI. */
 @import "tailwindcss";
-@import "./variables.css";
+@import './variables.css';
 @import "@heroui/styles";
 
 body {
