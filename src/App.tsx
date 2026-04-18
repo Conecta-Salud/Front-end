@@ -1,15 +1,19 @@
-import { Button } from '@heroui/react';
+import { Button } from "@heroui/react";
+import Header from "./components/Header/Header";
+import logo from "./assets/ConectaSalud.png";
 
 function App() {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      <Button variant="primary"> My Buttonn </Button>
+    <div className="min-h-screen flex flex-col">
+      <Header subtitle="Panel Usuario Estratégico" logo={logo} />
 
-      <Button variant="secondary">Edit</Button> 
+      <main className="p-4 flex flex-col gap-4">
+        <h1>Hello, World!</h1>
+
+        <Button variant="primary">My Button</Button>
+        <Button variant="secondary">Edit</Button>
+      </main>
     </div>
-
-
   );
 }
 
