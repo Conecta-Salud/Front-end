@@ -10,10 +10,10 @@ type CustomInputFieldProps = {
   value?: string;
   onChange?: (value: string) => void;
   type?: "text" | "password" | "email";
-  importance?: boolean;rightIcon?: string;
+  importance?: boolean;
+  rightIcon?: string;
   passwordVisibleIcon?: string;
   passwordHiddenIcon?: string;
-
 };
 
 const CustomInputField: React.FC<CustomInputFieldProps> = ({

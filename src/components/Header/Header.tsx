@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ subtitle, logo = true }) => {
 
   return (
     <header
-      className="w-full p-7.5 flex items-center gap-[9px] shadow-sm"
+      className="w-full h-full flex items-center gap-[9px] px-[30px] shadow-sm"
       style={{
         backgroundColor: "#fff",
         borderBottom: "1px solid #e5e7eb",
