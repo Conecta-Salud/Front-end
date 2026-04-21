@@ -1,115 +1,120 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
-import CustomButton from './Button';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
+
+import Button from "./Button";
 
 const meta = {
-  title: 'Components/CustomButton',
-  component: CustomButton,
+  title: "Components/Button",
+  component: Button,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    color: {
-      control: 'select',
-      options: ['primary', 'secondary', 'danger', 'default'],
-      description: 'Define el color temático del botón',
+    label: { control: "text" },
+
+    tone: {
+      control: "select",
+      options: ["green", "blue", "red"],
     },
-    variant: {
-      control: 'select',
-      options: ['solid', 'outline', 'ghost'],
-      description: 'Define el estilo visual del botón',
+
+    height: {
+      control: "select",
+      options: ["40", "60"],
     },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Define el tamaño del botón',
+
+    textSize: {
+      control: "select",
+      options: ["md", "lg"],
     },
-    isLoading: {
-      control: 'boolean',
-      description: 'Muestra un estado de carga',
+
+    buttonType: {
+      control: "select",
+      options: ["add", "download"],
     },
-    isDisabled: {
-      control: 'boolean',
-      description: 'Deshabilita la interacción',
-    },
-    onPress: { 
-      action: 'pressed',
-      description: 'Función que se ejecuta al hacer clic' 
-    },
+
+    loading: { control: "boolean" },
+    disabled: { control: "boolean" },
+
+    onClick: { action: "clicked" },
   },
   args: {
-    title: 'Botón de Acción',
-    color: 'primary',
-    variant: 'solid',
-    size: 'md',
-    isLoading: false,
-    isDisabled: false,
-    onPress: fn(),
+    label: "Botón",
+    tone: "green",
+    height: "40",
+    textSize: "md",
+    loading: false,
+    disabled: false,
+    onClick: fn(),
   },
-} satisfies Meta<typeof CustomButton>;
+} satisfies Meta<typeof Button>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// 1. Variante Principal (Uso médico: Buscar)
-export const Default: Story = {
+export const Default: Story = {};
+
+export const Blue: Story = {
   args: {
-    title: 'Buscar Centros de Salud',
-    color: 'primary',
-    variant: 'solid',
+    label: "Ver detalles",
+    tone: "blue",
   },
 };
 
-// 2. Variante Secundaria (Uso médico: Nueva consulta)
-export const Secondary: Story = {
+export const Red: Story = {
   args: {
-    title: 'Nueva Búsqueda',
-    color: 'primary',
-    variant: 'outline',
+    label: "Cerrar Sesión",
+    tone: "red",
   },
 };
 
-// 3. Variante Crítica (Uso médico: Cancelar cita)
-export const Danger: Story = {
+export const Height60: Story = {
   args: {
-    title: 'Cancelar Cita Médica',
-    color: 'danger',
-    variant: 'solid',
+    label: "Comparar",
+    height: "60",
+    textSize: "lg",
   },
 };
 
-// 4. Variante de Éxito o Registro
-export const Success: Story = {
+export const TextMedium: Story = {
   args: {
-    title: 'Confirmar Registro',
-    color: 'secondary', // Usamos el color secundario definido en tu sistema
-    variant: 'solid',
-    className: 'shadow-lg',
+    label: "Texto 18px",
+    textSize: "md",
   },
 };
 
-// 5. Botón Personalizado (Ancho completo y grande)
-export const FullWidthCustom: Story = {
+export const TextLarge: Story = {
   args: {
-    title: 'AGENDAR CITA AHORA',
-    className: 'w-[450px] h-[60px] uppercase tracking-widest bg-emerald-500',
-    textClassName: 'text-xl', // Si añadiste esta prop en el componente
+    label: "Texto 24px",
+    textSize: "lg",
   },
 };
 
-// 6. Estado de Carga
+export const AddButton: Story = {
+  args: {
+    label: "Nuevo Usuario",
+    buttonType: "add",
+  },
+};
+
+export const DownloadButton: Story = {
+  args: {
+    label: "Exportar",
+    buttonType: "download",
+    tone: "blue",
+  },
+};
+
 export const Loading: Story = {
   args: {
-    title: 'Procesando...',
-    isLoading: true,
+    label: "Cargando",
+    loading: true,
   },
 };
 
-// 7. Botón Deshabilitado
 export const Disabled: Story = {
   args: {
-    title: 'No disponible',
-    isDisabled: true,
+    label: "Deshabilitado",
+    disabled: true,
   },
 };
