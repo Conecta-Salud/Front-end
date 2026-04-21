@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ListFilter, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import filterIcon from "../../assets/icons/Filtro_logo.svg";
 
 interface Option {
   label: string;
@@ -20,18 +21,19 @@ export default function Filter({
   onChange,
 }: FilterProps) {
   const [open, setOpen] = useState(false);
-  const selectedValues = values ? values.split(",") : [];
+
+  const selectedValue = values || "";
+
+  const selectedLabel =
+    options.find((o) => o.value === selectedValue)?.label || "";
 
   const toggleValue = (val: string) => {
-    let newValues = [...selectedValues];
-
-    if (newValues.includes(val)) {
-      newValues = newValues.filter((v) => v !== val);
+    if (val === selectedValue) {
+      onChange("");
     } else {
-      newValues.push(val);
+      onChange(val);
     }
-
-    onChange(newValues.join(","));
+    setOpen(false);
   };
 
   return (
@@ -39,34 +41,26 @@ export default function Filter({
       {/* BOTÓN */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-4 h-11 rounded-xl border shadow-sm"
+        className="flex items-center gap-2 px-4 h-11 rounded-xl border-2 shadow-sm"
         style={{
           borderColor: "#14B8A6",
           backgroundColor: "#fff",
-          minWidth: "180px",
+          minWidth: "200px",
         }}
       >
-        <ListFilter className="w-4 h-4 text-[#14B8A6]" />
+        <img src={filterIcon} alt="filter" className="w-4 h-4" />
 
         <span className="text-sm truncate">
-          {selectedValues.length > 0
-            ? `${title} | ${selectedValues.length}`
-            : title}
+          {selectedValue ? `${title} | ${selectedLabel}` : title}
         </span>
       </button>
 
       {/* DROPDOWN */}
       {open && (
-        <div
-          className="absolute mt-2 w-full rounded-xl shadow-lg z-50"
-          style={{
-            backgroundColor: "#fff",
-            border: "1px solid #e5e7eb",
-          }}
-        >
+        <div className="absolute mt-2 w-full rounded-xl shadow-lg z-50 border-2 border-gray-200 bg-white">
           <div className="p-2 max-h-60 overflow-y-auto">
             {options.map((option) => {
-              const isSelected = selectedValues.includes(option.value);
+              const isSelected = selectedValue === option.value;
 
               return (
                 <div
@@ -89,9 +83,12 @@ export default function Filter({
               );
             })}
 
-            {selectedValues.length > 0 && (
+            {selectedValue && (
               <div
-                onClick={() => onChange("")}
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
                 className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
                 style={{ color: "#14B8A6" }}
               >
