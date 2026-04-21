@@ -2,7 +2,9 @@ import Header from "./components/Header/Header";
 import SearchBar from "./components/SearchBar/SearchBar";
 import Filter from "./components/Filter/Filter";
 import CustomInputField from "./components/CustomInputField/CustomInputField";
-import BarChart from "../src/components/BarChart graphic/BarChart";
+import BarChart from "./components/BarChart/BarChart";
+import RankingTableCard from "./components/RankingTable/RankingTableCard";
+import RankingTableModal from "./components/RankingTable/RankingTableModal";
 
 import { useState } from "react";
 
@@ -26,15 +28,25 @@ function App() {
 
   // ✅ DATA FUERA DEL RETURN
   const dummyData = [
-    { estado: "Nuevo León", valor: 3.8 },
-    { estado: "CDMX", valor: 3.6 },
-    { estado: "Querétaro", valor: 3.4 },
-    { estado: "Jalisco", valor: 3.2 },
-    { estado: "Michoacán", valor: 3.1 },
-    { estado: "Morelos", valor: 2.8 },
-    { estado: "Guerrero", valor: 2.7 },
-    { estado: "Oaxaca", valor: 2.6 },
-    { estado: "Chiapas", valor: 2.5 },
+    { label: "Nuevo León", value: 3.8 },
+    { label: "CDMX", value: 3.6 },
+    { label: "Querétaro", value: 3.4 },
+    { label: "Jalisco", value: 3.2 },
+    { label: "Michoacán", value: 3.1 },
+    { label: "Morelos", value: 2.8 },
+    { label: "Guerrero", value: 2.7 },
+    { label: "Oaxaca", value: 2.6 },
+    { label: "Chiapas", value: 2.5 },
+    { label: "Chiapas", value: 2.5 },
+    { label: "Nuevo León", value: 3.8 },
+    { label: "CDMX", value: 3.6 },
+    { label: "Querétaro", value: 3.4 },
+    { label: "Jalisco", value: 3.2 },
+    { label: "Michoacán", value: 3.1 },
+    { label: "Morelos", value: 2.8 },
+    { label: "Guerrero", value: 2.7 },
+    { label: "Oaxaca", value: 2.6 },
+    { label: "Chiapas", value: 2.5 },
   ];
 
   return (
@@ -99,7 +111,10 @@ function App() {
         </div>
 
         {/* GRÁFICA */}
-        <BarChart data={dummyData} />
+        <BarChart 
+          data={dummyData}
+          chartHeight={510}
+        />
 
         {/* DEBUG INFO */}
         <div className="text-sm text-gray-600">

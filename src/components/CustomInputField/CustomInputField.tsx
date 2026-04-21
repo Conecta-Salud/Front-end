@@ -46,7 +46,7 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
             className="w-[578px] h-[61px] rounded-[10px] px-0.75 py-0.75"
             style={{ background: "var(--gradient-primary-green)" }}
             >
-                <div className="relative h-full w-full rounded-[10px] bg-white px-2.5 py-2.5 flex flex-col justify-center leading-none">
+                <div className="relative h-full w-full rounded-[7.5px] bg-white px-2.5 py-2.5 flex flex-col justify-center leading-none">
                     
                     <label
                         htmlFor={name} 

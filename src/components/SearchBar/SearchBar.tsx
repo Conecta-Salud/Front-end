@@ -1,5 +1,4 @@
-import React from "react";
-import searchIcon from "../../assets/icons/Lupa_logo.png";
+import searchIcon from "../../assets/icons/searchIcon.svg";
 
 interface SearchBarProps {
   searchTerm?: string;
