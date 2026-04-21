@@ -3,6 +3,8 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import Filter from "./components/Filter/Filter";
 import CustomInputField from "./components/CustomInputField/CustomInputField";
 import BarChart from "./components/BarChart/BarChart";
+import RankingTableCard from "./components/RankingTable/RankingTableCard";
+import RankingTableModal from "./components/RankingTable/RankingTableModal";
 
 import { useState } from "react";
 
