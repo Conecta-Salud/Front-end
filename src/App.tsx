@@ -7,7 +7,7 @@ import Dashboard from "./pages/dashboard-estrategico";
 import Comparison from "./pages/modulo-comparacion";
 import Profile from "./pages/perfil";
 import Admin from "./pages/panel-adminstrador";
-
+import Pruebas from "./pages/pruebas_componentes";
 function LayoutWrapper() {
   return (
     <AppLayout role="admin">
@@ -19,7 +19,6 @@ function LayoutWrapper() {
 function App() {
   return (
     <Routes>
-
       <Route path="/login" element={<Login />} />
 
       <Route element={<LayoutWrapper />}>
@@ -27,6 +26,7 @@ function App() {
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/pruebas" element={<Pruebas />} />
       </Route>
     </Routes>
   );
