@@ -30,8 +30,6 @@ export type SidebarProfileItemProps = {
 
 export type SidebarProps = {
   role?: UserRole;
-  activeItem: SidebarItemId;
-  onChange?: (item: SidebarItemId) => void;
   profileLabel?: string;
   showProfileLabel?: boolean;
 };

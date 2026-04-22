@@ -20,7 +20,7 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6">
       <div
         className={[
-          "relative w-full max-w-[1600px] max-h-[90vh] overflow-hidden rounded-[30px] bg-white shadow-xl",
+          "relative max-w-[1000px] max-h-[90vh] overflow-hidden rounded-[30px] bg-white shadow-xl",
           className,
         ].join(" ")}
       >

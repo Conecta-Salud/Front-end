@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
-import filterIcon from "../../assets/icons/Filtro_logo.svg";
+import filterIcon from "../../assets/icons/filterIcon.svg";
+import separatorIcon from "../../assets/icons/separatorIcon.svg";
+import SelectedLabelComp from "./SelectedLabel";
 
 interface Option {
-  label: string;
+  name: string;
   value: string;
 }
 
@@ -21,11 +22,11 @@ export default function Filter({
   onChange,
 }: FilterProps) {
   const [open, setOpen] = useState(false);
-
+  
   const selectedValue = values || "";
 
   const selectedLabel =
-    options.find((o) => o.value === selectedValue)?.label || "";
+    options.find((o) => o.value === selectedValue)?.name || "";
 
   const toggleValue = (val: string) => {
     if (val === selectedValue) {
@@ -40,48 +41,46 @@ export default function Filter({
     <div className="relative">
       {/* BOTÓN */}
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-4 h-11 rounded-xl border-2 shadow-sm"
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm"
         style={{
           borderColor: "#14B8A6",
           backgroundColor: "#fff",
-          minWidth: "200px",
         }}
       >
-        <img src={filterIcon} alt="filter" className="w-4 h-4" />
+        <img src={filterIcon} alt="filter" className="w-[21px] h-[13px]" />
 
-        <span className="text-sm truncate">
-          {selectedValue ? `${title} | ${selectedLabel}` : title}
+        <span className="flex items-center gap-2 text-sm truncate">
+          {selectedValue ? (
+            <>
+              {title}
+                <img
+                  src={separatorIcon}
+                  alt="separator"
+                  className="w-[2px] h-5 object-contain"
+                />
+              
+              <SelectedLabelComp label={selectedLabel} />
+            </>
+          ) : (
+            title
+          )}
         </span>
       </button>
-
+      
       {/* DROPDOWN */}
       {open && (
         <div className="absolute mt-2 w-full rounded-xl shadow-lg z-50 border-2 border-gray-200 bg-white">
           <div className="p-2 max-h-60 overflow-y-auto">
-            {options.map((option) => {
-              const isSelected = selectedValue === option.value;
-
-              return (
+            {options.map((option) => (
                 <div
                   key={option.value}
                   onClick={() => toggleValue(option.value)}
                   className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100"
                 >
-                  <div
-                    className="w-4 h-4 flex items-center justify-center rounded border"
-                    style={{
-                      borderColor: "#14B8A6",
-                      backgroundColor: isSelected ? "#14B8A6" : "transparent",
-                    }}
-                  >
-                    {isSelected && <Check className="w-3 h-3 text-white" />}
-                  </div>
-
-                  <span className="text-sm">{option.label}</span>
+                  {option.name}
                 </div>
-              );
-            })}
+            ))}
 
             {selectedValue && (
               <div
