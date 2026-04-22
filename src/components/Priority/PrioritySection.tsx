@@ -1,14 +1,14 @@
 import React from "react";
 import PriorityCard from "./PriorityCard";
 
-const PrioritySection: React.FC = () => {
+const PrioritySection = () => {
   return (
-    <div className="w-full flex flex-col items-center">
-      <h2 className="text-green-500 font-semibold mb-6">Índice de Prioridad</h2>
+    <div className="flex flex-col items-center gap-6">
+      <h2 className="text-teal-500 font-semibold">Índice de Prioridad</h2>
 
       <div className="flex flex-col md:flex-row gap-6">
         <PriorityCard
-          state="alta"
+          variant="alta"
           title="Cuernavaca"
           subtitle="(Morelos)"
           progress={90}
@@ -20,7 +20,7 @@ const PrioritySection: React.FC = () => {
         />
 
         <PriorityCard
-          state="baja"
+          variant="baja"
           title="Zapopan"
           subtitle="(Jalisco)"
           progress={30}
@@ -30,6 +30,8 @@ const PrioritySection: React.FC = () => {
             { label: "Adultos Mayores", value: "27%" },
           ]}
         />
+
+        {/* Ejemplo extra */}
       </div>
     </div>
   );
