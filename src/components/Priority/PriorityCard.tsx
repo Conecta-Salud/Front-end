@@ -5,40 +5,71 @@ type Metric = {
   value: string | number;
 };
 
+type Variant = "alta" | "baja" | "media";
+
 type PriorityCardProps = {
   title: string;
   subtitle: string;
-  state: "alta" | "baja";
-  progress: number; // 0 a 100
+  variant: Variant;
+  progress: number;
   metrics: Metric[];
+};
+
+const variantStyles: Record<
+  Variant,
+  {
+    gradient: string;
+    color: string;
+    border: string;
+  }
+> = {
+  alta: {
+    gradient: "var(--gradient-primary-red)",
+    color: "#FC6767",
+    border: "#FC6767",
+  },
+  baja: {
+    gradient: "var(--gradient-primary-green)",
+    color: "#14B8A6",
+    border: "#14B8A6",
+  },
+  media: {
+    gradient: "var(--gradient-primary-yellow)",
+    color: "#F59E0B",
+    border: "#F59E0B",
+  },
 };
 
 const PriorityCard: React.FC<PriorityCardProps> = ({
   title,
   subtitle,
-  state,
+  variant,
   progress,
   metrics,
 }) => {
-  const isAlta = state === "alta";
+  const styles = variantStyles[variant];
 
-  const colors = {
-    bgHeader: isAlta ? "from-red-500 to-red-400" : "from-green-500 to-teal-400",
-    border: isAlta ? "border-red-400" : "border-teal-400",
-    progress: isAlta ? "bg-red-500" : "bg-teal-400",
-    dot: isAlta ? "bg-red-500" : "bg-teal-400",
-    textValue: isAlta ? "text-red-500" : "text-teal-500",
+  const labelMap = {
+    alta: "Alta",
+    baja: "Baja",
+    media: "Media",
   };
 
   return (
     <div
-      className={`rounded-2xl border ${colors.border} overflow-hidden w-full max-w-md`}
+      className="rounded-2xl overflow-hidden w-full max-w-md"
+      style={{
+        border: `2px solid ${styles.border}`,
+      }}
     >
       {/* Header */}
       <div
-        className={`bg-gradient-to-r ${colors.bgHeader} text-white p-4 text-center font-bold text-lg`}
+        className="text-white p-4 text-center font-bold text-lg"
+        style={{
+          background: styles.gradient,
+        }}
       >
-        {state === "alta" ? "⚠ Alta" : "👍 Baja"}
+        {labelMap[variant]}
       </div>
 
       {/* Body */}
@@ -46,11 +77,14 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
         <h2 className="text-xl font-semibold">{title}</h2>
         <p className="text-gray-400">{subtitle}</p>
 
-        {/* Progress bar */}
+        {/* Progress */}
         <div className="mt-4 w-full h-2 bg-gray-300 rounded-full overflow-hidden">
           <div
-            className={`${colors.progress} h-full`}
-            style={{ width: `${progress}%` }}
+            className="h-full transition-all duration-500"
+            style={{
+              width: `${progress}%`,
+              background: styles.color,
+            }}
           />
         </div>
 
@@ -59,10 +93,13 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
           {metrics.map((m, i) => (
             <div key={i} className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: styles.color }}
+                />
                 <span>{m.label}</span>
               </div>
-              <span className={`font-semibold ${colors.textValue}`}>
+              <span className="font-semibold" style={{ color: styles.color }}>
                 {m.value}
               </span>
             </div>
