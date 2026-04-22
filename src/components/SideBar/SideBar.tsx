@@ -1,17 +1,51 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import SidebarItem from "./SideBarItem";
 import SidebarProfileItem from "./SidebarProfileItem";
-import type { SidebarNavItemData, SidebarProps } from "./Sidebar.types";
+import type { SidebarItemId, SidebarNavItemData, SidebarProps } from "./Sidebar.types";
 import { sidebarIcons } from "./SideBar.config";
 
 const Sidebar: React.FC<SidebarProps> = ({
   role = "user",
-  activeItem,
-  onChange,
   profileLabel,
   showProfileLabel = false,
 }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
 
+
+  const getActiveItem = (): SidebarItemId => {
+    const pathname = location.pathname;
+
+    if (pathname === "/") return "dashboard";
+    if (pathname.startsWith("/comparison")) return "comparison";
+    if (pathname.startsWith("/admin")) return "admin";
+    if (pathname.startsWith("/profile")) return "profile";
+
+    return "dashboard";
+  };
+
+  const activeItem = getActiveItem();
+
+  const handleNavigation = (id: SidebarItemId) => {
+    switch (id) {
+      case "dashboard":
+        navigate("/");
+        break;
+      case "comparison":
+        navigate("/comparison");
+        break;
+      case "admin":
+        navigate("/admin");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+      default:
+        navigate("/");
+    }
+  };
 
   const navItems: SidebarNavItemData[] = [
     {
@@ -46,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             label={item.label}
             icon={item.icon}
             selected={activeItem === item.id}
-            onPress={(id) => onChange?.(id)}
+            onPress={(id) => handleNavigation(id)}
           />
         ))}
       </div>
@@ -55,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         avatar={sidebarIcons.profile}
         label={showProfileLabel ? profileLabel : undefined}
         selected={activeItem === "profile"}
-        onPress={() => onChange?.("profile")}
+        onPress={() => handleNavigation("profile")}
       />
     </aside>
   );
