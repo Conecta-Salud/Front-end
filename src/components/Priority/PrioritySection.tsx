@@ -1,4 +1,3 @@
-import React from "react";
 import PriorityCard from "./PriorityCard";
 
 const PrioritySection = () => {

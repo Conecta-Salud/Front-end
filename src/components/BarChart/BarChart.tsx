@@ -18,7 +18,6 @@ interface CustomBarChartProps {
   data: ChartData[];
   title?: string;
   barColor?: string;
-  gridColor?: string;
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
   showAverageLine?: boolean;
@@ -28,7 +27,6 @@ export default function CustomBarChart({
   data,
   title = "Gráfica de barras",
   barColor,
-  gridColor = "#E5E7EB",
   yDomain = [0, "auto"],
   chartHeight = 320,
   showAverageLine = true,
@@ -78,11 +76,7 @@ export default function CustomBarChart({
               </linearGradient>
             </defs>
 
-            <CartesianGrid
-              stroke={gridColor}
-              strokeDasharray="3 3"
-              vertical={false}
-            />
+            <CartesianGrid vertical={false} stroke="#D9D9D9" strokeDasharray="0" />
 
             <XAxis
               dataKey="label"

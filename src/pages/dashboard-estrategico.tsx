@@ -3,11 +3,14 @@ import { useState } from "react";
 import SearchBar from "../components/SearchBar/SearchBar";
 import Filter from "../components/Filter/Filter";
 import CustomInputField from "../components/CustomInputField/CustomInputField";
+import Button from "../components/Button/Button";
+import CustomKPI from "../components/KPI/CustomKPI";
 
 import CustomBarChart from "../components/BarChart/BarChart";
 import RankingTableCard from "../components/RankingTable/RankingTableCard";
 import RankingTableModal from "../components/RankingTable/RankingTableModal";
-import CustomKPI from "../components/KPI/CustomKPI";
+import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
+import CustomPieChart from "../components/PieChart/PieChart";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -15,6 +18,10 @@ import {
   compactColumns,
   fullColumns,
 } from "../mocks/rankingTable.mock";
+import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
+import { data } from "../mocks/piechart.mock";
+
+
 
 function DashboardEstrategicoPage() {
   const [search, setSearch] = useState("");
@@ -45,6 +52,37 @@ function DashboardEstrategicoPage() {
           Esta sección te sirve para validar cómo se ve el dashboard con contenido real.
         </p>
       </section>
+
+      <div className="flex items-center gap-4 flex-wrap">
+        <Button 
+          label="Nuevo Usuario" 
+          tone="green" 
+          height="40" 
+          buttonType= "add" 
+        />
+        <Button 
+          label="Exportar" 
+          tone="blue" 
+          height="40" 
+          buttonType= "download" 
+        />
+        <Button 
+          label="Cancelar" 
+          tone="red" 
+          height="40" 
+        />
+        <Button 
+          label="Continuar" 
+          tone="green" 
+          height="40" 
+        />
+        <Button 
+          label="Continuar" 
+          tone="green" 
+          height="60" 
+          textSize="lg"
+        />
+      </div>
 
       {/* Inputs */}
       <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
@@ -179,7 +217,7 @@ function DashboardEstrategicoPage() {
             title="Promedio médicos"
             titleSecondLine="por 1000 habitantes"
             value="2.5"
-            size="sm"
+            size="md"
             fullWidth
           />
           <CustomKPI
@@ -192,6 +230,23 @@ function DashboardEstrategicoPage() {
           />
         </div>
       </div>
+
+      <ComparisonBarChart
+        title="Cobertura médica"
+        data={coberturaData}
+        rules={coberturaRules}
+        referenceLine={{
+          value: 2.3,
+          label: "Referencia mínima OMS / 2.3",
+        }}
+        yDomain={[0, 3.5]}
+      />
+
+      <CustomPieChart
+        data={data}
+        title="Distribución de Equipos"
+        isAnimationActive={true}
+      />
 
     </div>
   );
