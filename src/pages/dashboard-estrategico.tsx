@@ -11,6 +11,7 @@ import RankingTableCard from "../components/RankingTable/RankingTableCard";
 import RankingTableModal from "../components/RankingTable/RankingTableModal";
 import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
 import CustomPieChart from "../components/PieChart/PieChart";
+import PriorityCard from "../components/Priority/PriorityCard";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -20,8 +21,7 @@ import {
 } from "../mocks/rankingTable.mock";
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
-
-
+import { data1, data2 } from "../mocks/prioritycard.mock";
 
 function DashboardEstrategicoPage() {
   const [search, setSearch] = useState("");
@@ -247,6 +247,31 @@ function DashboardEstrategicoPage() {
         title="Distribución de Equipos"
         isAnimationActive={true}
       />
+
+      <div className="grid grid-cols-4 gap-[18px]">
+        <PriorityCard
+          title="Cuernavaca"
+          subtitle="(Morelos)"
+          priority="alta"
+          progress={96}
+          metrics={data1}
+        />
+
+        <PriorityCard
+          title="Zapopan"
+          subtitle="(Jalisco)"
+          priority="baja"
+          progress={22}
+          metrics={data2}
+        />
+        <PriorityCard
+          title="Zapopan"
+          subtitle="(Jalisco)"
+          priority="media"
+          progress={22}
+          metrics={data2}
+        />
+      </div>
 
     </div>
   );

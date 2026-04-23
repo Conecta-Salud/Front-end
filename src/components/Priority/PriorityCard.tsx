@@ -1,112 +1,147 @@
 import React from "react";
 
 type Metric = {
+  id: string;
   label: string;
   value: string | number;
 };
 
-type Variant = "alta" | "baja" | "media";
-
 type PriorityCardProps = {
   title: string;
-  subtitle: string;
-  variant: Variant;
+  subtitle?: string;
+  priority: PriorityLevel;
   progress: number;
   metrics: Metric[];
+  className?: string;
+  showProgress?: boolean;
+  gradientDirection?: GradientDirection;
 };
 
-const variantStyles: Record<
-  Variant,
+const priorityStyles: Record<
+  PriorityLevel,
   {
+    label: string;
     gradient: string;
-    color: string;
-    border: string;
   }
 > = {
   alta: {
+    label: "Alta",
     gradient: "var(--gradient-primary-red)",
-    color: "#FC6767",
-    border: "#FC6767",
-  },
-  baja: {
-    gradient: "var(--gradient-primary-green)",
-    color: "#14B8A6",
-    border: "#14B8A6",
   },
   media: {
+    label: "Media",
     gradient: "var(--gradient-primary-yellow)",
-    color: "#F59E0B",
-    border: "#F59E0B",
   },
+  baja: {
+    label: "Baja",
+    gradient: "var(--gradient-primary-green)",
+  },
+};
+
+type PriorityLevel = "alta" | "media" | "baja";
+type GradientDirection = "horizontal" | "diagonal";
+
+const priorityGradientName: Record<PriorityLevel, "red" | "yellow" | "green"> = {
+  alta: "red",
+  media: "yellow",
+  baja: "green",
+};
+
+const getGradient = (priority: PriorityLevel, direction: GradientDirection) => {
+  const color = priorityGradientName[priority];
+  return `var(--gradient-primary-${color}-${direction})`;
+};
+
+const clampProgress = (value: number) => {
+  if (Number.isNaN(value)) return 0;
+  return Math.min(100, Math.max(0, value));
 };
 
 const PriorityCard: React.FC<PriorityCardProps> = ({
   title,
   subtitle,
-  variant,
+  priority,
   progress,
   metrics,
+  className = "",
+  showProgress = true,
+  gradientDirection = "horizontal",
 }) => {
-  const styles = variantStyles[variant];
-
-  const labelMap = {
-    alta: "Alta",
-    baja: "Baja",
-    media: "Media",
-  };
+  const styles = priorityStyles[priority];
+  const safeProgress = clampProgress(progress);
+  const gradient = getGradient(priority, gradientDirection);
 
   return (
-    <div
-      className="rounded-2xl overflow-hidden w-full max-w-md"
-      style={{
-        border: `2px solid ${styles.border}`,
-      }}
+    <article
+      className={[
+        "w-full rounded-[10px] p-[2px] shadow-sm",
+        className,
+      ].join(" ")}
+      style={{ background: gradient }}
     >
-      {/* Header */}
-      <div
-        className="text-white p-4 text-center font-bold text-lg"
-        style={{
-          background: styles.gradient,
-        }}
-      >
-        {labelMap[variant]}
-      </div>
-
-      {/* Body */}
-      <div className="bg-gray-100 p-6 text-center">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        <p className="text-gray-400">{subtitle}</p>
-
-        {/* Progress */}
-        <div className="mt-4 w-full h-2 bg-gray-300 rounded-full overflow-hidden">
-          <div
-            className="h-full transition-all duration-500"
-            style={{
-              width: `${progress}%`,
-              background: styles.color,
-            }}
-          />
+      <div className="overflow-hidden rounded-[8px] bg-white">
+        <div
+          className="h-[60px] flex items-center justify-center text-white text-[24px] font-semibold"
+          style={{ background: gradient }}
+        >
+          {styles.label}
         </div>
 
-        {/* Metrics */}
-        <div className="mt-4 text-left space-y-2">
-          {metrics.map((m, i) => (
-            <div key={i} className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ background: styles.color }}
-                />
-                <span>{m.label}</span>
-              </div>
-              <span className="font-semibold" style={{ color: styles.color }}>
-                {m.value}
-              </span>
+        <div className="px-6 py-5 text-center">
+          <h3 className="text-[20px] font-semibold leading-tight text-black">
+            {title}
+          </h3>
+
+          {subtitle && (
+            <p
+              className="text-[16px] font-normal leading-tight"
+              style={{ color: "var(--color-text-secundary)" }}
+            >
+              {subtitle}
+            </p>
+          )}
+
+          {showProgress && (
+            <div className="mt-5 w-full h-[5px] bg-[#E5E5E5] rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${safeProgress}%`,
+                  background: gradient,
+                }}
+              />
             </div>
-          ))}
+          )}
+
+          <div className="mt-5 flex flex-col gap-2 text-left">
+            {metrics.map((metric) => (
+              <div
+                key={metric.id}
+                className="grid grid-cols-[1fr_auto] items-center gap-4 text-[15px]"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className="w-[6px] h-[6px] rounded-full shrink-0"
+                    style={{ background: gradient }}
+                  />
+
+                  <span className="truncate text-black">
+                    {metric.label}
+                  </span>
+                </div>
+
+                <span
+                  className="text-gradient font-semibold whitespace-nowrap"
+                  style={{ backgroundImage: styles.gradient }}
+                >
+                  {metric.value}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
