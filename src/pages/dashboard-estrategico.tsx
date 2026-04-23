@@ -7,6 +7,7 @@ import CustomInputField from "../components/CustomInputField/CustomInputField";
 import CustomBarChart from "../components/BarChart/BarChart";
 import RankingTableCard from "../components/RankingTable/RankingTableCard";
 import RankingTableModal from "../components/RankingTable/RankingTableModal";
+import CustomKPI from "../components/KPI/CustomKPI";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -120,13 +121,11 @@ function DashboardEstrategicoPage() {
       </section>
 
       {/* Bar chart */}
-      <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-        <CustomBarChart
-          title="Estados vs médicos por 1000 habitantes"
-          data={chartData}
-          showAverageLine
-        />
-      </section>
+      <CustomBarChart
+        title="Estados vs médicos por 1000 habitantes"
+        data={chartData}
+        showAverageLine
+      />
 
       {/* Ranking resumido */}
       <section className="w-full max-w-[600px]">
@@ -147,6 +146,53 @@ function DashboardEstrategicoPage() {
         data={rankingData}
         onClose={() => setIsModalOpen(false)}
       />
+
+      <div className="grid grid-cols-4 gap-4">
+        <CustomKPI title="Usuarios registrados" value="151" variant="green" size="sm" fullWidth />
+        <CustomKPI title="Usuarios activos" subtitle="(últimos 7 días)" value="34" size="sm" fullWidth />
+        <CustomKPI title="Comparaciones realizadas" value="76" size="sm" fullWidth />
+        <CustomKPI title="Reportes exportados" value="24" size="sm" fullWidth />
+      </div>
+
+      <div className="grid grid-cols-4 gap-[18px]">
+        <div className="flex flex-col gap-4">
+          <CustomKPI
+            title="Promedio médicos"
+            titleSecondLine="por 1000 habitantes"
+            value="2.5"
+            variant="green"
+            size="sm"
+            fullWidth
+          />
+          <CustomKPI
+            title="Estados"
+            titleSecondLine="críticos"
+            value="8"
+            variant="red"
+            size="sm"
+            fullWidth
+          />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <CustomKPI
+            title="Promedio médicos"
+            titleSecondLine="por 1000 habitantes"
+            value="2.5"
+            size="sm"
+            fullWidth
+          />
+          <CustomKPI
+            title="Estados"
+            titleSecondLine="críticos"
+            value="8"
+            variant="red"
+            size="md"
+            fullWidth
+          />
+        </div>
+      </div>
+
     </div>
   );
 }
