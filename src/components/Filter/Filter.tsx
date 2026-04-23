@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { ListFilter, Check } from "lucide-react";
+import filterIcon from "../../assets/icons/filterIcon.svg";
+import separatorIcon from "../../assets/icons/separatorIcon.svg";
+import SelectedLabelComp from "./SelectedLabel";
 
 interface Option {
-  label: string;
+  name: string;
   value: string;
 }
 
@@ -20,78 +22,72 @@ export default function Filter({
   onChange,
 }: FilterProps) {
   const [open, setOpen] = useState(false);
-  const selectedValues = values ? values.split(",") : [];
+  
+  const selectedValue = values || "";
+
+  const selectedLabel =
+    options.find((o) => o.value === selectedValue)?.name || "";
 
   const toggleValue = (val: string) => {
-    let newValues = [...selectedValues];
-
-    if (newValues.includes(val)) {
-      newValues = newValues.filter((v) => v !== val);
+    if (val === selectedValue) {
+      onChange("");
     } else {
-      newValues.push(val);
+      onChange(val);
     }
-
-    onChange(newValues.join(","));
+    setOpen(false);
   };
 
   return (
     <div className="relative">
       {/* BOTÓN */}
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-4 h-11 rounded-xl border shadow-sm"
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm"
         style={{
           borderColor: "#14B8A6",
           backgroundColor: "#fff",
-          minWidth: "180px",
         }}
       >
-        <ListFilter className="w-4 h-4 text-[#14B8A6]" />
+        <img src={filterIcon} alt="filter" className="w-[21px] h-[13px]" />
 
-        <span className="text-sm truncate">
-          {selectedValues.length > 0
-            ? `${title} | ${selectedValues.length}`
-            : title}
+        <span className="flex items-center gap-2 text-sm truncate">
+          {selectedValue ? (
+            <>
+              {title}
+                <img
+                  src={separatorIcon}
+                  alt="separator"
+                  className="w-[2px] h-5 object-contain"
+                />
+              
+              <SelectedLabelComp label={selectedLabel} />
+            </>
+          ) : (
+            title
+          )}
         </span>
       </button>
-
+      
       {/* DROPDOWN */}
       {open && (
-        <div
-          className="absolute mt-2 w-full rounded-xl shadow-lg z-50"
-          style={{
-            backgroundColor: "#fff",
-            border: "1px solid #e5e7eb",
-          }}
-        >
+        <div className="absolute mt-2 w-full rounded-xl shadow-lg z-50 border-2 border-gray-200 bg-white">
           <div className="p-2 max-h-60 overflow-y-auto">
-            {options.map((option) => {
-              const isSelected = selectedValues.includes(option.value);
-
-              return (
+            {options.map((option) => (
                 <div
                   key={option.value}
                   onClick={() => toggleValue(option.value)}
                   className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100"
                 >
-                  <div
-                    className="w-4 h-4 flex items-center justify-center rounded border"
-                    style={{
-                      borderColor: "#14B8A6",
-                      backgroundColor: isSelected ? "#14B8A6" : "transparent",
-                    }}
-                  >
-                    {isSelected && <Check className="w-3 h-3 text-white" />}
-                  </div>
-
-                  <span className="text-sm">{option.label}</span>
+                  {option.name}
                 </div>
-              );
-            })}
+            ))}
 
-            {selectedValues.length > 0 && (
+            {selectedValue && (
               <div
-                onClick={() => onChange("")}
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
                 className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
                 style={{ color: "#14B8A6" }}
               >

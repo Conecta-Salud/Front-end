@@ -6,6 +6,7 @@
     --color-red: #FC6767; /* Rojo - botones, status crítico */
     --color-yellow: #E8E338; /* Amarillo - status riesgo */
     --color-green: #12D439; /* Verde - status bueno */
+    --color-blue: #1F3A8A; /* Azul - color secundario marca */
     --color-text-secundary: #C6C6C6; /* Texto secundario */
 
   /* Gradientes */
