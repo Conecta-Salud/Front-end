@@ -121,13 +121,11 @@ function DashboardEstrategicoPage() {
       </section>
 
       {/* Bar chart */}
-      <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-        <CustomBarChart
-          title="Estados vs médicos por 1000 habitantes"
-          data={chartData}
-          showAverageLine
-        />
-      </section>
+      <CustomBarChart
+        title="Estados vs médicos por 1000 habitantes"
+        data={chartData}
+        showAverageLine
+      />
 
       {/* Ranking resumido */}
       <section className="w-full max-w-[600px]">
