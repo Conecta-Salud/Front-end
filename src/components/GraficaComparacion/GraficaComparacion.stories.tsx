@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import GraficaComparacion from "./GraficaComparacion";
 
-
 const meta: Meta<typeof GraficaComparacion> = {
-  title: "Components/GraficaComparacion",
+  title: "Components/Tables/GraficaComparacion",
   component: GraficaComparacion,
   tags: ["autodocs"],
 };

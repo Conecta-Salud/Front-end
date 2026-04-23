@@ -1,14 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-
+import { MemoryRouter } from "react-router-dom";
 import Sidebar from "./SideBar";
 
 const meta = {
-  title: "Components/Sidebar",
+  title: "Components/Navigation/Sidebar",
   component: Sidebar,
   parameters: {
-    layout: "fullscreen", // importante para que ocupe toda la altura
+    layout: "fullscreen",
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <div style={{ height: "100vh", display: "flex" }}>
+          <Story />
+        </div>
+      </MemoryRouter>
+    ),
+  ],
   argTypes: {
     role: {
       control: "select",
@@ -72,4 +81,3 @@ export const ProfileWithLabel: Story = {
     profileLabel: "Mi Perfil",
   },
 };
-
