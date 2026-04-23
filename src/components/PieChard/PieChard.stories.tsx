@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import PieChard from "./PieChard";
 
 const meta: Meta<typeof PieChard> = {
-  title: "Components/PieChard",
+  title: "Components/Tables/PieChart",
   component: PieChard,
   tags: ["autodocs"],
 };

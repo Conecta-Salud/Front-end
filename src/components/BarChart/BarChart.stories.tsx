@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import BarChart from "./BarChart";
 
 const meta = {
-  title: "Components/Charts/CustomBarChart",
+  title: "Components/Tables/CustomBarChart",
   component: BarChart,
   parameters: {
     layout: "centered",

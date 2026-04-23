@@ -3,7 +3,7 @@ import { useState } from "react";
 import Filter from "./Filter";
 
 const meta: Meta<typeof Filter> = {
-  title: "Components/Filter",
+  title: "Components/UI/Filter",
   component: Filter,
   tags: ["autodocs"],
 };
@@ -25,7 +25,6 @@ export const Default: Story = {
     return (
       <div style={{ padding: "20px" }}>
         <Filter {...args} values={value} onChange={setValue} />
-        <p style={{ marginTop: "10px" }}>Seleccionado: {value}</p>
       </div>
     );
   },
