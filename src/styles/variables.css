@@ -7,7 +7,7 @@
   --color-red: #FC6767; /* Rojo - botones, status crítico */
 
   --color-yellow: #FACC15; /* Amarillo - status riesgo */
-  --color-yellow-end: #FDE68A;
+  --color-yellow-end: #E8E338;
 
   --color-green-start: #14B8A6; /* Verde - color principal marca */
   --color-green-end: #6EE7B7;
@@ -36,6 +36,16 @@
   --gradient-primary-red: linear-gradient(180deg, var(--color-red-start) 0%, var(--color-red) 100%);
   --gradient-primary-blue: linear-gradient(180deg, var(--color-blue) 0%, var(--color-blue-end) 54%);
 
+  /* Angulos colores */
+  --gradient-primary-green-horizontal: linear-gradient(90deg, #14B8A6 0%, #6EE7B7 73%);
+  --gradient-primary-green-diagonal: linear-gradient(135deg, #14B8A6 0%, #6EE7B7 73%);
+
+  --gradient-primary-yellow-horizontal: linear-gradient(90deg, var(--color-yellow) 0%, var(--color-yellow-end) 74%);
+  --gradient-primary-yellow-diagonal: linear-gradient(135deg, var(--color-yellow) 0%, var(--color-yellow-end) 74%);
+
+  --gradient-primary-red-horizontal: linear-gradient(90deg, var(--color-red-start) 0%, var(--color-red) 100%);
+  --gradient-primary-red-diagonal: linear-gradient(135deg, var(--color-red-start) 0%, var(--color-red) 100%);
+
   /* Tipografía */
   --font-primary: 'Fredoka', sans-serif;
   --font-weight-regular: 400;
@@ -50,3 +60,4 @@
   /* Bordes */
   --radius-md: 8px;
 }
+
