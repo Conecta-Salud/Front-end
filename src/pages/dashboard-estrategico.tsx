@@ -22,6 +22,7 @@ import {
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
 import { data1, data2 } from "../mocks/prioritycard.mock";
+import ImportButton from "../components/ImportButton/ImportButton";
 
 function DashboardEstrategicoPage() {
   const [search, setSearch] = useState("");
@@ -49,39 +50,28 @@ function DashboardEstrategicoPage() {
       <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
         <h1 className="text-3xl font-bold mb-2">Dashboard Estratégico</h1>
         <p className="text-gray-600">
-          Esta sección te sirve para validar cómo se ve el dashboard con contenido real.
+          Esta sección te sirve para validar cómo se ve el dashboard con
+          contenido real.
         </p>
       </section>
 
       <div className="flex items-center gap-4 flex-wrap">
-        <Button 
-          label="Nuevo Usuario" 
-          tone="green" 
-          height="40" 
-          buttonType= "add" 
+        <Button
+          label="Nuevo Usuario"
+          tone="green"
+          height="40"
+          buttonType="add"
         />
-        <Button 
-          label="Exportar" 
-          tone="blue" 
-          height="40" 
-          buttonType= "download" 
+        <Button
+          label="Exportar"
+          tone="blue"
+          height="40"
+          buttonType="download"
         />
-        <Button 
-          label="Cancelar" 
-          tone="red" 
-          height="40" 
-        />
-        <Button 
-          label="Continuar" 
-          tone="green" 
-          height="40" 
-        />
-        <Button 
-          label="Continuar" 
-          tone="green" 
-          height="60" 
-          textSize="lg"
-        />
+        <Button label="Cancelar" tone="red" height="40" />
+        <Button label="Continuar" tone="green" height="40" />
+        <Button label="Continuar" tone="green" height="60" textSize="lg" />
+        <ImportButton />
       </div>
 
       {/* Inputs */}
@@ -186,9 +176,26 @@ function DashboardEstrategicoPage() {
       />
 
       <div className="grid grid-cols-4 gap-4">
-        <CustomKPI title="Usuarios registrados" value="151" variant="green" size="sm" fullWidth />
-        <CustomKPI title="Usuarios activos" subtitle="(últimos 7 días)" value="34" size="sm" fullWidth />
-        <CustomKPI title="Comparaciones realizadas" value="76" size="sm" fullWidth />
+        <CustomKPI
+          title="Usuarios registrados"
+          value="151"
+          variant="green"
+          size="sm"
+          fullWidth
+        />
+        <CustomKPI
+          title="Usuarios activos"
+          subtitle="(últimos 7 días)"
+          value="34"
+          size="sm"
+          fullWidth
+        />
+        <CustomKPI
+          title="Comparaciones realizadas"
+          value="76"
+          size="sm"
+          fullWidth
+        />
         <CustomKPI title="Reportes exportados" value="24" size="sm" fullWidth />
       </div>
 
@@ -272,7 +279,6 @@ function DashboardEstrategicoPage() {
           metrics={data2}
         />
       </div>
-
     </div>
   );
 }
