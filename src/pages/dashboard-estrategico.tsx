@@ -21,6 +21,7 @@ import {
 } from "../mocks/rankingTable.mock";
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
+import Heatmap from "../components/HeatMap/Heatmap";
 import { data1, data2 } from "../mocks/prioritycard.mock";
 import ImportButton from "../components/ImportButton/ImportButton";
 
@@ -255,6 +256,7 @@ function DashboardEstrategicoPage() {
         isAnimationActive={true}
       />
 
+      <Heatmap></Heatmap>
       <div className="grid grid-cols-4 gap-[18px]">
         <PriorityCard
           title="Cuernavaca"
