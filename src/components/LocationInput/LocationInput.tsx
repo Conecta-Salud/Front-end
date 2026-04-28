@@ -6,7 +6,7 @@ import cancelarIcon from '../../assets/icons/cancelar.svg';
 
 interface LocationInputProps {
   text1: string;
-  text2: string;
+  text2?: string;
   onClear?: () => void;
   className?: string;
 }
