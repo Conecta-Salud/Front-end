@@ -9,7 +9,7 @@ import Profile from "./pages/perfil";
 import Admin from "./pages/panel-adminstrador";
 function LayoutWrapper() {
   return (
-    <AppLayout role="admin">
+    <AppLayout role="administrador">
       <Outlet />
     </AppLayout>
   );

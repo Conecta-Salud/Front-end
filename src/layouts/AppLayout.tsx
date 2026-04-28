@@ -13,7 +13,7 @@ const SIDEBAR_WIDTH = 100;
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
-  role = "user",
+  role = "estrategico",
 }) => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#F5F7F8]">
