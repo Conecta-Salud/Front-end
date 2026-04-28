@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect } from "react";
 import filterIcon from "../../assets/icons/filterIcon.svg";
 import separatorIcon from "../../assets/icons/separatorIcon.svg";
 import SelectedLabelComp from "./SelectedLabel";
@@ -9,19 +9,27 @@ interface Option {
 }
 
 interface FilterProps {
+  id: string;
   title: string;
   options: Option[];
   values: string;
+  isOpen: boolean;
+  onOpenChange: (id: string | null) => void;
   onChange: (value: string) => void;
+  className?: string;
 }
 
 export default function Filter({
+  id,
   title,
   options,
   values,
+  isOpen,
+  onOpenChange,
   onChange,
+  className = "",
 }: FilterProps) {
-  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const selectedValue = values || "";
 
@@ -34,59 +42,79 @@ export default function Filter({
     } else {
       onChange(val);
     }
-    setOpen(false);
+    onOpenChange(null);
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        onOpenChange(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onOpenChange]);
+
   return (
-    <div className="relative">
+    <div ref={containerRef} className={["relative", className].join(" ")}>
       {/* BOTÓN */}
       <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm"
+        type="button"
+        onClick={() => onOpenChange(isOpen ? null : id)}
+        className="flex w-full items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm bg-white"
         style={{
           borderColor: "#14B8A6",
-          backgroundColor: "#fff",
         }}
       >
-        <img src={filterIcon} alt="filter" className="w-[21px] h-[13px]" />
+        <img src={filterIcon} alt="filter" className="w-[21px] h-[13px] shrink-0" />
 
-        <span className="flex items-center gap-2 text-sm truncate">
+        <span className="flex min-w-0 items-center gap-2 text-sm truncate">
           {selectedValue ? (
             <>
-              {title}
+              <span className="shrink-0">{title}</span>
+
                 <img
                   src={separatorIcon}
                   alt="separator"
-                  className="w-[2px] h-5 object-contain"
+                  className="w-[2px] h-5 object-contain shrink-0"
                 />
               
               <SelectedLabelComp label={selectedLabel} />
             </>
           ) : (
-            title
+            <span className="truncate">{title}</span>
           )}
         </span>
       </button>
       
       {/* DROPDOWN */}
-      {open && (
-        <div className="absolute mt-2 w-full rounded-xl shadow-lg z-50 border-2 border-gray-200 bg-white">
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-max min-w-full max-w-[320px] rounded-xl shadow-lg z-50 border-2 border-gray-200 bg-white">
           <div className="p-2 max-h-60 overflow-y-auto">
             {options.map((option) => (
-                <div
-                  key={option.value}
-                  onClick={() => toggleValue(option.value)}
-                  className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100"
-                >
-                  {option.name}
-                </div>
+              <div
+                key={option.value}
+                onClick={() => toggleValue(option.value)}
+                className="whitespace-nowrap px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm"
+              >
+                {option.name}
+              </div>
             ))}
 
             {selectedValue && (
               <div
                 onClick={() => {
                   onChange("");
-                  setOpen(false);
+                  onOpenChange(null);
                 }}
                 className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
                 style={{ color: "#14B8A6" }}

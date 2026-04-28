@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginWithFirebase } from "../services/auth/authService";
-import { getCurrentUser } from "../services/auth/getCurrentUser";
+
+import { useAuthStore } from "../stores/authStore";
 
 import loginShape from "../assets/backgrounds/login_shape.png"
 import ConectaSaludLogo from "../assets/ConectaSalud_Full.png";
@@ -10,14 +10,15 @@ import Button from "../components/Button/Button";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const status = useAuthStore((state) => state.status);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({
@@ -27,24 +28,15 @@ function LoginPage() {
   };
 
   const handleLogin = async () => {
+    if (status === "checking") return;
+
     try {
-      setLoading(true);
       setError("");
-
-      const { token } = await loginWithFirebase(form.email, form.password);
-
-      localStorage.setItem("token", token);
-
-      const user = await getCurrentUser();
-
-      console.log("Usuario desde BD local:", user);
-
-      navigate("/dashboard");
+      await login(form.email, form.password);
+      navigate("/", { replace: true });
     } catch (error) {
       console.error(error);
       setError("Correo o contraseña incorrectos.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -89,7 +81,7 @@ function LoginPage() {
               name="email"
               label="Correo"
               type="email"
-              placeholder="correo@ejemplo.com"
+              placeholder="correo@conectasalud.mx"
               value={form.email}
               onChange={(value) => handleChange("email", value)}
             />
@@ -107,10 +99,12 @@ function LoginPage() {
           {/* Botón */}
           <div className="mt-[70px] flex justify-center">
             <Button
-              label={loading ? "Cargando..." : "Continuar"}
+              label="Continuar"
               tone="green"
               height="60"
               textSize="lg"
+              loading={status === "checking"}
+              disabled={status === "checking"}
               onClick={handleLogin}
             />
           </div>
@@ -126,7 +120,7 @@ function LoginPage() {
             type="button"
             className="mt-[25px] text-[16px] font-medium"
             style={{
-              backgroundImage: "var( --gradient-primary-blue)",
+              backgroundImage: "var(--gradient-primary-blue)",
               WebkitBackgroundClip: "text",
               color: "transparent",
             }}
