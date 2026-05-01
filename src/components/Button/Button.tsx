@@ -90,7 +90,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       type={type}
       disabled={disabled || loading}
       className={[
-        "inline-flex items-center justify-center rounded-[10px] px-[15px] transition-all duration-200",
+        "inline-flex items-center justify-center rounded-[6px] px-[15px] transition-all duration-200",
         "font-semibold shadow-md",
         "disabled:opacity-60 disabled:cursor-not-allowed",
         heightClasses[height],
