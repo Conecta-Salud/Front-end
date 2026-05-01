@@ -4,6 +4,8 @@ export type UserRole = "estrategico" | "administrador";
 
 export type AuthUser = {
   id: number;
+  idDependencia: number;
+  nombreDependencia: string;
   nombre: string;
   apellidos: string;
   email: string;
@@ -12,7 +14,7 @@ export type AuthUser = {
 };
 
 export const getCurrentUser = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>("/user/profile");
+  const response = await api.get<AuthUser>("/user/me");
   return response.data;
 };
 
