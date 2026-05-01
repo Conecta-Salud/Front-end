@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header/Header";
 import Sidebar from "../components/SideBar/SideBar";
 import type { UserRole } from "../components/SideBar/Sidebar.types";
+
+import { useLocation } from "react-router-dom";
+import HeaderActions from "../components/Header/HeaderActions";
+import { useHeaderFilterStore } from "../stores/HeaderFilterStore";
+import {
+  headerConfigByPath,
+  defaultHeaderConfig,
+} from "../config/header.config";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -13,8 +21,25 @@ const SIDEBAR_WIDTH = 100;
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
-  role = "user",
+  role = "estrategico",
 }) => {
+  const location = useLocation();
+
+  const headerConfig = headerConfigByPath[location.pathname] ?? defaultHeaderConfig;
+
+const category = useHeaderFilterStore((state) => state.category);
+const year = useHeaderFilterStore((state) => state.year);
+const search = useHeaderFilterStore((state) => state.search);
+
+const setCategory = useHeaderFilterStore((state) => state.setCategory);
+const setYear = useHeaderFilterStore((state) => state.setYear);
+const setSearch = useHeaderFilterStore((state) => state.setSearch);
+
+  const shouldShowHeaderActions =
+    headerConfig.showCategoryFilter ||
+    headerConfig.showYearFilter ||
+    headerConfig.showSearchBar;
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#F5F7F8]">
       {/* Header fijo */}
@@ -22,7 +47,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         className="fixed top-0 left-0 right-0 z-50"
         style={{ height: `${HEADER_HEIGHT}px` }}
       >
-        <Header subtitle="Panel Usuario Estratégico" />
+        <Header
+          subtitle={headerConfig.subtitle}
+          actions={
+            shouldShowHeaderActions ? (
+              <HeaderActions
+                showCategoryFilter={headerConfig.showCategoryFilter}
+                showYearFilter={headerConfig.showYearFilter}
+                showSearchBar={headerConfig.showSearchBar}
+                category={category}
+                year={year}
+                search={search}
+                onCategoryChange={setCategory}
+                onYearChange={setYear}
+                onSearchChange={setSearch}
+              />
+            ) : undefined
+          }
+        />
       </div>
 
       {/* Sidebar fijo */}
