@@ -12,6 +12,7 @@ import RankingTableModal from "../components/RankingTable/RankingTableModal";
 import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
 import CustomPieChart from "../components/PieChart/PieChart";
 import PriorityCard from "../components/Priority/PriorityCard";
+import LocationInput from "../components/LocationInput/LocationInput";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
