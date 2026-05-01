@@ -1,7 +1,5 @@
 import React from 'react';
-// @ts-ignore
 import pinIcon from '../../assets/icons/pin.svg';
-// @ts-ignore
 import cancelarIcon from '../../assets/icons/cancelar.svg';
 
 interface LocationInputProps {
@@ -28,7 +26,6 @@ const LocationInput: React.FC<LocationInputProps> = ({
         height: '60px', 
         borderRadius: '15px', 
         border: '6px solid var(--color-green-start)', 
-        fontFamily: 'var(--font-primary)',
         boxSizing: 'border-box',
         overflow: 'hidden'
       }}
@@ -43,7 +40,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
         }}
       >
         <img 
-          src={pinIcon.src || pinIcon} 
+          src={pinIcon || pinIcon} 
           alt="Ubicación" 
           className="h-[28px] w-auto object-contain" 
         />
@@ -73,7 +70,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
         }}
       >
         <img 
-          src={cancelarIcon.src || cancelarIcon} 
+          src={cancelarIcon || cancelarIcon} 
           alt="Limpiar" 
           className="h-[42px] w-[42px] object-contain"
         />
