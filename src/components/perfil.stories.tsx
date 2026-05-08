@@ -13,7 +13,7 @@ const meta: Meta<typeof PerfilPage> = {
     ),
   ],
   parameters: {
-    layout: 'fullscreen', // Para que el layout ocupe toda la pantalla de Storybook sin márgenes extra
+    layout: 'fullscreen',
   },
 };
 

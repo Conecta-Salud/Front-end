@@ -1,5 +1,4 @@
 import React from "react";
-// Importamos los iconos correctamente
 import alertIcon from "../../assets/icons/alertIcon.svg";
 import likeIcon from "../../assets/icons/likeIcon.svg";
 
@@ -23,29 +22,28 @@ type PriorityCardProps = {
   gradientDirection?: GradientDirection;
 };
 
-// Actualizamos este objeto para que sepa qué icono usar
 const priorityStyles: Record<
   PriorityLevel,
   {
     label: string;
     gradient: string;
-    icon: string; // Añadimos la propiedad icon
+    icon: string; 
   }
 > = {
   alta: {
     label: "Alta",
     gradient: "var(--gradient-primary-red)",
-    icon: alertIcon, // Usa alertIcon para Alta
+    icon: alertIcon, 
   },
   media: {
     label: "Media",
     gradient: "var(--gradient-primary-yellow)",
-    icon: alertIcon, // Puedes usar el mismo o uno diferente
+    icon: alertIcon, 
   },
   baja: {
     label: "Baja",
     gradient: "var(--gradient-primary-green)",
-    icon: likeIcon, // Usa likeIcon para Baja
+    icon: likeIcon, 
   },
 };
 
@@ -143,7 +141,7 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
                   style={{ 
                     backgroundImage: styles.gradient,
                     WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent" // Para que el gradiente se vea en el texto
+                    WebkitTextFillColor: "transparent" 
                   }}
                 >
                   {metric.value}

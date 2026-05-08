@@ -1,5 +1,5 @@
 import { useId } from "react";
-// Importación del icono médico
+// @ts-ignore
 import medIcon from "../../assets/icons/medIcon.svg"; 
 import {
   BarChart,
@@ -106,7 +106,6 @@ export default function ComparisonBarChart({
 }: ComparisonBarChartProps) {
   const chartId = useId();
 
-  // Contenedor del encabezado con el Icono
   const ChartHeader = () => (
     <div className="flex items-center gap-3 mb-6">
       <div className="bg-[#E6FFFA] p-2 rounded-lg shrink-0">
