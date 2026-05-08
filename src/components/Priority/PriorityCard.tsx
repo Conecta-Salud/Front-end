@@ -1,10 +1,16 @@
 import React from "react";
+// Importamos los iconos correctamente
+import alertIcon from "../../assets/icons/alertIcon.svg";
+import likeIcon from "../../assets/icons/likeIcon.svg";
 
 type Metric = {
   id: string;
   label: string;
   value: string | number;
 };
+
+type PriorityLevel = "alta" | "media" | "baja";
+type GradientDirection = "horizontal" | "diagonal";
 
 type PriorityCardProps = {
   title: string;
@@ -17,29 +23,31 @@ type PriorityCardProps = {
   gradientDirection?: GradientDirection;
 };
 
+// Actualizamos este objeto para que sepa qué icono usar
 const priorityStyles: Record<
   PriorityLevel,
   {
     label: string;
     gradient: string;
+    icon: string; // Añadimos la propiedad icon
   }
 > = {
   alta: {
     label: "Alta",
     gradient: "var(--gradient-primary-red)",
+    icon: alertIcon, // Usa alertIcon para Alta
   },
   media: {
     label: "Media",
     gradient: "var(--gradient-primary-yellow)",
+    icon: alertIcon, // Puedes usar el mismo o uno diferente
   },
   baja: {
     label: "Baja",
     gradient: "var(--gradient-primary-green)",
+    icon: likeIcon, // Usa likeIcon para Baja
   },
 };
-
-type PriorityLevel = "alta" | "media" | "baja";
-type GradientDirection = "horizontal" | "diagonal";
 
 const priorityGradientName: Record<PriorityLevel, "red" | "yellow" | "green"> = {
   alta: "red",
@@ -73,17 +81,20 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
 
   return (
     <article
-      className={[
-        "w-full rounded-[10px] p-[2px] shadow-sm",
-        className,
-      ].join(" ")}
+      className={["w-full rounded-[10px] p-[2px] shadow-sm", className].join(" ")}
       style={{ background: gradient }}
     >
       <div className="overflow-hidden rounded-[8px] bg-white">
+        {/* CABECERA: Aquí agregamos la imagen al lado del texto */}
         <div
-          className="h-[60px] flex items-center justify-center text-white text-[24px] font-semibold"
+          className="h-[60px] flex items-center justify-center gap-3 text-white text-[24px] font-semibold"
           style={{ background: gradient }}
         >
+          <img 
+            src={styles.icon} 
+            alt="Icono de prioridad" 
+            className="w-6 h-6 object-contain brightness-0 invert" 
+          />
           {styles.label}
         </div>
 
@@ -124,15 +135,16 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
                     className="w-[6px] h-[6px] rounded-full shrink-0"
                     style={{ background: gradient }}
                   />
-
-                  <span className="truncate text-black">
-                    {metric.label}
-                  </span>
+                  <span className="truncate text-black">{metric.label}</span>
                 </div>
 
                 <span
-                  className="text-gradient font-semibold whitespace-nowrap"
-                  style={{ backgroundImage: styles.gradient }}
+                  className="font-semibold whitespace-nowrap"
+                  style={{ 
+                    backgroundImage: styles.gradient,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent" // Para que el gradiente se vea en el texto
+                  }}
                 >
                   {metric.value}
                 </span>

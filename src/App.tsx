@@ -8,8 +8,7 @@ import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard-estrategico";
 import Comparison from "./pages/modulo-comparacion";
-import Profile from "./pages/perfil";
-import Admin from "./pages/panel-adminstrador";
+import Profile from './pages/ProfileView';
 import { useEffect } from "react";
 
 function LayoutWrapper() {
@@ -40,7 +39,6 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/comparison" element={<Comparison />} />
           <Route path="/profile" element={<Profile />} />
-
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<Admin />} />
           </Route>
