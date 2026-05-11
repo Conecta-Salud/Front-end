@@ -12,7 +12,9 @@ import RankingTableModal from "../components/RankingTable/RankingTableModal";
 import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
 import CustomPieChart from "../components/PieChart/PieChart";
 import PriorityCard from "../components/Priority/PriorityCard";
-import LocationInput from "../components/LocationInput/LocationInput";
+import ImportButton from "../components/ImportButton/ImportButton";
+import Heatmap from "../components/HeatMap/Heatmap";
+import LocationInput, { type LocationOption } from "../components/LocationInput/LocationInput";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -22,14 +24,15 @@ import {
 } from "../mocks/rankingTable.mock";
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
-import Heatmap from "../components/HeatMap/Heatmap";
 import { data1, data2 } from "../mocks/prioritycard.mock";
-import ImportButton from "../components/ImportButton/ImportButton";
+import { locationOptionsMock } from "../mocks/locationinput.mock";
+
 
 function DashboardEstrategicoPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [year, setYear] = useState("");
+  const [location, setLocation] = useState<LocationOption | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -282,6 +285,14 @@ function DashboardEstrategicoPage() {
           metrics={data2}
         />
       </div>
+
+      <LocationInput
+        value={location}
+        options={locationOptionsMock}
+        placeholder="Selecciona estado o municipio"
+        onChange={setLocation}
+        onClear={() => console.log('Ubicación limpiada')}
+      />
     </div>
   );
 }
