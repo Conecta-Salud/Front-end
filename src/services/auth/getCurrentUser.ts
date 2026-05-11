@@ -12,7 +12,7 @@ export type AuthUser = {
 };
 
 export const getCurrentUser = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>("/user/profile");
+  const response = await api.get<AuthUser>("/user/me");
   return response.data;
 };
 
