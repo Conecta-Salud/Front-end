@@ -13,7 +13,7 @@ type HeaderFiltersState = {
 
 export const useHeaderFilterStore = create<HeaderFiltersState>((set) => ({
   category: "cobertura_medica",
-  year: "2026",
+  year: "2024",
   search: "",
 
   setCategory: (category) => set({ category }),
@@ -23,7 +23,7 @@ export const useHeaderFilterStore = create<HeaderFiltersState>((set) => ({
   resetFilters: () =>
     set({
       category: "cobertura_medica",
-      year: "2026",
+      year: "2024",
       search: "",
     }),
 }));
