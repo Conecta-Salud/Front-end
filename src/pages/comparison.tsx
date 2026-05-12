@@ -42,19 +42,18 @@ export default function ModuloComparacionPage() {
   };
 
   return (
-    // CONTENEDOR RAIZ: Ocupa toda la pantalla y evita scroll horizontal
-    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden">
+    <div className="relative h-screen w-screen bg-[#F8FAFC] overflow-hidden flex">
       
-      {/* 1. SIDEBAR: Fija a la izquierda */}
-      <div className="h-full flex-shrink-0">
+      {/* 1. SIDEBAR FIJA */}
+      <div className="w-[100px] h-full flex-shrink-0 z-50">
         <SideBar />
       </div>
 
-      {/* 2. ÁREA DE CONTENIDO: Header + Scrollable Body */}
-      <div className="flex flex-col flex-1 min-w-0 h-full">
+      {/* 2. CONTENEDOR DERECHO (HEADER + CONTENIDO) */}
+      <div className="flex-1 flex flex-col min-w-0 relative h-full">
         
-        {/* HEADER: Fijo en la parte superior */}
-        <div className="h-[80px] flex-shrink-0">
+        {/* HEADER FIJO ARRIBA */}
+        <div className="w-full h-[100px] bg-white border-b border-gray-100 flex-shrink-0 z-40">
           <Header 
             subtitle="Panel Usuario Estratégico"
             actions={
@@ -69,14 +68,16 @@ export default function ModuloComparacionPage() {
           />
         </div>
 
-        {/* CUERPO DE LA PÁGINA: Con scroll independiente */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-[1600px] mx-auto">
+        {/* 3. ÁREA DE SCROLL (EL CUERPO) */}
+        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+          <div className="max-w-[1400px] mx-auto">
             
-            {/* Título y Botón Exportar */}
+            {/* Título y Año dinámico */}
             <div className="flex justify-between items-end mb-8">
               <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Módulo de Comparación</h1>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                  Módulo de Comparación
+                </h1>
                 <p className="text-gray-500 font-semibold mt-1">
                   Búsqueda de indicadores de salud | {selectedYear}
                 </p>
@@ -113,17 +114,36 @@ export default function ModuloComparacionPage() {
               <ComparisonChart title="Población en pobreza" data={getChartData(2.5, 0.8)} rules={RULES} chartHeight={220} />
             </div>
 
-            {/* Índice de Prioridad */}
+            {/* Índice de Prioridad (Métricas restauradas) */}
             <div className="bg-white rounded-[40px] p-10 shadow-sm border border-gray-50 mb-10">
-              <h2 className="text-center text-[#4FD1C5] text-2xl font-black mb-10 uppercase tracking-[0.2em]">Índice de Prioridad</h2>
+              <h2 className="text-center text-[#4FD1C5] text-2xl font-black mb-10 uppercase tracking-[0.2em]">
+                Índice de Prioridad
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <PriorityCard title={confirmedLoc1.nombre} subtitle={confirmedLoc1.estado} priority="alta" progress={85} metrics={[]} />
-                <PriorityCard title={confirmedLoc2.nombre} subtitle={confirmedLoc2.estado} priority="baja" progress={25} metrics={[]} />
+                <PriorityCard 
+                  title={confirmedLoc1.nombre} 
+                  subtitle={confirmedLoc1.estado ? `(${confirmedLoc1.estado})` : ""}
+                  priority="alta" progress={85}
+                  metrics={[
+                    { id: '1', label: "Hospitales por población", value: "4.0" },
+                    { id: '2', label: "Cobertura Médica", value: "0.7" },
+                    { id: '3', label: "Adultos Mayores", value: "14%" },
+                  ]}
+                />
+                <PriorityCard 
+                  title={confirmedLoc2.nombre} 
+                  subtitle={confirmedLoc2.estado ? `(${confirmedLoc2.estado})` : ""}
+                  priority="baja" progress={25}
+                  metrics={[
+                    { id: '1', label: "Hospitales por población", value: "8.4" },
+                    { id: '2', label: "Cobertura Médica", value: "2.9" },
+                    { id: '3', label: "Adultos Mayores", value: "27%" },
+                  ]}
+                />
               </div>
             </div>
-
           </div>
-        </div>
+        </main>
       </div>
 
       <Export isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} onExport={() => setIsExportOpen(false)} />
