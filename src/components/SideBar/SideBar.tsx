@@ -7,7 +7,7 @@ import type { SidebarItemId, SidebarNavItemData, SidebarProps } from "./Sidebar.
 import { sidebarIcons } from "./SideBar.config";
 
 const Sidebar: React.FC<SidebarProps> = ({
-  role = "estrategico",
+  role = "strategic",
   profileLabel,
   showProfileLabel = false,
 }) => {
@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  if (role === "administrador" && sidebarIcons.admin) {
+  if (role === "admin" && sidebarIcons.admin) {
     navItems.push({
       id: "admin",
       label: "Panel Administrador",
