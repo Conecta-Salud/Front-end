@@ -1,20 +1,20 @@
 import api from "../api";
 
-export type UserRole = "estrategico" | "administrador";
+export type UserRole = "strategic" | "admin";
 
 export type AuthUser = {
   id: number;
-  idDependencia: number;
-  nombreDependencia: string;
-  nombre: string;
-  apellidos: string;
+  departmentId: number;
+  departmentName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   firebaseUid: string;
-  rol: UserRole;
+  role: UserRole;
 };
 
 export const getCurrentUser = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>("/user/me");
+  const response = await api.get<AuthUser>("/users/profile");
   return response.data;
 };
 

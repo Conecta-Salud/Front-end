@@ -21,7 +21,7 @@ const SIDEBAR_WIDTH = 100;
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
-  role = "estrategico",
+  role = "strategic",
 }) => {
   const location = useLocation();
 
