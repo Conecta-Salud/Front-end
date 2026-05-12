@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import pinIcon from '../../assets/icons/pin.svg';
-import cancelarIcon from '../../assets/icons/cancelar.svg';
+import pinIcon from '../../../assets/icons/pin.svg';
+import cancelarIcon from '../../../assets/icons/cancelar.svg';
 
 export type LocationLevel = "state" | "municipality";
 

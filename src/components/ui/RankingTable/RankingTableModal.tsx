@@ -3,7 +3,7 @@ import type {
   RankingTableBaseRow,
   RankingTableModalProps,
 } from "./RankingTable.types";
-import closeIcon from "../../assets/icons/closeIcon.svg";
+import closeIcon from "../../../assets/icons/closeIcon.svg";
 
 export const RankingTableModal = <T extends RankingTableBaseRow>({
   isOpen,

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Filter from "../Filter/Filter";
-import SearchBar from "../SearchBar/SearchBar";
-import type { HealthMapIndicator } from "../HealthMap/healthMap.types";
+import Filter from "../../ui/Filter/Filter";
+import SearchBar from "../../ui/SearchBar/SearchBar";
+import type { HealthMapIndicator } from "../../../features/health-map/types/healthMap.types";
 
 type HeaderActionsProps = {
   showCategoryFilter?: boolean;

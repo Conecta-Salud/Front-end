@@ -1,4 +1,4 @@
-import searchIcon from "../../assets/icons/searchIcon.svg";
+import searchIcon from "../../../assets/icons/searchIcon.svg";
 
 interface SearchBarProps {
   searchTerm?: string;

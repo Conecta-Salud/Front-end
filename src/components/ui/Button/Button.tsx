@@ -1,6 +1,6 @@
 import React, { type ButtonHTMLAttributes, type ReactNode } from "react";
-import plusIcon from "../../assets/icons/button/plusIcon.svg";
-import downloadIcon from "../../assets/icons/button/downloadIcon.svg";
+import plusIcon from "../../../assets/icons/button/plusIcon.svg";
+import downloadIcon from "../../../assets/icons/button/downloadIcon.svg";
 
 type CustomButtonProps = {
   label: string;

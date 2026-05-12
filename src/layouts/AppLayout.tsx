@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import Header from "../components/Header/Header";
-import Sidebar from "../components/SideBar/SideBar";
-import type { UserRole } from "../components/SideBar/Sidebar.types";
-
+import React from "react";
 import { useLocation } from "react-router-dom";
-import HeaderActions from "../components/Header/HeaderActions";
-import { useHeaderFilterStore } from "../stores/HeaderFilterStore";
+
+import Header from "../components/layout/Header/Header";
+import HeaderActions from "../components/layout/Header/HeaderActions";
+import Sidebar from "../components/layout/SideBar/SideBar";
+
+import type { UserRole } from "../components/layout/SideBar/Sidebar.types";
+import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import {
   headerConfigByPath,
   defaultHeaderConfig,

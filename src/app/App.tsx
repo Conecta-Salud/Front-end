@@ -1,15 +1,15 @@
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { PrivateRoute } from "./routes/PrivateRoute";
-import { AdminRoute } from "./routes/AdminRoute";
-import { useAuthStore } from "./stores/authStore";
-import AppLayout from "./layouts/AppLayout";
+import { PrivateRoute } from "../routes/PrivateRoute";
+import { AdminRoute } from "../routes/AdminRoute";
+import { useAuthStore } from "../stores/authStore";
+import AppLayout from "../layouts/AppLayout";
 
 // PAGES
-import Login from "./pages/login";
-import Dashboard from "./pages/dashboard-estrategico";
-import Comparison from "./pages/modulo-comparacion";
-import Profile from "./pages/perfil";
-import Admin from "./pages/panel-adminstrador";
+import Login from "../pages/login";
+import Dashboard from "../pages/dashboard_strategic";
+import Comparison from "../pages/comparison_module";
+import Profile from "../pages/perfil";
+import Admin from "../pages/admin_panel";
 import { useEffect } from "react";
 
 function LayoutWrapper() {

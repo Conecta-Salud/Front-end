@@ -1,17 +1,17 @@
 import { useState } from "react";
 
-import CustomInputField from "../components/CustomInputField/CustomInputField";
-import Button from "../components/Button/Button";
-import CustomKPI from "../components/KPI/CustomKPI";
+import CustomInputField from "../components/ui/CustomInputField/CustomInputField";
+import Button from "../components/ui/Button/Button";
+import CustomKPI from "../components/ui/KPI/CustomKPI";
 
-import CustomBarChart from "../components/BarChart/BarChart";
-import RankingTableCard from "../components/RankingTable/RankingTableCard";
-import RankingTableModal from "../components/RankingTable/RankingTableModal";
-import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
-import CustomPieChart from "../components/PieChart/PieChart";
-import PriorityCard from "../components/Priority/PriorityCard";
-import ImportButton from "../components/ImportButton/ImportButton";
-import LocationInput, { type LocationOption } from "../components/LocationInput/LocationInput";
+import CustomBarChart from "../components/charts/BarChart/BarChart";
+import RankingTableCard from "../components/ui/RankingTable/RankingTableCard";
+import RankingTableModal from "../components/ui/RankingTable/RankingTableModal";
+import ComparisonBarChart from "../components/charts/ComparisonChart/ComparisonChart";
+import CustomPieChart from "../components/charts/PieChart/PieChart";
+import PriorityCard from "../components/charts/Priority/PriorityCard";
+import ImportButton from "../components/ui/ImportButton/ImportButton";
+import LocationInput, { type LocationOption } from "../components/ui/LocationInput/LocationInput";
 
 import { chartData } from "../mocks/barchart.mock";
 import {

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { HealthMapIndicator } from "../components/HealthMap/healthMap.types";
+import type { HealthMapIndicator } from "../features/health-map/types/healthMap.types";
 
 type HeaderFiltersState = {
   category: HealthMapIndicator;

@@ -1,5 +1,5 @@
 import React from "react";
-import logoImg from "../../assets/ConectaSalud_logo.png";
+import logoImg from "../../../assets/ConectaSalud_logo.png";
 
 
 type HeaderProps = {

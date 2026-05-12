@@ -5,8 +5,8 @@ import { useAuthStore } from "../stores/authStore";
 
 import loginShape from "../assets/backgrounds/login_shape.png"
 import ConectaSaludLogo from "../assets/ConectaSalud_Full.png";
-import CustomInputField from "../components/CustomInputField/CustomInputField";
-import Button from "../components/Button/Button";
+import CustomInputField from "../components/ui/CustomInputField/CustomInputField";
+import Button from "../components/ui/Button/Button";
 
 function LoginPage() {
   const navigate = useNavigate();

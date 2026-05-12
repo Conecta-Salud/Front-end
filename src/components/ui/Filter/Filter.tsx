@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
-import filterIcon from "../../assets/icons/filterIcon.svg";
-import separatorIcon from "../../assets/icons/separatorIcon.svg";
+import filterIcon from "../../../assets/icons/filterIcon.svg";
+import separatorIcon from "../../../assets/icons/separatorIcon.svg";
 import SelectedLabelComp from "./SelectedLabel";
 
 interface Option {

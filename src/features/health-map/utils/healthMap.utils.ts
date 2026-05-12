@@ -3,7 +3,7 @@ import type {
   HealthMapFeatureCollection,
   HealthMapIndicatorResponse,
   RawGeoJsonFeatureCollection,
-} from "./healthMap.types";
+} from "../types/healthMap.types";
 
 export function getHealthMapFillColor(colorToken?: HealthMapColorToken) {
   switch (colorToken) {

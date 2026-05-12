@@ -1,7 +1,7 @@
 import React from "react";
-import eyeCloseIcon from "../../assets/icons/eyeCloseIcon.svg";
-import eyeOpenIcon from "../../assets/icons/eyeOpenIcon.svg";
-import userIcon from "../../assets/icons/userIcon.svg";
+import eyeCloseIcon from "../../../assets/icons/eyeCloseIcon.svg";
+import eyeOpenIcon from "../../../assets/icons/eyeOpenIcon.svg";
+import userIcon from "../../../assets/icons/userIcon.svg";
 
 type CustomInputFieldProps = {
   name: string;

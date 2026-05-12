@@ -1,9 +1,9 @@
-import api from "../../services/api";
+import api from "../../../services/api";
 import type {
   HealthMapIndicator,
   HealthMapIndicatorResponse,
   RawGeoJsonFeatureCollection,
-} from "./healthMap.types";
+} from "../types/healthMap.types";
 
 export async function fetchStatesGeoJson() {
   const response = await fetch("/geo/mexico-states.geojson");
