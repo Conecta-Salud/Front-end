@@ -2,84 +2,60 @@ import React from 'react';
 // @ts-ignore
 import pinIcon from '../../assets/icons/pinIcon.svg';
 // @ts-ignore
-import cancelarIcon from '../../assets/icons/cancelIcon.svg';
+import closeIcon from '../../assets/icons/closeIcon.svg';
 
 interface LocationInputProps {
-  text1: string;
-  text2?: string;
-  onClear?: () => void;
-  className?: string;
+  text1: string; // Municipio/Ciudad
+  text2: string; // Estado
+  onClear: () => void;
+  // NUEVOS PROPS para permitir la escritura
+  onChangeText1?: (val: string) => void;
+  onChangeText2?: (val: string) => void;
 }
 
 const LocationInput: React.FC<LocationInputProps> = ({ 
   text1, 
   text2, 
   onClear,
-  className = "" 
+  onChangeText1,
+  onChangeText2 
 }) => {
   return (
-    <div 
-      className={`
-        flex items-center w-full relative
-        bg-[#F1F1F1] transition-all shadow-md
-        ${className}
-      `}
-      style={{
-        height: '60px', 
-        borderRadius: '15px', 
-        border: '6px solid var(--color-green-start)', 
-        fontFamily: 'var(--font-primary)',
-        boxSizing: 'border-box',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Icono PIN: Separación exacta de 10px */}
-      <div 
-        style={{ 
-          position: 'absolute', 
-          left: '10px', 
-          display: 'flex', 
-          alignItems: 'center' 
-        }}
-      >
-        <img 
-          src={pinIcon.src || pinIcon} 
-          alt="Ubicación" 
-          className="h-[28px] w-auto object-contain" 
+    <div className="flex items-center gap-3 bg-white border-4 border-[#4FD1C5] rounded-full px-4 py-2 shadow-md w-full max-w-md">
+      <img src={pinIcon} alt="Pin" className="w-6 h-6 opacity-60" />
+      
+      <div className="flex flex-1 items-center gap-1 min-w-0">
+        {/* INPUT PARA MUNICIPIO */}
+        <input
+          type="text"
+          value={text1}
+          placeholder="Municipio"
+          onChange={(e) => onChangeText1?.(e.target.value)}
+          className="text-[18px] font-black text-black w-full bg-transparent outline-none placeholder:text-gray-300"
         />
+        
+        <span className="text-gray-400 font-bold">(</span>
+        
+        {/* INPUT PARA ESTADO */}
+        <input
+          type="text"
+          value={text2}
+          placeholder="Estado"
+          onChange={(e) => onChangeText2?.(e.target.value)}
+          className="text-[18px] font-medium text-gray-500 w-full bg-transparent outline-none placeholder:text-gray-300"
+        />
+        
+        <span className="text-gray-400 font-bold">)</span>
       </div>
 
-      {/* Contenedor de Texto */}
-      <div className="w-full flex items-baseline justify-start" style={{ paddingLeft: '50px', paddingRight: '60px' }}>
-        <span 
-          className="text-black whitespace-nowrap overflow-hidden text-ellipsis"
-          style={{ fontSize: '24px' }}
-        >
-          <strong style={{ fontWeight: 'var(--font-weight-bold)' }}>{text1}</strong>
-          <span className="ml-2 text-[#4A4A4A]" style={{ fontWeight: 'var(--font-weight-regular)' }}>
-            ({text2})
-          </span>
-        </span>
-      </div>
-
-      {/* Botón CANCELAR: Separación exacta de 10px */}
       <button 
         onClick={onClear}
-        className="hover:opacity-80 transition-opacity flex items-center justify-center p-0 border-none bg-transparent"
-        style={{ 
-          position: 'absolute', 
-          right: '10px',
-          cursor: 'pointer'
-        }}
+        className="p-1 hover:bg-gray-100 rounded-full transition-colors shrink-0"
       >
-        <img 
-          src={cancelarIcon.src || cancelarIcon} 
-          alt="Limpiar" 
-          className="h-[42px] w-[42px] object-contain"
-        />
+        <img src={closeIcon} alt="Limpiar" className="w-7 h-7" />
       </button>
     </div>
   );
 };
 
-export default LocationInput; 
+export default LocationInput;
