@@ -1,6 +1,6 @@
 export type SidebarItemId = "dashboard" | "comparison" | "admin" | "profile";
 export type SidebarNavItemId = "dashboard" | "comparison" | "admin";
-export type UserRole = "estrategico" | "administrador";
+export type UserRole = "strategic" | "admin";
 
 export type SidebarStatefulIcon = {
   default: string;

@@ -16,7 +16,7 @@ function LayoutWrapper() {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <AppLayout role={user?.rol ?? "estrategico"}>
+    <AppLayout role={user?.role ?? "strategic"}>
       <Outlet />
     </AppLayout>
   );
