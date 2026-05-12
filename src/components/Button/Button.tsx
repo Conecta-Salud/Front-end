@@ -1,66 +1,128 @@
-import React from "react";
-import { Button } from "@heroui/react";
+import React, { type ButtonHTMLAttributes, type ReactNode } from "react";
+import plusIcon from "../../assets/icons/button/plusIcon.svg";
+import downloadIcon from "../../assets/icons/button/downloadIcon.svg";
 
 type CustomButtonProps = {
-  title: string;
-  onPress?: () => void;
-  color?: "primary" | "secondary" | "danger" | "default";
-  variant?: "solid" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
-  isLoading?: boolean;
-  isDisabled?: boolean;
+  label: string;
+  tone?: "green" | "blue" | "red";
+  height?: "40" | "60";
+  buttonType?: "add" | "download";
+  icon?: ReactNode;
+  iconPlacement?: "left" | "right";
+  textSize?: "md" | "lg";
+  loading?: boolean;
   className?: string;
-  textClassName?: string; // <--- ESTA LÍNEA ES LA QUE FALTA
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const CustomButton: React.FC<CustomButtonProps> = ({
-  title,
-  onPress,
-  color = "primary",
-  variant = "solid",
-  size = "md",
-  isLoading = false,
-  isDisabled = false,
+  label,
+  tone = "green",
+  height = "40",
+  buttonType,
+  icon,
+  iconPlacement = "right",
+  textSize = "md",
+  loading = false,
+  disabled = false,
   className = "",
-  textClassName = "", // <--- Y RECIBIRLA AQUÍ
+  type = "button",
+  ...props
 }) => {
-  
-  const colorClasses = {
-    primary: "bg-blue-600 text-white",
-    secondary: "bg-purple-600 text-white",
-    danger: "bg-red-600 text-white",
-    default: "bg-gray-200 text-black",
+
+  const heightClasses = {
+    "40": "h-[40px]",
+    "60": "h-[60px]",
   };
 
-  const variantClasses = {
-    solid: "",
-    outline: "border-2 bg-transparent",
-    ghost: "bg-transparent hover:bg-gray-100",
+  const textSizeClasses = {
+    md: "text-[18px]",
+    lg: "text-[24px]",
   };
 
-  const sizeClasses = {
-    sm: "px-3 py-1 text-xs",
-    md: "px-6 py-2 text-base",
-    lg: "px-8 py-4 text-lg",
+  const toneStyles = {
+    green: {
+      background: "var(--gradient-primary-green)",
+      color: "#FFFFFF",
+    },
+    blue: {
+      background: "var(--gradient-primary-blue)",
+      color: "#FFFFFF",
+    },
+    red: {
+      background: "var(--color-red)",
+      color: "#FFFFFF",
+    },
   };
+
+  const presetConfig = {
+    add: {
+      src: plusIcon,
+      alt: "Agregar",
+      placement: "left" as const,
+    },
+    download: {
+      src: downloadIcon,
+      alt: "Descargar",
+      placement: "right" as const,
+    },
+  };
+
+  const resolvedPreset = buttonType ? presetConfig[buttonType] : null;
+
+  const resolvedIcon = icon
+    ? icon
+    : resolvedPreset
+    ? (
+        <img
+          src={resolvedPreset.src}
+          alt={resolvedPreset.alt}
+          className="w-[18px] h-[18px] object-contain"
+        />
+      )
+    : null;
+
+  const resolvedPlacement = resolvedPreset
+    ? resolvedPreset.placement
+    : iconPlacement;
 
   return (
-    <Button
-      onPress={onPress}
-      isDisabled={isDisabled || isLoading}
-      className={`
-        inline-flex items-center justify-center rounded-xl font-semibold transition-all shadow-sm
-        ${colorClasses[color]} 
-        ${variantClasses[variant]} 
-        ${sizeClasses[size]} 
-        ${className}
-      `}
+    <button
+      type={type}
+      disabled={disabled || loading}
+      className={[
+        "inline-flex items-center justify-center rounded-[6px] px-[15px] transition-all duration-200",
+        "font-semibold shadow-md",
+        "disabled:opacity-60 disabled:cursor-not-allowed",
+        heightClasses[height],
+        "w-fit min-w-[130px]",
+        className,
+      ].join(" ")}
+      style={toneStyles[tone]}
+      {...props}
     >
-      {/* Aplicamos la clase de texto aquí */}
-      <span className={textClassName}>
-        {isLoading ? "Cargando..." : title}
-      </span>
-    </Button>
+      <div className="flex items-center justify-center gap-[14px] w-full">
+        {!loading && resolvedPlacement === "left" && resolvedIcon && (
+          <span className="flex items-center justify-center shrink-0">
+            {resolvedIcon}
+          </span>
+        )}
+
+        <span
+          className={[
+            "font-semibold whitespace-nowrap",
+            textSizeClasses[textSize],
+          ].join(" ")}
+        >
+          {loading ? "Cargando..." : label}
+        </span>
+
+        {!loading && resolvedPlacement === "right" && resolvedIcon && (
+          <span className="flex items-center justify-center shrink-0">
+            {resolvedIcon}
+          </span>
+        )}
+      </div>
+    </button>
   );
 };
 
