@@ -1,3 +1,4 @@
+# Use the official Nginx image as the base image
 FROM nginx:stable-alpine
 
 COPY dist/ /usr/share/nginx/html
