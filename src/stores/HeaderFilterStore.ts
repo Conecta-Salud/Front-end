@@ -1,19 +1,20 @@
 import { create } from "zustand";
+import type { HealthMapIndicator } from "../components/HealthMap/healthMap.types";
 
 type HeaderFiltersState = {
-  category: string;
+  category: HealthMapIndicator;
   year: string;
   search: string;
 
-  setCategory: (category: string) => void;
+  setCategory: (category: HealthMapIndicator) => void;
   setYear: (year: string) => void;
   setSearch: (search: string) => void;
   resetFilters: () => void;
 };
 
 export const useHeaderFilterStore = create<HeaderFiltersState>((set) => ({
-  category: "cobertura_medica",
-  year: "2026",
+  category: "medical_coverage",
+  year: "2024",
   search: "",
 
   setCategory: (category) => set({ category }),
@@ -22,8 +23,8 @@ export const useHeaderFilterStore = create<HeaderFiltersState>((set) => ({
 
   resetFilters: () =>
     set({
-      category: "cobertura_medica",
-      year: "2026",
+      category: "medical_coverage",
+      year: "2024",
       search: "",
     }),
 }));

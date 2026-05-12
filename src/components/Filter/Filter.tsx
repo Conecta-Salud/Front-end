@@ -17,6 +17,7 @@ interface FilterProps {
   onOpenChange: (id: string | null) => void;
   onChange: (value: string) => void;
   className?: string;
+  allowClear?: boolean;
 }
 
 export default function Filter({
@@ -28,7 +29,9 @@ export default function Filter({
   onOpenChange,
   onChange,
   className = "",
+  allowClear = true,
 }: FilterProps) {
+
   const containerRef = useRef<HTMLDivElement>(null);
   
   const selectedValue = values || "";
@@ -37,11 +40,12 @@ export default function Filter({
     options.find((o) => o.value === selectedValue)?.name || "";
 
   const toggleValue = (val: string) => {
-    if (val === selectedValue) {
+    if (val === selectedValue && allowClear) {
       onChange("");
     } else {
       onChange(val);
     }
+
     onOpenChange(null);
   };
 
@@ -110,7 +114,7 @@ export default function Filter({
               </div>
             ))}
 
-            {selectedValue && (
+            {allowClear && selectedValue && (
               <div
                 onClick={() => {
                   onChange("");
@@ -119,7 +123,7 @@ export default function Filter({
                 className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
                 style={{ color: "#14B8A6" }}
               >
-                Limpiar
+                Clear
               </div>
             )}
           </div>
