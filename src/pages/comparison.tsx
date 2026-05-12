@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppLayout from '../layouts/AppLayout';
 import ComparisonChart from '../components/ComparisonChart/ComparisonChart';
 import LocationInput from '../components/LocationInput/LocationInput';
 import PriorityCard from '../components/Priority/PriorityCard';
+import Export from '../components/Export/Export'; 
 // @ts-ignore
 import Button from '../components/Button/Button'; 
 
@@ -17,8 +18,20 @@ const RULES = [
 ];
 
 export default function ModuloComparacionPage() {
-  const handleExport = () => console.log("Exportando...");
+  const [loc1, setLoc1] = useState({ nombre: "Cuernavaca", estado: "Morelos" });
+  const [loc2, setLoc2] = useState({ nombre: "Zapopan", estado: "Jalisco" });
+  const [isExportOpen, setIsExportOpen] = useState(false);
+
   const handleCompare = () => console.log("Comparando...");
+
+  const handleExportAction = (format: string) => {
+    console.log("Formato seleccionado para exportar:", format);
+    
+    setTimeout(() => {
+      console.log("Exportación completada.");
+      setIsExportOpen(false);
+    }, 3000);
+  };
 
   return (
     <AppLayout role="user">
@@ -33,23 +46,25 @@ export default function ModuloComparacionPage() {
             </p>
           </div>
           
-          {/* BOTÓN EXPORTAR: Usando preset 'download' y tono azul */}
           <Button 
             label="Exportar"
             buttonType="download"
             tone="blue"
             height="40"
-            onClick={handleExport}
+            onClick={() => setIsExportOpen(true)}
           />
         </div>
 
         {/* BUSCADORES */}
         <div className="flex items-center gap-6 mb-10 bg-white p-6 rounded-[24px] shadow-sm border border-gray-100">
           <div className="flex-1">
-            <LocationInput text1="Cuernavaca" text2="Morelos" onClear={() => {}} />
+            <LocationInput 
+              text1={loc1.nombre} 
+              text2={loc1.estado} 
+              onClear={() => setLoc1({ nombre: "", estado: "" })} 
+            />
           </div>
           
-          {/* BOTÓN COMPARAR: Usando tono verde y altura 60 para que destaque */}
           <Button 
             label="COMPARAR"
             tone="green"
@@ -60,11 +75,15 @@ export default function ModuloComparacionPage() {
           />
 
           <div className="flex-1">
-            <LocationInput text1="Zapopan" text2="Jalisco" onClear={() => {}} />
+            <LocationInput 
+              text1={loc2.nombre} 
+              text2={loc2.estado} 
+              onClear={() => setLoc2({ nombre: "", estado: "" })} 
+            />
           </div>
         </div>
 
-        {/* GRID DE GRÁFICAS */}
+        {/* GRÁFICAS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <ComparisonChart title="Cobertura Médica" data={MOCK_DATA} rules={RULES} chartHeight={220} />
           <ComparisonChart title="Déficit de médicos" data={MOCK_DATA} rules={RULES} chartHeight={220} />
@@ -80,8 +99,8 @@ export default function ModuloComparacionPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <PriorityCard 
-              title="Cuernavaca"
-              subtitle="(Morelos)"
+              title={loc1.nombre || "Selecciona ubicación"}
+              subtitle={loc1.estado ? `(${loc1.estado})` : ""}
               priority="alta"
               progress={85}
               metrics={[
@@ -92,8 +111,8 @@ export default function ModuloComparacionPage() {
             />
 
             <PriorityCard 
-              title="Zapopan"
-              subtitle="(Jalisco)"
+              title={loc2.nombre || "Selecciona ubicación"}
+              subtitle={loc2.estado ? `(${loc2.estado})` : ""}
               priority="baja"
               progress={25}
               metrics={[
@@ -105,6 +124,12 @@ export default function ModuloComparacionPage() {
           </div>
         </div>
       </div>
+
+      <Export 
+        isOpen={isExportOpen} 
+        onClose={() => setIsExportOpen(false)} 
+        onExport={handleExportAction}
+      />
     </AppLayout>
   );
 }

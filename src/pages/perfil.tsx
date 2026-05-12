@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; 
 import { useNavigate } from "react-router-dom";
 import AppLayout from '../layouts/AppLayout';
 import CustomInputField from '../components/CustomInputField/CustomInputField';
@@ -19,14 +19,16 @@ const USER_DATA = {
 function PerfilPage() {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
-  const status = useAuthStore((state) => state.status);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await logout();
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
+      setIsLoggingOut(false);
     }
   };
 
@@ -39,7 +41,6 @@ function PerfilPage() {
 
         <div className="bg-white rounded-2xl shadow-md p-10">
           <div className="flex items-center gap-3 mb-8">
-            {/* Implementación del icono importado */}
             <img 
               src={folderIcon} 
               alt="info" 
@@ -90,10 +91,11 @@ function PerfilPage() {
 
         <div className="mt-8">
           <Button
-            label={status === "checking" ? "Cerrando..." : "Cerrar sesión"}
+            label={isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
             tone="red"
             height="50"
             onClick={handleLogout}
+            disabled={isLoggingOut}
           />
         </div>
       </div>
