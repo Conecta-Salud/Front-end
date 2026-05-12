@@ -5,10 +5,10 @@ import pinIcon from '../../assets/icons/pinIcon.svg';
 import closeIcon from '../../assets/icons/closeIcon.svg';
 
 interface LocationInputProps {
-  text1: string; // Municipio/Ciudad
-  text2: string; // Estado
+  text1: string; 
+  text2: string; 
   onClear: () => void;
-  // NUEVOS PROPS para permitir la escritura
+  
   onChangeText1?: (val: string) => void;
   onChangeText2?: (val: string) => void;
 }

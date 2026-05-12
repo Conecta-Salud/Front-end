@@ -1,44 +1,60 @@
-// LocationInput.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
+import React, { useState } from 'react';
 import LocationInput from './LocationInput';
 
 const meta: Meta<typeof LocationInput> = {
-  title: 'Components/UI/LocationInput',
+  title: 'UI/LocationInput', // Ajustado a tu estructura de carpetas vista en Storybook
   component: LocationInput,
-  parameters: {
-    layout: 'fullscreen',
+  tags: ['autodocs'],
+  argTypes: {
+    onClear: { action: 'cleared' },
+    onChangeText1: { action: 'changed text1' },
+    onChangeText2: { action: 'changed text2' },
   },
-  decorators: [
-    (Story) => (
-      <div 
-        style={{ 
-          backgroundColor: '#F8FAFC',
-          padding: '40px',     
-          width: '100vw',      
-          height: '100vh', 
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start', 
-          boxSizing: 'border-box'
-        }}
-      >
-        {/* Contenedor que limita el ancho máximo, como en un layout real */}
-        <div style={{ width: '100%', maxWidth: '1400px' }}>
-          <Story />
-        </div>
-      </div>
-    ),
-  ],
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof LocationInput>;
 
+// 1. Estado por defecto (Vacío)
 export const Default: Story = {
+  args: {
+    text1: '',
+    text2: '',
+  },
+};
+
+// 2. Con datos precargados (Como se ve en tu módulo)
+export const Filled: Story = {
   args: {
     text1: 'Cuernavaca',
     text2: 'Morelos',
-    onClear: () => console.log("Limpiar"),
-    className: 'w-full' 
+  },
+};
+
+// 3. Versión Interactiva (Para probar el teclado en Storybook)
+export const Interactive: Story = {
+  render: (args) => {
+    const [t1, setT1] = useState(args.text1);
+    const [t2, setT2] = useState(args.text2);
+
+    return (
+      <LocationInput
+        {...args}
+        text1={t1}
+        text2={t2}
+        onChangeText1={(val) => setT1(val)}
+        onChangeText2={(val) => setT2(val)}
+        onClear={() => {
+          setT1('');
+          setT2('');
+          args.onClear();
+        }}
+      />
+    );
+  },
+  args: {
+    text1: 'Zapopan',
+    text2: 'Jalisco',
   },
 };

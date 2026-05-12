@@ -1,18 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { MemoryRouter } from "react-router-dom";
-import Sidebar from "./SideBar";
+import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import Sidebar from './SideBar';
 
-const meta = {
-  title: "Components/Navigation/Sidebar",
+const meta: Meta<typeof Sidebar> = {
+  title: 'UI/Sidebar', // Organizado en tu carpeta UI
   component: Sidebar,
-  parameters: {
-    layout: "fullscreen",
-  },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <div style={{ height: "100vh", display: "flex" }}>
+        <div style={{ height: '100vh', width: '100px' }}>
           <Story />
         </div>
       </MemoryRouter>
@@ -20,64 +18,36 @@ const meta = {
   ],
   argTypes: {
     role: {
-      control: "select",
-      options: ["user", "admin"],
-    },
-    activeItem: {
-      control: "select",
-      options: ["dashboard", "comparison", "admin", "profile"],
-    },
-    showProfileLabel: {
-      control: "boolean",
+      control: 'select',
+      options: ['estrategico', 'administrador'],
     },
   },
-  args: {
-    role: "user",
-    activeItem: "dashboard",
-    showProfileLabel: false,
-    profileLabel: "Perfil",
-  },
-} satisfies Meta<typeof Sidebar>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Sidebar>;
 
-export const Default: Story = {};
-
-export const Admin: Story = {
+// 1. Vista de Usuario Estratégico (Dos botones principales)
+export const Estrategico: Story = {
   args: {
-    role: "admin",
+    role: 'estrategico',
+    showProfileLabel: false,
   },
 };
 
-export const DashboardSelected: Story = {
+// 2. Vista de Administrador (Incluye el ícono de Panel Administrador)
+export const Administrador: Story = {
   args: {
-    activeItem: "dashboard",
+    role: 'administrador',
+    showProfileLabel: false,
   },
 };
 
-export const ComparisonSelected: Story = {
+// 3. Con etiqueta de perfil (Si decides mostrar el nombre del usuario)
+export const WithProfileLabel: Story = {
   args: {
-    activeItem: "comparison",
-  },
-};
-
-export const AdminSelected: Story = {
-  args: {
-    role: "admin",
-    activeItem: "admin",
-  },
-};
-
-export const ProfileSelected: Story = {
-  args: {
-    activeItem: "profile",
-  },
-};
-
-export const ProfileWithLabel: Story = {
-  args: {
+    role: 'estrategico',
+    profileLabel: 'Juan Pérez',
     showProfileLabel: true,
-    profileLabel: "Mi Perfil",
   },
 };

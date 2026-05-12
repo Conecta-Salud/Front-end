@@ -1,5 +1,7 @@
 import React from "react";
+// @ts-ignore
 import alertIcon from "../../assets/icons/alertIcon.svg";
+// @ts-ignore
 import likeIcon from "../../assets/icons/likeIcon.svg";
 
 type Metric = {
