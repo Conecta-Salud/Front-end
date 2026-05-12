@@ -37,7 +37,7 @@ steps:
         docker build \
           --tag "$$IMAGE_BASE:$$VERSION" \
           --tag "$$IMAGE_BASE:latest" \
-          --file=Dockerfile \
+          --file=dockerfile \
           .
 
         docker push "$$IMAGE_BASE:$$VERSION"
