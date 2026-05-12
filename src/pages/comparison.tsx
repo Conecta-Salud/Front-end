@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../components/Header/Header';
-import HeaderActions from '../components/Header/HeaderActions';
-import SideBar from '../components/SideBar/SideBar';
 import ComparisonChart from '../components/ComparisonChart/ComparisonChart';
 import LocationInput from '../components/LocationInput/LocationInput';
 import PriorityCard from '../components/Priority/PriorityCard';
@@ -44,29 +41,7 @@ export default function ModuloComparacionPage() {
   return (
     <div className="relative h-screen w-screen bg-[#F8FAFC] overflow-hidden flex">
       
-      {/* 1. SIDEBAR FIJA */}
-      <div className="w-[100px] h-full flex-shrink-0 z-50">
-        <SideBar />
-      </div>
-
-      {/* 2. CONTENEDOR DERECHO (HEADER + CONTENIDO) */}
-      <div className="flex-1 flex flex-col min-w-0 relative h-full">
         
-        {/* HEADER FIJO ARRIBA */}
-        <div className="w-full h-[100px] bg-white border-b border-gray-100 flex-shrink-0 z-40">
-          <Header 
-            subtitle="Panel Usuario Estratégico"
-            actions={
-              <HeaderActions 
-                showYearFilter={true}
-                year={selectedYear} 
-                onYearChange={(year) => setSelectedYear(year || "2026")}
-                showCategoryFilter={true}
-                category="cobertura_medica"
-              />
-            }
-          />
-        </div>
 
         {/* 3. ÁREA DE SCROLL (EL CUERPO) */}
         <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
@@ -144,7 +119,6 @@ export default function ModuloComparacionPage() {
             </div>
           </div>
         </main>
-      </div>
 
       <Export isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} onExport={() => setIsExportOpen(false)} />
     </div>

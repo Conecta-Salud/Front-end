@@ -33,7 +33,7 @@ function PerfilPage() {
   };
 
   return (
-    <AppLayout role="user">
+    <AppLayout>
       <div className="max-w-4xl mx-auto py-4">
         <h1 className="text-3xl font-bold text-black mb-6" style={{ fontFamily: 'var(--font-primary)' }}>
           Perfil
@@ -93,7 +93,7 @@ function PerfilPage() {
           <Button
             label={isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
             tone="red"
-            height="50"
+            height="60"
             onClick={handleLogout}
             disabled={isLoggingOut}
           />
