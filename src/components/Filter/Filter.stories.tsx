@@ -1,74 +1,130 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import React, { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
+
 import Filter from "./Filter";
 
-const meta: Meta<typeof Filter> = {
-  title: "Components/Filter",
-  component: Filter,
-  tags: ["autodocs"],
-};
-
-export default meta;
-
-type Story = StoryObj<typeof Filter>;
-
-const options = [
-  { label: "Cobertura Médica", value: "medica" },
-  { label: "Hospitales", value: "hospitales" },
-  { label: "Clínicas", value: "clinicas" },
+const categoryOptions = [
+  { name: "Cobertura médica", value: "coverage" },
+  { name: "Déficit de médicos", value: "deficit" },
+  { name: "Camas hospitalarias", value: "beds" },
+  { name: "Población en pobreza", value: "poverty" },
 ];
 
+const yearOptions = [
+  { name: "2022", value: "2022" },
+  { name: "2023", value: "2023" },
+  { name: "2024", value: "2024" },
+  { name: "2025", value: "2025" },
+  { name: "2026", value: "2026" },
+];
+
+const longOptions = [
+  { name: "Estado de México", value: "edomex" },
+  { name: "Baja California Sur", value: "bcs" },
+  { name: "San Luis Potosí", value: "slp" },
+  { name: "Ciudad de México", value: "cdmx" },
+];
+
+const meta = {
+  title: "Components/UI/Filter",
+  component: Filter,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    title: { control: "text" },
+    values: { control: "text" },
+    options: { control: "object" },
+    onChange: { action: "changed" },
+  },
+  args: {
+    title: "Categoría",
+    options: categoryOptions,
+    values: "",
+    onChange: fn(),
+  },
+} satisfies Meta<typeof Filter>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
 export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("");
+  args: {},
+};
 
-    return (
-      <div style={{ padding: "20px" }}>
-        <Filter {...args} values={value} onChange={setValue} />
-        <p style={{ marginTop: "10px" }}>Seleccionado: {value}</p>
-      </div>
-    );
-  },
+export const WithSelectedValue: Story = {
   args: {
     title: "Categoría",
-    options,
+    options: categoryOptions,
+    values: "coverage",
   },
 };
 
-export const WithSelection: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("medica,hospitales");
-
-    return (
-      <div style={{ padding: "20px" }}>
-        <Filter {...args} values={value} onChange={setValue} />
-      </div>
-    );
-  },
-  args: {
-    title: "Categoría",
-    options,
-  },
-};
-
-export const YearFilter: Story = {
-  render: (args) => {
-    const [value, setValue] = useState("2026");
-
-    return (
-      <div style={{ padding: "20px" }}>
-        <Filter {...args} values={value} onChange={setValue} />
-      </div>
-    );
-  },
+export const Years: Story = {
   args: {
     title: "Año",
-    options: [
-      { label: "2022", value: "2022" },
-      { label: "2023", value: "2023" },
-      { label: "2024", value: "2024" },
-      { label: "2025", value: "2025" },
-      { label: "2026", value: "2026" },
-    ],
+    options: yearOptions,
+    values: "",
+  },
+};
+
+export const LongLabels: Story = {
+  args: {
+    title: "Estado",
+    options: longOptions,
+    values: "cdmx",
+  },
+};
+
+export const Interactive: Story = {
+  args: {},
+  render: (args) => {
+    const Demo = () => {
+      const [value, setValue] = useState(args.values ?? "");
+
+      return (
+        <div className="w-[220px]">
+          <Filter
+            {...args}
+            values={value}
+            onChange={setValue}
+          />
+        </div>
+      );
+    };
+
+    return <Demo />;
+  },
+};
+
+export const TwoFiltersTogether: Story = {
+  args: {},
+  render: () => {
+    const Demo = () => {
+      const [category, setCategory] = useState("");
+      const [year, setYear] = useState("");
+
+      return (
+        <div className="flex items-center gap-4">
+          <Filter
+            title="Categoría"
+            options={categoryOptions}
+            values={category}
+            onChange={setCategory}
+          />
+
+          <Filter
+            title="Año"
+            options={yearOptions}
+            values={year}
+            onChange={setYear}
+          />
+        </div>
+      );
+    };
+
+    return <Demo />;
   },
 };

@@ -3,7 +3,7 @@ import { useState } from "react";
 import SearchBar from "./SearchBar";
 
 const meta: Meta<typeof SearchBar> = {
-  title: "Components/SearchBar",
+  title: "Components/Navigation/SearchBar",
   component: SearchBar,
   tags: ["autodocs"],
 };
@@ -19,7 +19,6 @@ export const Default: Story = {
     return (
       <div style={{ padding: "20px", background: "#f9fafb" }}>
         <SearchBar {...args} searchTerm={value} onSearch={setValue} />
-        <p style={{ marginTop: "10px" }}>Valor: {value}</p>
       </div>
     );
   },
