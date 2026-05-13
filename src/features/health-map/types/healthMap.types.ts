@@ -1,6 +1,6 @@
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 
-export type MapViewLevel = "country" | "state";
+export type HealthMapViewLevel = "country" | "state" | "municipality";
 
 export type HealthMapIndicator =
   | "medical_coverage"
@@ -60,4 +60,16 @@ export type HealthMapSelectedTerritory = {
   code: string;
   name: string;
   stateCode?: string;
+};
+
+export type HealthMapNavigationState = {
+  level: HealthMapViewLevel;
+  selectedState: {
+    code: string;
+    name: string;
+  } | null;
+  selectedMunicipality?: {
+    code: string;
+    name: string;
+  } | null;
 };

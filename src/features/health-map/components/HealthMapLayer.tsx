@@ -3,6 +3,7 @@ import type { Layer, Path } from "leaflet";
 import type {
   HealthMapFeature,
   HealthMapFeatureCollection,
+  HealthMapViewLevel,
 } from "../types/healthMap.types";
 import {
   getFeatureDisplayValue,
@@ -10,12 +11,12 @@ import {
   getHealthMapStrokeColor,
 } from "../utils/healthMap.utils";
 
-type MapLevel = "country" | "state";
-
 type HealthMapLayerProps = {
   data: HealthMapFeatureCollection;
-  mapLevel: MapLevel;
+  mapLevel: HealthMapViewLevel;
+  selectedMunicipalityCode?: string | null;
   onStateClick?: (stateCode: string, stateName: string) => void;
+  onMunicipalityClick?: (municipalityCode: string, municipalityName: string) => void;
 };
 
 const buildTooltipContent = (feature: HealthMapFeature) => {
@@ -50,23 +51,27 @@ const isPathLayer = (layer: Layer): layer is Path => {
 export default function HealthMapLayer({
   data,
   mapLevel,
+  selectedMunicipalityCode,
   onStateClick,
+  onMunicipalityClick,
 }: HealthMapLayerProps) {
   return (
     <GeoJSON
-      key={`${mapLevel}-${data.features
+      key={`${mapLevel}-${selectedMunicipalityCode ?? "none"}-${data.features
         .map((feature) => feature.properties.code)
         .join("-")}`}
       data={data}
       style={(feature) => {
         const typedFeature = feature as HealthMapFeature;
         const colorToken = typedFeature.properties.indicator?.colorToken;
+        const isSelected =
+          selectedMunicipalityCode === typedFeature.properties.code;
 
         return {
           fillColor: getHealthMapFillColor(colorToken),
-          color: getHealthMapStrokeColor(),
-          weight: 1,
-          fillOpacity: 0.85,
+          color: isSelected ? "#111827" : getHealthMapStrokeColor(),
+          weight: isSelected ? 3 : 1,
+          fillOpacity: isSelected ? 1 : 0.85,
           opacity: 1,
         };
       }}
@@ -91,18 +96,29 @@ export default function HealthMapLayer({
           mouseout: () => {
             if (!isPathLayer(layer)) return;
 
+            const isSelected =
+              selectedMunicipalityCode === typedFeature.properties.code;
+
             layer.setStyle({
-              weight: 1,
-              fillOpacity: 0.85,
+              weight: isSelected ? 3 : 1,
+              fillOpacity: isSelected ? 1 : 0.85,
             });
           },
           click: () => {
-            if (mapLevel !== "country") return;
+            if (mapLevel === "country") {
+              onStateClick?.(
+                typedFeature.properties.code,
+                typedFeature.properties.name
+              );
+              return;
+            }
 
-            onStateClick?.(
-              typedFeature.properties.code,
-              typedFeature.properties.name
-            );
+            if (mapLevel === "state" || mapLevel === "municipality") {
+              onMunicipalityClick?.(
+                typedFeature.properties.code,
+                typedFeature.properties.name
+              );
+            }
           },
         });
       }}

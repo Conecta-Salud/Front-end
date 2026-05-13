@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CustomInputField from "../components/ui/CustomInputField/CustomInputField";
 import Button from "../components/ui/Button/Button";
@@ -12,6 +12,7 @@ import CustomPieChart from "../components/charts/PieChart/PieChart";
 import PriorityCard from "../components/charts/Priority/PriorityCard";
 import ImportButton from "../components/ui/ImportButton/ImportButton";
 import LocationInput, { type LocationOption } from "../components/ui/LocationInput/LocationInput";
+import HealthMap from "../features/health-map/components/HealthMap";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -23,23 +24,43 @@ import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
 import { data1, data2 } from "../mocks/prioritycard.mock";
 import { locationOptionsMock } from "../mocks/locationinput.mock";
-import { mergeGeoJsonWithIndicators } from "../features/health-map/utils/healthMap.utils";
-import { fetchStateMapIndicators, fetchStatesGeoJson } from "../features/health-map/services/healthMap.api";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
-import HealthMap from "../features/health-map/components/HealthMap";
+import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
 
 function DashboardEstrategicoPage() {
   const [location, setLocation] = useState<LocationOption | null>(null);
   const indicator = useHeaderFilterStore((state) => state.category);
   const year = useHeaderFilterStore((state) => state.year);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mapNavigation, setMapNavigation] = useState<HealthMapNavigationState>({
+    level: "country",
+    selectedState: null,
+  });
+
+  const goToCountry = () => {
+    setMapNavigation({
+      level: "country",
+      selectedState: null,
+      selectedMunicipality: null,
+    });
+  };
+
+  const goToState = () => {
+    if (!mapNavigation.selectedState) return;
+
+    setMapNavigation({
+      level: "state",
+      selectedState: mapNavigation.selectedState,
+      selectedMunicipality: null,
+    });
+  };
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({
@@ -47,26 +68,6 @@ function DashboardEstrategicoPage() {
       [field]: value,
     }));
   };
-
-  useEffect(() => {
-  async function testMap() {
-    const geoJson = await fetchStatesGeoJson();
-
-    const indicators = await fetchStateMapIndicators({
-      indicator: "medical_coverage",
-      year: "2024",
-    });
-
-    const merged = mergeGeoJsonWithIndicators({
-      geoJson,
-      indicators,
-    });
-
-    console.log(merged);
-  }
-
-  testMap();
-}, []);
 
   return (
     <div className="bg-[#F8F9FB] flex flex-col gap-6">
@@ -150,15 +151,69 @@ function DashboardEstrategicoPage() {
         onClose={() => setIsModalOpen(false)}
       />
 
-      <div className="flex flex-col gap-6">
+      {/* Mapa */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-[28px] font-bold leading-tight text-black">
+              <button
+                type="button"
+                onClick={goToCountry}
+                disabled={mapNavigation.level === "country"}
+                className={[
+                  "transition-opacity",
+                  mapNavigation.level === "country"
+                    ? "cursor-default font-bold text-black"
+                    : "cursor-pointer font-normal hover:opacity-70",
+                ].join(" ")}
+              >
+                México
+              </button>
+
+              {mapNavigation.selectedState && (
+                <>
+                  <span className="font-normal"> &gt; </span>
+
+                  <button
+                    type="button"
+                    onClick={goToState}
+                    disabled={mapNavigation.level === "state"}
+                    className={[
+                      "transition-opacity",
+                      mapNavigation.level === "state"
+                        ? "cursor-default font-bold text-black"
+                        : "cursor-pointer font-normal hover:opacity-70",
+                    ].join(" ")}
+                  >
+                    {mapNavigation.selectedState.name}
+                  </button>
+                </>
+              )}
+
+              {mapNavigation.selectedMunicipality && (
+                <>
+                  <span className="font-normal"> &gt; </span>
+
+                  <span className="font-bold text-black">
+                    {mapNavigation.selectedMunicipality.name}
+                  </span>
+                </>
+              )}
+            </h1>
+
+            <p className="text-[16px] text-black">
+              Indicadores de cobertura médica | {year}
+            </p>
+          </div>
+        </div>
+
         <HealthMap
           indicator={indicator}
           year={year}
-          onStateClick={(stateCode, stateName) => {
-            console.log("Selected state:", stateCode, stateName);
-          }}
+          navigation={mapNavigation}
+          onNavigationChange={setMapNavigation}
         />
-      </div>
+      </section>
 
       <div className="grid grid-cols-4 gap-4">
         <CustomKPI
