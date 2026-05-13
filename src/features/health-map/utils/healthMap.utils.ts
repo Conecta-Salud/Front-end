@@ -4,6 +4,7 @@ import type {
   HealthMapIndicatorResponse,
   RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
+//
 
 export function getHealthMapFillColor(colorToken?: HealthMapColorToken) {
   switch (colorToken) {
