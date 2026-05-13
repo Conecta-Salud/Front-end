@@ -20,10 +20,10 @@ type HeaderActionsProps = {
 type HeaderDropdownId = "category" | "year";
 
 const indicatorOptions: { name: string; value: HealthMapIndicator }[] = [
-  { name: "Medical coverage", value: "medical_coverage" },
-  { name: "Hospital beds", value: "hospital_beds" },
+  { name: "Cobertura Médica", value: "medical_coverage" },
+  { name: "Infraestructura Hospitalaria", value: "hospital_beds" },
   {
-    name: "Healthcare access deficiency",
+    name: "Vulnerabilidad Poblacional",
     value: "healthcare_access_deficiency",
   },
 ];
@@ -66,7 +66,7 @@ export default function HeaderActions({
       {showCategoryFilter && (
         <Filter
           id="category"
-          title="Indicator"
+          title="Categoria"
           values={category}
           isOpen={openDropdown === "category"}
           onOpenChange={(id) => setOpenDropdown(id as HeaderDropdownId | null)}
@@ -80,7 +80,7 @@ export default function HeaderActions({
       {showYearFilter && (
         <Filter
           id="year"
-          title="Year"
+          title="Año"
           values={year}
           isOpen={openDropdown === "year"}
           onOpenChange={(id) => setOpenDropdown(id as HeaderDropdownId | null)}
@@ -95,7 +95,7 @@ export default function HeaderActions({
         <SearchBar
           searchTerm={search}
           onSearch={(value) => onSearchChange?.(value)}
-          placeholder="Search state or municipality..."
+          placeholder="Ingrese el estado o municipio..."
           className="w-[300px] max-lg:w-[260px] max-sm:w-full"
         />
       )}

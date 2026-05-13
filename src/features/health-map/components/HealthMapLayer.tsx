@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { GeoJSON } from "react-leaflet";
 import type { Layer, Path } from "leaflet";
 import type {

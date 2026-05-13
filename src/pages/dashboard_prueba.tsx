@@ -7,6 +7,7 @@ import exportIcon from "../assets/icons/button/downloadIcon.svg";
 
 import HealthMap from "../features/health-map/components/HealthMap";
 import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
+import DashboardRankingSection from "../features/dashboard/components/DashboardRankingSection";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import { useDashboardScope } from "../features/dashboard/hooks/useDashboardScope";
@@ -14,9 +15,9 @@ import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSum
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
 
 const categoryLabels = {
-  medical_coverage: "Medical coverage",
-  hospital_beds: "Hospital infrastructure",
-  healthcare_access_deficiency: "Population vulnerability",
+  medical_coverage: "Indicadores de cobertura médica",
+  hospital_beds: "Indicadores de infraestructura hospitalaria",
+  healthcare_access_deficiency: "Indicadores de vulnerabilidad poblacional",
 };
 
 function DashboardStrategicPage() {
@@ -108,7 +109,7 @@ function DashboardStrategicPage() {
           </h1>
 
           <p className="text-[16px] text-black">
-            {categoryLabels[indicator]} indicators | {year}
+            {categoryLabels[indicator]} | {year}
           </p>
         </div>
 
@@ -141,11 +142,11 @@ function DashboardStrategicPage() {
             isError={dashboardSummary.isError}
           />
 
-          <div className="rounded-[10px] bg-white p-6 shadow-sm">
-            <p className="text-[16px] font-semibold text-gray-400">
-              Ranking table will be connected in the next block.
-            </p>
-          </div>
+          <DashboardRankingSection
+            ranking={dashboardSummary.summary?.ranking}
+            isLoading={dashboardSummary.isLoading}
+            isError={dashboardSummary.isError}
+          />
         </aside>
       </section>
 
