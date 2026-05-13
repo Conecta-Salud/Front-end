@@ -1,64 +1,112 @@
-import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "../../../lib/queryKeys";
-
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
-  fetchStatesGeoJson,
   fetchMunicipalitiesGeoJson,
-  fetchStateMapIndicators,
   fetchMunicipalityMapIndicators,
+  fetchStateMapIndicators,
+  fetchStatesGeoJson,
 } from "../services/healthMap.api";
-
 import type { HealthMapIndicator } from "../types/healthMap.types";
+
+export const healthMapQueryKeys = {
+  all: ["health-map"] as const,
+
+  geoJson: () => [...healthMapQueryKeys.all, "geojson"] as const,
+
+  statesGeoJson: () =>
+    [...healthMapQueryKeys.geoJson(), "states"] as const,
+
+  municipalitiesGeoJson: (stateCode: string | null | undefined) =>
+    [...healthMapQueryKeys.geoJson(), "municipalities", stateCode] as const,
+
+  indicators: () => [...healthMapQueryKeys.all, "indicators"] as const,
+
+  stateIndicators: (params: {
+    indicator: HealthMapIndicator;
+    year: string;
+  }) =>
+    [
+      ...healthMapQueryKeys.indicators(),
+      "states",
+      params.indicator,
+      params.year,
+    ] as const,
+
+  municipalityIndicators: (params: {
+    stateCode: string | null | undefined;
+    indicator: HealthMapIndicator;
+    year: string;
+  }) =>
+    [
+      ...healthMapQueryKeys.indicators(),
+      "municipalities",
+      params.stateCode,
+      params.indicator,
+      params.year,
+    ] as const,
+};
 
 export function useStatesGeoJsonQuery() {
   return useQuery({
-    queryKey: queryKeys.healthMap.statesGeoJson(),
+    queryKey: healthMapQueryKeys.statesGeoJson(),
     queryFn: fetchStatesGeoJson,
     staleTime: Infinity,
-    gcTime: 60 * 60 * 1000,
+    gcTime: 1000 * 60 * 60 * 24,
   });
 }
 
-export function useMunicipalitiesGeoJsonQuery(stateCode?: string) {
+export function useMunicipalitiesGeoJsonQuery(
+  stateCode: string | null | undefined
+) {
   return useQuery({
-    queryKey: queryKeys.healthMap.municipalitiesGeoJson(stateCode ?? ""),
-    queryFn: () => fetchMunicipalitiesGeoJson(stateCode!),
+    queryKey: healthMapQueryKeys.municipalitiesGeoJson(stateCode),
+    queryFn: () => fetchMunicipalitiesGeoJson(stateCode as string),
     enabled: Boolean(stateCode),
     staleTime: Infinity,
-    gcTime: 60 * 60 * 1000,
+    gcTime: 1000 * 60 * 60 * 24,
   });
 }
 
 export function useStateMapIndicatorsQuery(params: {
   indicator: HealthMapIndicator;
   year: string;
+  enabled?: boolean;
 }) {
   return useQuery({
-    queryKey: queryKeys.healthMap.stateIndicators(params.indicator, params.year),
-    queryFn: () => fetchStateMapIndicators(params),
-    enabled: Boolean(params.indicator && params.year),
-    staleTime: 5 * 60 * 1000,
+    queryKey: healthMapQueryKeys.stateIndicators({
+      indicator: params.indicator,
+      year: params.year,
+    }),
+    queryFn: () =>
+      fetchStateMapIndicators({
+        indicator: params.indicator,
+        year: params.year,
+      }),
+    enabled: params.enabled ?? true,
+    staleTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
   });
 }
 
 export function useMunicipalityMapIndicatorsQuery(params: {
-  stateCode?: string;
+  stateCode: string | null | undefined;
   indicator: HealthMapIndicator;
   year: string;
+  enabled?: boolean;
 }) {
   return useQuery({
-    queryKey: queryKeys.healthMap.municipalityIndicators(
-      params.stateCode ?? "",
-      params.indicator,
-      params.year
-    ),
+    queryKey: healthMapQueryKeys.municipalityIndicators({
+      stateCode: params.stateCode,
+      indicator: params.indicator,
+      year: params.year,
+    }),
     queryFn: () =>
       fetchMunicipalityMapIndicators({
-        stateCode: params.stateCode!,
+        stateCode: params.stateCode as string,
         indicator: params.indicator,
         year: params.year,
       }),
-    enabled: Boolean(params.stateCode && params.indicator && params.year),
-    staleTime: 5 * 60 * 1000,
+    enabled: Boolean(params.stateCode) && (params.enabled ?? true),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
   });
 }
