@@ -33,6 +33,11 @@ const meta = {
       options: ["add", "download"],
     },
 
+    iconPlacement: {
+      control: "select",
+      options: ["left", "right"],
+    },
+
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
 

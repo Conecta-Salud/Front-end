@@ -8,6 +8,8 @@ import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard-estrategico";
 import Comparison from "./pages/comparison";
+import Comparison from "./pages/modulo-comparacion";
+import DashboardPrueba from "./pages/dashboard_prueba";
 import Profile from "./pages/perfil";
 import Admin from "./pages/panel-adminstrador";
 import { useEffect } from "react";
@@ -16,7 +18,7 @@ function LayoutWrapper() {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <AppLayout role={user?.rol ?? "estrategico"}>
+    <AppLayout role={user?.role ?? "strategic"}>
       <Outlet />
     </AppLayout>
   );
@@ -29,22 +31,20 @@ function App() {
     const unsubscribe = initializeAuth();
     return unsubscribe;
   }, [initializeAuth]);
-  
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
 
       <Route element={<PrivateRoute />}>
         <Route element={<LayoutWrapper />}>
-
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/comparison" element={<Comparison />} />
+          <Route path="/" element={<DashboardPrueba />} />
+          <Route path="/comparison" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
 
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<Admin />} />
           </Route>
-
         </Route>
       </Route>
 

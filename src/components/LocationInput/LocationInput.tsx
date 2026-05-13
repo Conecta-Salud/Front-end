@@ -1,59 +1,208 @@
-import React from 'react';
-// @ts-ignore
-import pinIcon from '../../assets/icons/pinIcon.svg';
-// @ts-ignore
-import closeIcon from '../../assets/icons/closeIcon.svg';
+import React, { useEffect, useRef, useState } from 'react';
+import pinIcon from '../../assets/icons/pin.svg';
+import cancelarIcon from '../../assets/icons/cancelar.svg';
 
-interface LocationInputProps {
-  text1: string; 
-  text2: string; 
-  onClear: () => void;
-  
-  onChangeText1?: (val: string) => void;
-  onChangeText2?: (val: string) => void;
-}
+export type LocationLevel = "state" | "municipality";
+
+export type LocationOption = {
+  id: string;
+  name: string;
+  level: LocationLevel;
+  stateName?: string;
+  stateCode?: string;
+};
+
+type LocationInputProps = {
+  value?: LocationOption | null;
+  options: LocationOption[];
+  placeholder?: string;
+  restrictedLevel?: LocationLevel;
+  disabled?: boolean;
+  error?: string;
+  onClear?: () => void;
+  onChange: (value: LocationOption | null) => void;
+};
+
+const getDisplayLabel = (option: LocationOption): string => {
+  if (option.level === 'municipality' && option.stateName) {
+    return `${option.name} (${option.stateName})`;
+  }
+
+  return option.name;
+};
 
 const LocationInput: React.FC<LocationInputProps> = ({ 
-  text1, 
-  text2, 
+  value = null,
+  options,
+  placeholder = 'Selecciona una ubicación',
+  restrictedLevel,
+  disabled = false,
+  error,
+  onChange,
   onClear,
-  onChangeText1,
-  onChangeText2 
 }) => {
+
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const normalizedSearch = search.toLowerCase().trim();
+
+  const filteredOptions = options.filter((option) => {
+    const matchesLevel = restrictedLevel
+      ? option.level === restrictedLevel
+      : true;
+
+    const matchesSearch = normalizedSearch
+      ? getDisplayLabel(option).toLowerCase().includes(normalizedSearch)
+      : true;
+
+    return matchesLevel && matchesSearch;
+  });
+
+  const handleSelect = (option: LocationOption) => {
+    onChange(option);
+    setSearch(getDisplayLabel(option));
+    setOpen(false);
+  };
+
+  const handleClear = () => {
+    if (disabled) return;
+
+    onChange(null);
+    setSearch("");
+    setOpen(false);
+    onClear?.();
+  };
+
+  useEffect(() => {
+    setSearch(value ? getDisplayLabel(value) : "");
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+
+        if (value) {
+          setSearch(getDisplayLabel(value));
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [value]);
+
+
   return (
-    <div className="flex items-center gap-3 bg-white border-4 border-[#4FD1C5] rounded-full px-4 py-2 shadow-md w-full max-w-md">
-      <img src={pinIcon} alt="Pin" className="w-6 h-6 opacity-60" />
-      
-      <div className="flex flex-1 items-center gap-1 min-w-0">
-        {/* INPUT PARA MUNICIPIO */}
+    <div ref={containerRef} className="relative w-full">
+      <div
+        className={`
+          relative flex h-[60px] w-full items-center overflow-hidden
+          rounded-[15px] border-2 bg-[#F1F1F1] shadow-md transition-all
+          ${disabled ? "cursor-not-allowed opacity-60" : ""}
+          ${error ? "border-red-500" : "border-[var(--color-green-start)]"}
+        `}
+      >
+        <div className="pointer-events-none absolute left-[10px] flex items-center">
+          <img
+            src={pinIcon}
+            alt=""
+            aria-hidden="true"
+            className="h-[24px] w-auto object-contain"
+          />
+        </div>
+
         <input
           type="text"
-          value={text1}
-          placeholder="Municipio"
-          onChange={(e) => onChangeText1?.(e.target.value)}
-          className="text-[18px] font-black text-black w-full bg-transparent outline-none placeholder:text-gray-300"
+          value={search}
+          placeholder={placeholder}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setOpen(true);
+
+            if (value) {
+              onChange(null);
+            }
+          }}
+          onFocus={() => {
+            if (!disabled) setOpen(true);
+          }}
+          disabled={disabled}
+          aria-invalid={Boolean(error)}
+          className="
+            h-full w-full bg-transparent
+            pl-[50px] pr-[60px] text-[20px] font-bold
+            outline-none disabled:cursor-not-allowed
+          "
         />
-        
-        <span className="text-gray-400 font-bold">(</span>
-        
-        {/* INPUT PARA ESTADO */}
-        <input
-          type="text"
-          value={text2}
-          placeholder="Estado"
-          onChange={(e) => onChangeText2?.(e.target.value)}
-          className="text-[18px] font-medium text-gray-500 w-full bg-transparent outline-none placeholder:text-gray-300"
-        />
-        
-        <span className="text-gray-400 font-bold">)</span>
+
+        {(value || search) && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            aria-label="Limpiar ubicación"
+            className="
+              absolute right-[10px] flex items-center justify-center
+              border-none bg-transparent p-0 transition-opacity hover:opacity-80
+            "
+          >
+            <img
+              src={cancelarIcon}
+              alt=""
+              aria-hidden="true"
+              className="h-[42px] w-[42px] object-contain"
+            />
+          </button>
+        )}
       </div>
 
-      <button 
-        onClick={onClear}
-        className="p-1 hover:bg-gray-100 rounded-full transition-colors shrink-0"
-      >
-        <img src={closeIcon} alt="Limpiar" className="w-7 h-7" />
-      </button>
+      {open && !disabled && (
+        <div className="absolute left-0 right-0 z-50 mt-2 rounded-[15px] border border-gray-200 bg-white shadow-lg">
+          <div className="max-h-[260px] overflow-y-auto p-2">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => handleSelect(option)}
+                  className="w-full rounded-[10px] px-4 py-3 text-left hover:bg-gray-100"
+                >
+                  <span className="block text-[16px] font-semibold text-black">
+                    {option.name}
+                  </span>
+
+                  {option.level === "municipality" && option.stateName && (
+                    <span className="block text-[14px] text-gray-500">
+                      {option.stateName}
+                    </span>
+                  )}
+
+                  {option.level === "state" && (
+                    <span className="block text-[14px] text-gray-500">
+                      Estado
+                    </span>
+                  )}
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-[14px] text-gray-500">
+                No se encontraron resultados.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {error && <p className="mt-2 text-sm font-medium text-red-500">{error}</p>}
     </div>
   );
 };

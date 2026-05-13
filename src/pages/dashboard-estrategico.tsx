@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import SearchBar from "../components/SearchBar/SearchBar";
-import Filter from "../components/Filter/Filter";
 import CustomInputField from "../components/CustomInputField/CustomInputField";
 import Button from "../components/Button/Button";
 import CustomKPI from "../components/KPI/CustomKPI";
@@ -12,6 +10,8 @@ import RankingTableModal from "../components/RankingTable/RankingTableModal";
 import ComparisonBarChart from "../components/ComparisonChart/ComparisonChart";
 import CustomPieChart from "../components/PieChart/PieChart";
 import PriorityCard from "../components/Priority/PriorityCard";
+import ImportButton from "../components/ImportButton/ImportButton";
+import LocationInput, { type LocationOption } from "../components/LocationInput/LocationInput";
 
 import { chartData } from "../mocks/barchart.mock";
 import {
@@ -21,14 +21,12 @@ import {
 } from "../mocks/rankingTable.mock";
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
-import Heatmap from "../components/HeatMap/Heatmap";
 import { data1, data2 } from "../mocks/prioritycard.mock";
-import ImportButton from "../components/ImportButton/ImportButton";
+import { locationOptionsMock } from "../mocks/locationinput.mock";
+
 
 function DashboardEstrategicoPage() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [year, setYear] = useState("");
+  const [location, setLocation] = useState<LocationOption | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -97,55 +95,6 @@ function DashboardEstrategicoPage() {
             value={form.password}
             onChange={(value) => handleChange("password", value)}
           />
-        </div>
-      </section>
-
-      {/* Filtros y búsqueda */}
-      <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-        <h2 className="text-xl font-semibold mb-4">Prueba de filtros</h2>
-
-        <div className="flex items-center gap-4 flex-wrap mb-4">
-          <Filter
-            title="Categoría"
-            values={category}
-            onChange={setCategory}
-            options={[
-              { name: "Cobertura Médica", value: "medica" },
-              { name: "Hospitales", value: "hospitales" },
-              { name: "Clínicas", value: "clinicas" },
-            ]}
-          />
-
-          <Filter
-            title="Año"
-            values={year}
-            onChange={setYear}
-            options={[
-              { name: "2022", value: "2022" },
-              { name: "2023", value: "2023" },
-              { name: "2024", value: "2024" },
-              { name: "2025", value: "2025" },
-              { name: "2026", value: "2026" },
-            ]}
-          />
-
-          <SearchBar
-            searchTerm={search}
-            onSearch={setSearch}
-            placeholder="Ingrese el estado o municipio..."
-          />
-        </div>
-
-        <div className="text-sm text-gray-600 space-y-1">
-          <p>
-            <strong>Search:</strong> {search}
-          </p>
-          <p>
-            <strong>Categoría:</strong> {category}
-          </p>
-          <p>
-            <strong>Año:</strong> {year}
-          </p>
         </div>
       </section>
 
@@ -256,7 +205,6 @@ function DashboardEstrategicoPage() {
         isAnimationActive={true}
       />
 
-      <Heatmap></Heatmap>
       <div className="grid grid-cols-4 gap-[18px]">
         <PriorityCard
           title="Cuernavaca"
@@ -281,6 +229,14 @@ function DashboardEstrategicoPage() {
           metrics={data2}
         />
       </div>
+
+      <LocationInput
+        value={location}
+        options={locationOptionsMock}
+        placeholder="Selecciona estado o municipio"
+        onChange={setLocation}
+        onClear={() => console.log('Ubicación limpiada')}
+      />
     </div>
   );
 }
