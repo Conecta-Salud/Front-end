@@ -1,19 +1,18 @@
-import CustomKPI from "../components/KPI/CustomKPI";
-import RankingTableModal from "../components/RankingTable/RankingTableModal";
-import RankingTableCard from "../components/RankingTable/RankingTableCard";
+import CustomKPI from "../components/ui/KPI/CustomKPI";
+import RankingTableModal from "../components/ui/RankingTable/RankingTableModal";
+import RankingTableCard from "../components/ui/RankingTable/RankingTableCard";
 import { useState } from "react";
 
 import {
   rankingData,
   compactColumns,
-  fullColumns,
 } from "../mocks/rankingTable.mock";
 import { data } from "../mocks/piechart.mock";
 import { chartData } from "../mocks/barchart.mock";
-import CustomButton from "../components/Button/Button";
+import CustomButton from "../components/ui/Button/Button";
 import exportIcon from "../assets/icons/button/downloadIcon.svg";
-import CustomPieChart from "../components/PieChart/PieChart";
-import CustomBarChart from "../components/BarChart/BarChart";
+import CustomPieChart from "../components/charts/PieChart/PieChart";
+import CustomBarChart from "../components/charts/BarChart/BarChart";
 
 function DashboardEstrategicoPrueba() {
   const [isModalOpen, setIsModalOpen] = useState(false);

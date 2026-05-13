@@ -4,9 +4,8 @@ import { AdminRoute } from "../routes/AdminRoute";
 import { useAuthStore } from "../stores/authStore";
 import AppLayout from "../layouts/AppLayout";
 
-// PAGES
 import Login from "../pages/login";
-import Dashboard from "../pages/dashboard_strategic";
+import Dashboard from "../pages/dashboard_prueba";
 import Comparison from "../pages/comparison_module";
 import Profile from "../pages/perfil";
 import Admin from "../pages/admin_panel";
