@@ -5,9 +5,10 @@ import {
   usePeriodsCatalogQuery,
   useStatesCatalogQuery,
 } from "../../catalogs/queries/catalog.queries";
+import type { DashboardTerritoryLevel } from "../types/dashboard.types";
 
 export type DashboardScope = {
-  level: "state" | "municipality" | null;
+  level: DashboardTerritoryLevel;
   stateId: number | null;
   municipalityId: number | null;
   periodId: number | null;
@@ -24,28 +25,38 @@ export function useDashboardScope({
   navigation,
   year,
 }: UseDashboardScopeParams): DashboardScope {
-  const statesQuery = useStatesCatalogQuery();
-  const municipalitiesQuery = useMunicipalitiesCatalogQuery();
+  const needsStateCatalog =
+    navigation.level === "state" || navigation.level === "municipality";
+
+  const needsMunicipalityCatalog = navigation.level === "municipality";
+
+  const statesQuery = useStatesCatalogQuery({
+    enabled: needsStateCatalog,
+  });
+
+  const municipalitiesQuery = useMunicipalitiesCatalogQuery({
+    enabled: needsMunicipalityCatalog,
+  });
+
   const periodsQuery = usePeriodsCatalogQuery();
 
   return useMemo(() => {
+    const selectedYear = Number(year);
+
     const period = periodsQuery.data?.find(
-      (item) => String(item.year) === String(year)
+      (item) => Number(item.year) === selectedYear
     );
 
     const periodId = period?.id ?? null;
 
     if (navigation.level === "country") {
       return {
-        level: null,
+        level: "country",
         stateId: null,
         municipalityId: null,
         periodId,
-        isReady: false,
-        isLoading:
-          statesQuery.isLoading ||
-          municipalitiesQuery.isLoading ||
-          periodsQuery.isLoading,
+        isReady: Boolean(periodId),
+        isLoading: periodsQuery.isLoading,
       };
     }
 
@@ -64,10 +75,7 @@ export function useDashboardScope({
         municipalityId: null,
         periodId,
         isReady: Boolean(stateId && periodId),
-        isLoading:
-          statesQuery.isLoading ||
-          municipalitiesQuery.isLoading ||
-          periodsQuery.isLoading,
+        isLoading: statesQuery.isLoading || periodsQuery.isLoading,
       };
     }
 

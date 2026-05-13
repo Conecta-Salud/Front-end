@@ -1,5 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
+  fetchCountryDashboardHealth,
+  fetchCountryDashboardIndicators,
   fetchMunicipalityDashboardHealth,
   fetchMunicipalityDashboardIndicators,
   fetchStateDashboardHealth,
@@ -9,13 +11,30 @@ import {
 export const dashboardQueryKeys = {
   all: ["dashboard"] as const,
 
-  state: (stateId: number | null | undefined, periodId: number | null | undefined) =>
-    [...dashboardQueryKeys.all, "state", stateId, periodId] as const,
+  country: (periodId: number | null | undefined) =>
+    [...dashboardQueryKeys.all, "country", periodId] as const,
+
+  countryIndicators: (periodId: number | null | undefined) =>
+    [...dashboardQueryKeys.country(periodId), "indicators"] as const,
+
+  countryHealth: (periodId: number | null | undefined) =>
+    [...dashboardQueryKeys.country(periodId), "health"] as const,
+
+  state: (
+    stateId: number | null | undefined,
+    periodId: number | null | undefined
+  ) => [...dashboardQueryKeys.all, "state", stateId, periodId] as const,
 
   municipality: (
     municipalityId: number | null | undefined,
     periodId: number | null | undefined
-  ) => [...dashboardQueryKeys.all, "municipality", municipalityId, periodId] as const,
+  ) =>
+    [
+      ...dashboardQueryKeys.all,
+      "municipality",
+      municipalityId,
+      periodId,
+    ] as const,
 
   stateIndicators: (
     stateId: number | null | undefined,
@@ -45,6 +64,38 @@ export const dashboardQueryKeys = {
       "health",
     ] as const,
 };
+
+export function useCountryDashboardIndicatorsQuery(params: {
+  periodId: number | null | undefined;
+  enabled?: boolean;
+}) {
+  return useQuery({
+    queryKey: dashboardQueryKeys.countryIndicators(params.periodId),
+    queryFn: () =>
+      fetchCountryDashboardIndicators({
+        periodId: params.periodId as number,
+      }),
+    enabled: Boolean(params.periodId) && (params.enabled ?? true),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useCountryDashboardHealthQuery(params: {
+  periodId: number | null | undefined;
+  enabled?: boolean;
+}) {
+  return useQuery({
+    queryKey: dashboardQueryKeys.countryHealth(params.periodId),
+    queryFn: () =>
+      fetchCountryDashboardHealth({
+        periodId: params.periodId as number,
+      }),
+    enabled: Boolean(params.periodId) && (params.enabled ?? true),
+    staleTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
+  });
+}
 
 export function useStateDashboardIndicatorsQuery(params: {
   stateId: number | null | undefined;

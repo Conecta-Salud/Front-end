@@ -32,6 +32,8 @@ type RawPeriodResponse = {
   id: number;
   year?: number;
   anio?: number;
+  periodYear?: number;
+  status?: string;
 };
 
 const normalizeState = (state: RawStateResponse): StateCatalogItem => ({
@@ -62,7 +64,7 @@ const normalizeMunicipality = (
 
 const normalizePeriod = (period: RawPeriodResponse): PeriodCatalogItem => ({
   id: period.id,
-  year: period.year ?? period.anio ?? 0,
+  year: period.year ?? period.anio ?? period.periodYear ?? 0,
 });
 
 export async function fetchStatesCatalog() {

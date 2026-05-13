@@ -1,10 +1,41 @@
 import api from "../../../services/api";
 import type {
+  DashboardCountryParams,
   DashboardHealthResponse,
   DashboardIndicatorsResponse,
   DashboardMunicipalityParams,
   DashboardStateParams,
 } from "../types/dashboard.types";
+
+export async function fetchCountryDashboardIndicators({
+  periodId,
+}: DashboardCountryParams) {
+  const response = await api.get<DashboardIndicatorsResponse>(
+    "/dashboard/country/indicators",
+    {
+      params: {
+        periodId,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function fetchCountryDashboardHealth({
+  periodId,
+}: DashboardCountryParams) {
+  const response = await api.get<DashboardHealthResponse>(
+    "/dashboard/country/health",
+    {
+      params: {
+        periodId,
+      },
+    }
+  );
+
+  return response.data;
+}
 
 export async function fetchStateDashboardIndicators({
   stateId,

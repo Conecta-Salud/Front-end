@@ -1,4 +1,3 @@
-import CustomKPI from "../components/ui/KPI/CustomKPI";
 import RankingTableModal from "../components/ui/RankingTable/RankingTableModal";
 import RankingTableCard from "../components/ui/RankingTable/RankingTableCard";
 import { useState } from "react";
@@ -18,6 +17,8 @@ import HealthMap from "../features/health-map/components/HealthMap";
 import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
 import { useDashboardScope } from "../features/dashboard/hooks/useDashboardScope";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
+import { useDashboardKpis } from "../features/dashboard/hooks/useDashboardKpis";
+import CustomKPI from "../components/ui/KPI/CustomKPI";
 
 function DashboardEstrategicoPrueba() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,7 +53,16 @@ function DashboardEstrategicoPrueba() {
     year,
   });
 
-  
+  const dashboardKpis = useDashboardKpis({
+    scope: dashboardScope,
+  });
+
+  const visibleKpis = dashboardKpis.kpis.slice(0, 4);
+
+  const kpiColumns = [
+    visibleKpis.slice(0, 2),
+    visibleKpis.slice(2, 4),
+  ];
 
   console.log("Dashboard scope:", dashboardScope);
 
@@ -146,36 +156,56 @@ function DashboardEstrategicoPrueba() {
           </section>
 
           {/*TABLAS A LA DERECHA DEL MAPA*/}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <CustomKPI
-              title="Promedio médicos por 1000 habitantes"
-              value="2.5"
-              size="md"
-              variant="green"
-              fullWidth
-            ></CustomKPI>
-            <CustomKPI
-              title="Promedio médicos por 1000 habitantes"
-              value="2.5"
-              size="md"
-              variant="green"
-              fullWidth
-            ></CustomKPI>
-            <CustomKPI
-              title="Promedio médicos por 1000 habitantes"
-              value="2.5"
-              size="md"
-              variant="green"
-              fullWidth
-            ></CustomKPI>
-            <CustomKPI
-              title="Promedio médicos por 1000 habitantes"
-              value="2.5"
-              size="md"
-              variant="default"
-              fullWidth
-            ></CustomKPI>
-          </div>
+          <section className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+
+              {dashboardKpis.isFetching && (
+                <span className="text-[14px] text-gray-400">
+                  Updating...
+                </span>
+              )}
+            </div>
+
+            {dashboardKpis.isLoading ? (
+              <div className="grid grid-cols-2 gap-[18px]">
+                {Array.from({ length: 2 }).map((_, columnIndex) => (
+                  <div key={columnIndex} className="flex flex-col gap-4">
+                    {Array.from({ length: 2 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="h-[140px] rounded-[10px] bg-white shadow-sm animate-pulse"
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : dashboardKpis.isError ? (
+              <div className="rounded-[10px] bg-white p-6 shadow-sm">
+                <p className="text-[16px] text-red-500">
+                  Could not load dashboard KPIs.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-[18px]">
+                {kpiColumns.map((column, columnIndex) => (
+                  <div key={columnIndex} className="flex flex-col gap-4">
+                    {column.map((kpi) => (
+                      <CustomKPI
+                        key={kpi.id}
+                        title={kpi.title}
+                        titleSecondLine={kpi.titleSecondLine}
+                        value={kpi.value}
+                        variant={kpi.variant}
+                        size="sm"
+                        fullWidth
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           <div>
             <RankingTableCard
               title="Estados con menor cobertura médica"
