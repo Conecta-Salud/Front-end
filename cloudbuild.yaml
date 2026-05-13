@@ -1,0 +1,50 @@
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: frontimage
+  _IMAGE: frontend
+  _SERVICE: frontend
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - id: build-and-push
+    name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+
+        VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
+
+        IMAGE_BASE="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}"
+
+        docker build \
+          -t "$$IMAGE_BASE:$$VERSION" \
+          -t "$$IMAGE_BASE:latest" \
+          .
+
+        docker push "$$IMAGE_BASE:$$VERSION"
+        docker push "$$IMAGE_BASE:latest"
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+
+        VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
+
+        IMAGE="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:$$VERSION"
+
+        gcloud run deploy ${_SERVICE} \
+          --image "$$IMAGE" \
+          --region ${_REGION} \
+          --platform managed \
+          --allow-unauthenticated \
+          --port 80
+
+timeout: 1800s
