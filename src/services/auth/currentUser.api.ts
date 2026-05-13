@@ -17,4 +17,3 @@ export const getCurrentUser = async (): Promise<AuthUser> => {
   const response = await api.get<AuthUser>("/users/profile");
   return response.data;
 };
-

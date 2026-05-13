@@ -69,8 +69,8 @@ export default function HealthMapLayer({
 
         return {
           fillColor: getHealthMapFillColor(colorToken),
-          color: isSelected ? "#111827" : getHealthMapStrokeColor(),
-          weight: isSelected ? 3 : 1,
+          color: isSelected ? "#020617" : getHealthMapStrokeColor(),
+          weight: isSelected ? 2 : 1,
           fillOpacity: isSelected ? 1 : 0.85,
           opacity: 1,
         };
@@ -88,22 +88,39 @@ export default function HealthMapLayer({
           mouseover: () => {
             if (!isPathLayer(layer)) return;
 
-            layer.setStyle({
-              weight: 2,
-              fillOpacity: 1,
-            });
-          },
-          mouseout: () => {
-            if (!isPathLayer(layer)) return;
-
             const isSelected =
               selectedMunicipalityCode === typedFeature.properties.code;
 
             layer.setStyle({
-              weight: isSelected ? 3 : 1,
-              fillOpacity: isSelected ? 1 : 0.85,
+              weight: isSelected ? 2 : 2,
+              fillOpacity: 1,
             });
+
+            if (isSelected) {
+              layer.bringToFront();
+            }
           },
+
+          mouseout: () => {
+            if (!isPathLayer(layer)) return;
+
+            const colorToken = typedFeature.properties.indicator?.colorToken;
+            const isSelected =
+              selectedMunicipalityCode === typedFeature.properties.code;
+
+            layer.setStyle({
+              fillColor: getHealthMapFillColor(colorToken),
+              color: isSelected ? "#020617" : getHealthMapStrokeColor(),
+              weight: isSelected ? 2 : 1,
+              fillOpacity: isSelected ? 1 : 0.85,
+              opacity: 1,
+            });
+
+            if (isSelected) {
+              layer.bringToFront();
+            }
+          },
+
           click: () => {
             if (mapLevel === "country") {
               onStateClick?.(

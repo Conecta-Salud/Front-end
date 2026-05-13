@@ -31,12 +31,12 @@ export default function HealthMapSelectedMarker({
   return (
     <CircleMarker
       center={center}
-      radius={8}
+      radius={5}
       pathOptions={{
         color: "#111827",
         fillColor: "#FC6767",
         fillOpacity: 1,
-        weight: 2,
+        weight: 1,
       }}
     >
       <Tooltip direction="top" offset={[0, -8]} opacity={1}>

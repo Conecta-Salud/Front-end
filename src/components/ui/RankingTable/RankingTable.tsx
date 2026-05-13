@@ -27,12 +27,48 @@ const getRowHeightClass = (rowHeight: "sm" | "md" | "lg") => {
   }
 };
 
+const getCellValue = <T extends RankingTableBaseRow>(
+  row: T,
+  key: keyof T | string
+) => {
+  const directValue = row[key as keyof T];
+
+  if (
+    directValue !== undefined &&
+    directValue !== null &&
+    directValue !== ""
+  ) {
+    return directValue;
+  }
+
+  return row.extra?.[String(key)];
+};
+
+const formatCellValue = (value: unknown) => {
+  if (value === null || value === undefined || value === "") return "—";
+
+  if (typeof value === "number") {
+    return new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/^\w/, (letter) => letter.toUpperCase());
+  }
+
+  return String(value);
+};
+
 export const RankingTable = <T extends RankingTableBaseRow>({
   columns,
   data,
   compact = false,
   rowHeight = "md",
-  emptyMessage = "No hay datos disponibles.",
+  emptyMessage = "No data available.",
   className = "",
 }: RankingTableProps<T>) => {
   const cellPadding = compact ? "px-2" : "px-3";
@@ -48,10 +84,11 @@ export const RankingTable = <T extends RankingTableBaseRow>({
                 key={`${String(col.key)}-${index}`}
                 className={[
                   "pb-4 font-semibold text-black",
-                  compact ? "text-[18px]" : "text-[20px]",
+                  compact ? "text-[14px]" : "text-[18px]",
                   cellPadding,
                   getAlignClass(col.align),
                 ].join(" ")}
+                style={{ width: col.width }}
               >
                 <div
                   className={[
@@ -84,9 +121,11 @@ export const RankingTable = <T extends RankingTableBaseRow>({
                 className="border-b-[2px] border-[#57D8BE] last:border-b-[2px]"
               >
                 {columns.map((col, index) => {
+                  const rawValue = getCellValue(row, col.key);
+
                   const content = col.render
                     ? col.render(row)
-                    : String(row[col.key] ?? "");
+                    : formatCellValue(rawValue);
 
                   return (
                     <td
@@ -94,17 +133,21 @@ export const RankingTable = <T extends RankingTableBaseRow>({
                       className={[
                         rowHeightClass,
                         cellPadding,
-                        compact ? "text-[16px]" : "text-[18px]",
+                        compact ? "text-[13px]" : "text-[16px]",
                         "text-black font-normal align-middle",
                         getAlignClass(col.align),
                       ].join(" ")}
                     >
                       <div
                         className={[
-                          col.truncate ? "truncate overflow-hidden whitespace-nowrap" : "",
+                          col.truncate
+                            ? "truncate overflow-hidden whitespace-nowrap"
+                            : "",
                           col.maxWidth ?? "",
                         ].join(" ")}
-                        title={typeof content === "string" ? content : undefined}
+                        title={
+                          typeof content === "string" ? content : undefined
+                        }
                       >
                         {content}
                       </div>
