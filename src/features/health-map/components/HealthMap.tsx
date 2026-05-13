@@ -1,39 +1,57 @@
-// src/features/health-map/components/HealthMap.tsx
-
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import type {
   HealthMapFeatureCollection,
   HealthMapIndicator,
-  RawGeoJsonFeatureCollection,
   HealthMapIndicatorResponse,
+  RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
 import {
+  fetchMunicipalitiesGeoJson,
+  fetchMunicipalityMapIndicators,
   fetchStateMapIndicators,
   fetchStatesGeoJson,
 } from "../services/healthMap.api";
 import { mergeGeoJsonWithIndicators } from "../utils/healthMap.utils";
 import HealthMapLayer from "./HealthMapLayer";
 
+type MapLevel = "country" | "state";
+
 type HealthMapProps = {
   indicator: HealthMapIndicator;
   year: string;
   className?: string;
-  onStateClick?: (stateCode: string, stateName: string) => void;
+};
+
+type MapNavigationState = {
+  mapLevel: "country" | "state" | "municipality";
+  selectedState?: {
+    code: string;
+    name: string;
+  };
 };
 
 export default function HealthMap({
   indicator,
   year,
   className = "",
-  onStateClick,
 }: HealthMapProps) {
+  const [mapLevel, setMapLevel] = useState<MapLevel>("country");
+  const [selectedState, setSelectedState] = useState<{
+    code: string;
+    name: string;
+  } | null>(null);
+
   const [geoJson, setGeoJson] = useState<RawGeoJsonFeatureCollection | null>(
     null
   );
   const [indicators, setIndicators] = useState<HealthMapIndicatorResponse[]>(
     []
   );
+
+  const [municipalityGeoJsonCache, setMunicipalityGeoJsonCache] = useState<
+    Record<string, RawGeoJsonFeatureCollection>
+  >({});
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,45 +65,84 @@ export default function HealthMap({
     });
   }, [geoJson, indicators]);
 
-  useEffect(() => {
-    let isMounted = true;
+  const loadCountryMap = async () => {
+    setLoading(true);
+    setError(null);
 
-    async function loadMapData() {
-      try {
-        setLoading(true);
-        setError(null);
+    try {
+      const [statesGeoJson, stateIndicators] = await Promise.all([
+        fetchStatesGeoJson(),
+        fetchStateMapIndicators({
+          indicator,
+          year,
+        }),
+      ]);
 
-        const [statesGeoJson, stateIndicators] = await Promise.all([
-          fetchStatesGeoJson(),
-          fetchStateMapIndicators({
-            indicator,
-            year,
-          }),
-        ]);
+      setGeoJson(statesGeoJson);
+      setIndicators(stateIndicators);
+      setMapLevel("country");
+      setSelectedState(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not load national map data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (!isMounted) return;
+  const loadStateMap = async (stateCode: string, stateName: string) => {
+    setLoading(true);
+    setError(null);
 
-        setGeoJson(statesGeoJson);
-        setIndicators(stateIndicators);
-      } catch (err) {
-        console.error(err);
+    try {
+      let municipalitiesGeoJson = municipalityGeoJsonCache[stateCode];
 
-        if (!isMounted) return;
+      if (!municipalitiesGeoJson) {
+        municipalitiesGeoJson = await fetchMunicipalitiesGeoJson(stateCode);
 
-        setError("Could not load map data.");
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setMunicipalityGeoJsonCache((prev) => ({
+          ...prev,
+          [stateCode]: municipalitiesGeoJson,
+        }));
       }
+
+      const municipalityIndicators = await fetchMunicipalityMapIndicators({
+        stateCode,
+        indicator,
+        year,
+      });
+
+      setGeoJson(municipalitiesGeoJson);
+      setIndicators(municipalityIndicators);
+      setMapLevel("state");
+      setSelectedState({
+        code: stateCode,
+        name: stateName,
+      });
+    } catch (err) {
+      console.error(err);
+      setError(`Could not load municipalities for state ${stateCode}.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mapLevel === "country") {
+      loadCountryMap();
+      return;
     }
 
-    loadMapData();
-
-    return () => {
-      isMounted = false;
-    };
+    if (mapLevel === "state" && selectedState) {
+      loadStateMap(selectedState.code, selectedState.name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indicator, year]);
+
+  useEffect(() => {
+    loadCountryMap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (
@@ -114,15 +171,36 @@ export default function HealthMap({
   return (
     <div
       className={[
-        "h-[500px] w-full overflow-hidden rounded-[10px] bg-white shadow-sm",
+        "relative h-[500px] w-full overflow-hidden rounded-[10px] bg-white shadow-sm",
         className,
       ].join(" ")}
     >
+      {mapLevel === "state" && selectedState && (
+        <div className="absolute left-4 top-4 z-[1000] flex items-center gap-3 rounded-[10px] bg-white px-4 py-2 shadow-md">
+          <button
+            type="button"
+            onClick={loadCountryMap}
+            className="text-[14px] font-semibold"
+            style={{
+              backgroundImage: "var(--gradient-primary-green)",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            Back to Mexico
+          </button>
+
+          <span className="text-[14px] font-medium text-gray-500">
+            {selectedState.name}
+          </span>
+        </div>
+      )}
+
       <MapContainer
         center={[23.6345, -102.5528]}
-        zoom={5}
+        zoom={mapLevel === "country" ? 5 : 8}
         minZoom={4}
-        maxZoom={8}
+        maxZoom={10}
         scrollWheelZoom={false}
         zoomControl
         className="h-full w-full"
@@ -132,7 +210,14 @@ export default function HealthMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <HealthMapLayer data={mergedData} onStateClick={onStateClick} />
+        <HealthMapLayer
+          data={mergedData}
+          mapLevel={mapLevel}
+          onStateClick={(stateCode, stateName) => {
+            if (mapLevel !== "country") return;
+            loadStateMap(stateCode, stateName);
+          }}
+        />
       </MapContainer>
     </div>
   );

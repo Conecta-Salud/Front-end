@@ -1,16 +1,20 @@
-// src/features/health-map/components/HealthMapLayer.tsx
-
 import { GeoJSON } from "react-leaflet";
 import type { Layer, Path } from "leaflet";
-import type { HealthMapFeatureCollection, HealthMapFeature } from "../types/healthMap.types";
+import type {
+  HealthMapFeature,
+  HealthMapFeatureCollection,
+} from "../types/healthMap.types";
 import {
   getFeatureDisplayValue,
   getHealthMapFillColor,
   getHealthMapStrokeColor,
 } from "../utils/healthMap.utils";
 
+type MapLevel = "country" | "state";
+
 type HealthMapLayerProps = {
   data: HealthMapFeatureCollection;
+  mapLevel: MapLevel;
   onStateClick?: (stateCode: string, stateName: string) => void;
 };
 
@@ -45,11 +49,14 @@ const isPathLayer = (layer: Layer): layer is Path => {
 
 export default function HealthMapLayer({
   data,
+  mapLevel,
   onStateClick,
 }: HealthMapLayerProps) {
   return (
     <GeoJSON
-      key={data.features.map((feature) => feature.properties.code).join("-")}
+      key={`${mapLevel}-${data.features
+        .map((feature) => feature.properties.code)
+        .join("-")}`}
       data={data}
       style={(feature) => {
         const typedFeature = feature as HealthMapFeature;
@@ -63,7 +70,7 @@ export default function HealthMapLayer({
           opacity: 1,
         };
       }}
-      onEachFeature={(feature, layer: Layer) => {
+      onEachFeature={(feature, layer) => {
         const typedFeature = feature as HealthMapFeature;
 
         layer.bindTooltip(buildTooltipContent(typedFeature), {
@@ -90,6 +97,8 @@ export default function HealthMapLayer({
             });
           },
           click: () => {
+            if (mapLevel !== "country") return;
+
             onStateClick?.(
               typedFeature.properties.code,
               typedFeature.properties.name
