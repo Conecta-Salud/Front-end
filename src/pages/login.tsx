@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useAuthStore } from "../stores/authStore";
+import { useLoginMutation } from "../features/auth/mutations/useLoginMutation";
 
 import loginShape from "../assets/backgrounds/login_shape.png"
 import ConectaSaludLogo from "../assets/ConectaSalud_Full.png";
@@ -10,15 +9,12 @@ import Button from "../components/ui/Button/Button";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
-  const status = useAuthStore((state) => state.status);
-  const [error, setError] = useState("");
+  const loginMutation = useLoginMutation();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({
@@ -27,16 +23,16 @@ function LoginPage() {
     }));
   };
 
-  const handleLogin = async () => {
-    if (status === "checking") return;
-
+  const handleSubmit = async () => {
     try {
-      setError("");
-      await login(form.email, form.password);
+      await loginMutation.mutateAsync({
+        email: form.email,
+        password: form.password,
+      });
+
       navigate("/", { replace: true });
     } catch (error) {
-      console.error(error);
-      setError("Correo o contraseña incorrectos.");
+      console.error("Login error:", error);
     }
   };
 
@@ -99,19 +95,18 @@ function LoginPage() {
           {/* Botón */}
           <div className="mt-[70px] flex justify-center">
             <Button
-              label="Continuar"
+              label={loginMutation.isPending ? "Entrando..." : "Continuar"}
               tone="green"
               height="60"
               textSize="lg"
-              loading={status === "checking"}
-              disabled={status === "checking"}
-              onClick={handleLogin}
+              disabled={loginMutation.isPending}
+              onClick={handleSubmit}
             />
           </div>
 
-          {error && (
+          {loginMutation.isError && (
             <p className="mt-4 text-sm font-medium text-red-500">
-              {error}
+              Correo o contraseña incorrectos.
             </p>
           )}
 
