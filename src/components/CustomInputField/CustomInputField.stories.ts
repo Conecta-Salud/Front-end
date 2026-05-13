@@ -15,15 +15,32 @@ const meta = {
       control: "select",
       options: ["text", "password", "email"],
     },
+
     importance: {
       control: "boolean",
     },
+
+    label: {
+      control: "text",
+    },
+
+    placeholder: {
+      control: "text",
+    },
+
+    value: {
+      control: "text",
+    },
+
     onChange: {
       action: "changed",
     },
   },
+
   args: {
     onChange: fn(),
+    importance: false,
+    type: "text",
   },
 } satisfies Meta<typeof CustomInputField>;
 
@@ -36,8 +53,6 @@ export const Default: Story = {
     label: "Username",
     placeholder: "Enter your username",
     value: "",
-    type: "text",
-    importance: false,
   },
 };
 
@@ -47,7 +62,6 @@ export const Required: Story = {
     label: "Full Name",
     placeholder: "Enter your full name",
     value: "",
-    type: "text",
     importance: true,
   },
 };
@@ -80,7 +94,5 @@ export const WithValue: Story = {
     label: "User",
     placeholder: "Enter your user",
     value: "Gabriel",
-    type: "text",
-    importance: false,
   },
 };

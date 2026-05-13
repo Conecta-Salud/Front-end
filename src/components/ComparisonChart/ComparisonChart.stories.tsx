@@ -10,13 +10,22 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     title: { control: "text" },
+
     chartHeight: {
       control: { type: "number", min: 220, max: 700, step: 20 },
     },
+
     yDomain: { control: "object" },
+
     emptyMessage: { control: "text" },
+
     referenceLine: { control: "object" },
+
     rules: { control: "object" },
+  },
+
+  args: {
+    chartHeight: 320,
   },
 } satisfies Meta<typeof ComparisonChart>;
 
@@ -71,7 +80,6 @@ export const CoberturaMedica: Story = {
     referenceLine: {
       value: 2.3,
       label: "Referencia mínima OMS / 2.3",
-      color: "#67B7C7",
     },
     yDomain: [0, 3.5],
     chartHeight: 320,
@@ -86,7 +94,6 @@ export const DeficitEstimado: Story = {
     referenceLine: {
       value: 1,
       label: "Umbral recomendado / 1.0",
-      color: "#67B7C7",
     },
     yDomain: [0, 3.5],
     chartHeight: 320,
@@ -101,7 +108,6 @@ export const CamasHospitalarias: Story = {
     referenceLine: {
       value: 2.3,
       label: "Referencia mínima OMS / 2.3",
-      color: "#67B7C7",
     },
     yDomain: [0, 3],
     chartHeight: 340,
@@ -116,7 +122,6 @@ export const PoblacionEnPobreza: Story = {
     referenceLine: {
       value: 30,
       label: "Meta de referencia / 30%",
-      color: "#67B7C7",
     },
     yDomain: [0, 80],
     chartHeight: 340,

@@ -11,7 +11,6 @@ const meta = {
   argTypes: {
     title: { control: "text" },
     barColor: { control: "color" },
-    gridColor: { control: "color" },
     chartHeight: {
       control: { type: "number", min: 200, max: 700, step: 20 },
     },
@@ -93,14 +92,6 @@ export const CustomColor: Story = {
     title: "Color personalizado",
     data: basicData,
     barColor: "#3B82F6",
-  },
-};
-
-export const CustomGrid: Story = {
-  args: {
-    title: "Grid personalizado",
-    data: basicData,
-    gridColor: "#D1D5DB",
   },
 };
 

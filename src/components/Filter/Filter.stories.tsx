@@ -33,17 +33,29 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+
   argTypes: {
     title: { control: "text" },
+
     values: { control: "text" },
+
     options: { control: "object" },
+
+    isOpen: { control: "boolean" },
+
     onChange: { action: "changed" },
+
+    onOpenChange: { action: "openChanged" },
   },
+
   args: {
+    id: "filter",
     title: "Categoría",
     options: categoryOptions,
     values: "",
+    isOpen: false,
     onChange: fn(),
+    onOpenChange: fn(),
   },
 } satisfies Meta<typeof Filter>;
 
@@ -64,6 +76,7 @@ export const WithSelectedValue: Story = {
 
 export const Years: Story = {
   args: {
+    id: "years-filter",
     title: "Año",
     options: yearOptions,
     values: "",
@@ -72,6 +85,7 @@ export const Years: Story = {
 
 export const LongLabels: Story = {
   args: {
+    id: "state-filter",
     title: "Estado",
     options: longOptions,
     values: "cdmx",
@@ -79,16 +93,19 @@ export const LongLabels: Story = {
 };
 
 export const Interactive: Story = {
-  args: {},
   render: (args) => {
     const Demo = () => {
       const [value, setValue] = useState(args.values ?? "");
+      const [openFilter, setOpenFilter] = useState<string | null>(null);
 
       return (
         <div className="w-[220px]">
           <Filter
             {...args}
+            id="interactive-filter"
             values={value}
+            isOpen={openFilter === "interactive-filter"}
+            onOpenChange={setOpenFilter}
             onChange={setValue}
           />
         </div>
@@ -100,25 +117,31 @@ export const Interactive: Story = {
 };
 
 export const TwoFiltersTogether: Story = {
-  args: {},
   render: () => {
     const Demo = () => {
       const [category, setCategory] = useState("");
       const [year, setYear] = useState("");
+      const [openFilter, setOpenFilter] = useState<string | null>(null);
 
       return (
         <div className="flex items-center gap-4">
           <Filter
+            id="category-filter"
             title="Categoría"
             options={categoryOptions}
             values={category}
+            isOpen={openFilter === "category-filter"}
+            onOpenChange={setOpenFilter}
             onChange={setCategory}
           />
 
           <Filter
+            id="year-filter"
             title="Año"
             options={yearOptions}
             values={year}
+            isOpen={openFilter === "year-filter"}
+            onOpenChange={setOpenFilter}
             onChange={setYear}
           />
         </div>
