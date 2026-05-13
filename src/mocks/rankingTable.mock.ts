@@ -1,4 +1,4 @@
-import type { RankingColumn } from "../components/RankingTable/RankingTable.types";
+import type { RankingColumn } from "../components/ui/RankingTable/RankingTable.types";
 
 export type MedicalUnitRow = {
   id: number;
