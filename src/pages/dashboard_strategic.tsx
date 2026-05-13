@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import CustomInputField from "../components/ui/CustomInputField/CustomInputField";
 import Button from "../components/ui/Button/Button";
@@ -23,11 +23,16 @@ import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
 import { data1, data2 } from "../mocks/prioritycard.mock";
 import { locationOptionsMock } from "../mocks/locationinput.mock";
-
+import { mergeGeoJsonWithIndicators } from "../features/health-map/utils/healthMap.utils";
+import { fetchStateMapIndicators, fetchStatesGeoJson } from "../features/health-map/services/healthMap.api";
+import { useHeaderFilterStore } from "../stores/headerFilterStore";
+import HealthMap from "../features/health-map/components/HealthMap";
 
 function DashboardEstrategicoPage() {
   const [location, setLocation] = useState<LocationOption | null>(null);
-
+  const indicator = useHeaderFilterStore((state) => state.category);
+  const year = useHeaderFilterStore((state) => state.year);
+  
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -42,6 +47,26 @@ function DashboardEstrategicoPage() {
       [field]: value,
     }));
   };
+
+  useEffect(() => {
+  async function testMap() {
+    const geoJson = await fetchStatesGeoJson();
+
+    const indicators = await fetchStateMapIndicators({
+      indicator: "medical_coverage",
+      year: "2024",
+    });
+
+    const merged = mergeGeoJsonWithIndicators({
+      geoJson,
+      indicators,
+    });
+
+    console.log(merged);
+  }
+
+  testMap();
+}, []);
 
   return (
     <div className="bg-[#F8F9FB] flex flex-col gap-6">
@@ -124,6 +149,16 @@ function DashboardEstrategicoPage() {
         data={rankingData}
         onClose={() => setIsModalOpen(false)}
       />
+
+      <div className="flex flex-col gap-6">
+        <HealthMap
+          indicator={indicator}
+          year={year}
+          onStateClick={(stateCode, stateName) => {
+            console.log("Selected state:", stateCode, stateName);
+          }}
+        />
+      </div>
 
       <div className="grid grid-cols-4 gap-4">
         <CustomKPI
