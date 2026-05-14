@@ -2,18 +2,20 @@ import React from "react";
 
 export type TableAlign = "left" | "center" | "right";
 
-export interface RankingColumn<T> {
+export interface RankingTableBaseRow {
+  id: string | number;
+  extra?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface RankingColumn<T extends RankingTableBaseRow> {
   header: string;
-  key: keyof T;
+  key: keyof T | string;
   align?: TableAlign;
   truncate?: boolean;
   maxWidth?: string;
   width?: string;
   render?: (row: T) => React.ReactNode;
-}
-
-export interface RankingTableBaseRow {
-  id: string | number;
 }
 
 export interface RankingTableProps<T extends RankingTableBaseRow> {

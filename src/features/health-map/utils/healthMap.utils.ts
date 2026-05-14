@@ -8,14 +8,14 @@ import type {
 export function getHealthMapFillColor(colorToken?: HealthMapColorToken) {
   switch (colorToken) {
     case "green":
-      return "#14B8A6";
+      return "var(--color-green)";
     case "yellow":
-      return "#FACC15";
+      return "var(--color-yellow)";
     case "red":
-      return "#FC6767";
+      return "var(--color-red)";
     case "neutral":
     default:
-      return "#D1D5DB";
+      return "var(--color-text-secundary)";
   }
 }
 
