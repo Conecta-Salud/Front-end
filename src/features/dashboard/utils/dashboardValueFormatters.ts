@@ -1,4 +1,5 @@
 import type { DashboardKpi } from "../types/dashboardSummary.types";
+import { translateDashboardValue } from "./dashboardTranslation.utils";
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 
@@ -34,7 +35,11 @@ export function formatDashboardNumber(value: number | null | undefined) {
 export function formatDashboardKpiValue(kpi: DashboardKpi) {
   if (kpi.value === null || kpi.value === undefined) {
     if (kpi.unit && !technicalUnits.has(kpi.unit)) {
-      return formatTextValue(kpi.unit);
+      const translatedValue = translateDashboardValue(kpi.unit);
+
+      return typeof translatedValue === "string"
+        ? translatedValue
+        : formatTextValue(kpi.unit);
     }
 
     return "N/A";

@@ -3,13 +3,13 @@ import api from "../api";
 export type UserRole = "strategic" | "admin";
 
 export type AuthUser = {
-  id: number;
+  id: string;
   departmentId: number;
   departmentName: string;
   firstName: string;
   lastName: string;
   email: string;
-  firebaseUid: string;
+  firebaseUiid: string;
   role: UserRole;
 };
 

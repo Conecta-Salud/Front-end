@@ -1,5 +1,3 @@
-// src/pages/dashboard_prueba.tsx
-
 import { useState } from "react";
 
 import CustomButton from "../components/ui/Button/Button";
@@ -8,11 +6,13 @@ import exportIcon from "../assets/icons/button/downloadIcon.svg";
 import HealthMap from "../features/health-map/components/HealthMap";
 import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
 import DashboardRankingSection from "../features/dashboard/components/DashboardRankingSection";
+import DashboardChartSection from "../features/dashboard/components/DashboardChartSection";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import { useDashboardScope } from "../features/dashboard/hooks/useDashboardScope";
 import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSummary";
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
+
 
 const categoryLabels = {
   medical_coverage: "Indicadores de cobertura médica",
@@ -151,16 +151,22 @@ function DashboardStrategicPage() {
       </section>
 
       <section className="mt-6 grid grid-cols-12 gap-6">
-        <div className="col-span-12 rounded-[10px] bg-white p-6 shadow-sm xl:col-span-7">
-          <p className="text-[16px] font-semibold text-gray-400">
-            Main chart will be connected in the next block.
-          </p>
+        <div className="col-span-12 xl:col-span-7">
+          <DashboardChartSection
+            chart={dashboardSummary.summary?.mainChart}
+            isLoading={dashboardSummary.isLoading}
+            isError={dashboardSummary.isError}
+            height={340}
+          />
         </div>
 
-        <div className="col-span-12 rounded-[10px] bg-white p-6 shadow-sm xl:col-span-5">
-          <p className="text-[16px] font-semibold text-gray-400">
-            Secondary chart will be connected in the next block.
-          </p>
+        <div className="col-span-12 xl:col-span-5">
+          <DashboardChartSection
+            chart={dashboardSummary.summary?.secondaryChart}
+            isLoading={dashboardSummary.isLoading}
+            isError={dashboardSummary.isError}
+            height={340}
+          />
         </div>
       </section>
 
