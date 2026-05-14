@@ -6,6 +6,7 @@ export type LocationLevel = "state" | "municipality";
 
 export type LocationOption = {
   id: string;
+  code: string;
   name: string;
   level: LocationLevel;
   stateName?: string;
@@ -171,7 +172,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <button
-                  key={option.id}
+                  key={`${option.level}-${option.code}`}
                   type="button"
                   onClick={() => handleSelect(option)}
                   className="w-full rounded-[10px] px-4 py-3 text-left hover:bg-gray-100"

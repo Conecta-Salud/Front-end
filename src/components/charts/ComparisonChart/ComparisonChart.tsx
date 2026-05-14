@@ -11,7 +11,7 @@ import {
   LabelList,
 } from "recharts";
 
-type ChartTone = "green" | "yellow" | "red";
+type ChartTone = "green" | "yellow" | "red" | "neutral" | "default";
 
 type CustomXAxisTickProps = {
   x?: string | number;
@@ -26,6 +26,7 @@ interface ChartData {
   label: string;
   value: number;
   subtitle?: string;
+  tone?: ChartTone;
 }
 
 interface StatusRule {
@@ -42,7 +43,7 @@ interface ReferenceConfig {
 interface ComparisonBarChartProps {
   data: ChartData[];
   title?: string;
-  rules: StatusRule[];
+  rules?: StatusRule[];
   referenceLine?: ReferenceConfig;
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
@@ -125,17 +126,23 @@ export default function ComparisonBarChart({
     );
   }
 
-  const getToneForValue = (value: number): ChartTone => {
-    for (const rule of rules) {
-      const meetsMin = rule.min === undefined || value >= rule.min;
-      const meetsMax = rule.max === undefined || value <= rule.max;
+  const getToneForEntry = (entry: ChartData): ChartTone => {
+    if (entry.tone && entry.tone !== "default" && entry.tone !== "neutral") {
+      return entry.tone;
+    }
 
-      if (meetsMin && meetsMax) {
-        return rule.tone;
+    if (rules?.length) {
+      for (const rule of rules) {
+        const meetsMin = rule.min === undefined || entry.value >= rule.min;
+        const meetsMax = rule.max === undefined || entry.value <= rule.max;
+
+        if (meetsMin && meetsMax) {
+          return rule.tone;
+        }
       }
     }
 
-    return "yellow"; 
+    return "yellow";
   };
 
   const gradientIds = {
@@ -221,12 +228,14 @@ export default function ComparisonBarChart({
                 fontSize={14}
                 fontWeight={700}
                 formatter={(value) =>
-                  typeof value === "number" ? value.toFixed(1) : ""
+                  typeof value === "number"
+                    ? valueFormatter?.(value) ?? value.toFixed(2)
+                    : ""
                 }
               />
 
               {data.map((entry, index) => {
-                const tone = getToneForValue(entry.value);
+                const tone = getToneForEntry(entry);
 
                 return (
                   <Cell
