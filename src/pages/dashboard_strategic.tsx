@@ -319,14 +319,6 @@ function DashboardEstrategicoPage() {
           metrics={data2}
         />
       </div>
-
-      <LocationInput
-        value={location}
-        options={locationOptionsMock}
-        placeholder="Selecciona estado o municipio"
-        onChange={setLocation}
-        onClear={() => console.log('Ubicación limpiada')}
-      />
     </div>
   );
 }
