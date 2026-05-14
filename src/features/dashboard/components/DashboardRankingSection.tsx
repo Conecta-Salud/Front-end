@@ -5,6 +5,7 @@ import type { DashboardRanking } from "../types/dashboardSummary.types";
 import {
   adaptSummaryRankingColumns,
   adaptSummaryRankingRows,
+  adaptSummaryRankingTitle,
 } from "../utils/dashboardRanking.adapter";
 
 type DashboardRankingSectionProps = {
@@ -19,6 +20,8 @@ export default function DashboardRankingSection({
   isError = false,
 }: DashboardRankingSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const title = useMemo(() => adaptSummaryRankingTitle(ranking), [ranking]);
 
   const columns = useMemo(
     () => adaptSummaryRankingColumns(ranking),
@@ -37,7 +40,7 @@ export default function DashboardRankingSection({
     return (
       <div className="rounded-[20px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          Could not load ranking data.
+          No se pudieron cargar los datos la tabla ranking.
         </p>
       </div>
     );
@@ -46,8 +49,8 @@ export default function DashboardRankingSection({
   if (!ranking || !columns.length) {
     return (
       <div className="rounded-[20px] bg-white p-6 shadow-sm">
-        <p className="text-[16px] text-gray-500">
-          No ranking data available.
+        <p className="text-[16px] text-red-500">
+          No se pudo cargar la tabla ranking.
         </p>
       </div>
     );
@@ -56,21 +59,21 @@ export default function DashboardRankingSection({
   return (
     <>
       <RankingTableCard
-        title={ranking.title}
-        columns={columns}
+        title={title}
+        columns={columns.slice(0, 4)}
         data={rows}
-        footerText="View full ranking"
+        footerText="Ver ranking completo"
         onFooterClick={() => setIsModalOpen(true)}
-        emptyMessage="No ranking data available."
+        emptyMessage="No hay datos de ranking disponibles."
       />
 
       <RankingTableModal
         isOpen={isModalOpen}
-        title={ranking.title}
+        title={title}
         columns={columns}
         data={rows}
         onClose={() => setIsModalOpen(false)}
-        emptyMessage="No ranking data available."
+        emptyMessage="No hay datos de ranking disponibles."
         className="w-full max-w-[1200px]"
       />
     </>

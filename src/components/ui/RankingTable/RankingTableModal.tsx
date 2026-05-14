@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import RankingTable from "./RankingTable";
 import type {
   RankingTableBaseRow,
@@ -16,18 +17,18 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
 }: RankingTableModalProps<T>) => {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-6">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6">
       <div
         className={[
-          "relative max-w-[1000px] max-h-[90vh] overflow-hidden rounded-[30px] bg-white shadow-xl",
+          "relative w-full max-w-[1200px] max-h-[90vh] overflow-hidden rounded-[30px] bg-white shadow-2xl",
           className,
         ].join(" ")}
       >
         <div className="px-12 pt-10 pb-6">
           <div className="flex items-start justify-between gap-4 mb-8">
             <h2
-              className="text-[20px] leading-none font-semibold"
+              className="text-[24px] leading-tight font-semibold"
               style={{
                 backgroundImage: "var(--gradient-primary-green)",
                 WebkitBackgroundClip: "text",
@@ -41,11 +42,11 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
               type="button"
               onClick={onClose}
               className="shrink-0 transition-transform hover:scale-105"
-              aria-label="Cerrar modal"
+              aria-label="Close modal"
             >
               <img
                 src={closeIcon}
-                alt="Cerrar"
+                alt="Close"
                 className="w-[24px] h-[24px] object-contain"
               />
             </button>
@@ -61,7 +62,8 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

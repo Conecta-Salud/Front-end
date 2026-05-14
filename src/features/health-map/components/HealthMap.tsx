@@ -116,6 +116,13 @@ export default function HealthMap({
     : municipalitiesGeoJsonQuery.isLoading ||
       municipalityIndicatorsQuery.isLoading;
 
+  const layerKey = [
+    currentNavigationKey,
+    activeGeoJsonUpdatedAt,
+    activeIndicatorsUpdatedAt,
+    navigation.selectedMunicipality?.code ?? "no-selection",
+  ].join("-");
+
   useEffect(() => {
     setLoadedNavigationKey(null);
   }, [currentNavigationKey]);
@@ -134,11 +141,9 @@ export default function HealthMap({
     currentNavigationKey,
   ]);
 
-  const isInitialLoading =
-    isCountryView
-      ? statesGeoJsonQuery.isLoading || stateIndicatorsQuery.isLoading
-      : municipalitiesGeoJsonQuery.isLoading ||
-        municipalityIndicatorsQuery.isLoading;
+  const activeIndicatorsReady = activeIndicatorsUpdatedAt > 0;
+
+  const isInitialLoading = !activeGeoJson || !activeIndicatorsReady;
 
   const isFetching =
     statesGeoJsonQuery.isFetching ||
@@ -184,7 +189,7 @@ export default function HealthMap({
       ].join(" ")}
     >
       {isFetching && (
-        <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-white/50">
+        <div className="absolute inset-0 z-[500] flex items-center justify-center bg-white/50">
           <p className="text-[16px] text-gray-500">Updating map...</p>
         </div>
       )}
@@ -214,6 +219,7 @@ export default function HealthMap({
         <HealthMapLayer
           data={mergedData}
           mapLevel={navigation.level}
+          layerKey={layerKey}
           selectedMunicipalityCode={navigation.selectedMunicipality?.code}
           onStateClick={(stateCode, stateName) => {
             if (navigation.level !== "country") return;

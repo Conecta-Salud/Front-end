@@ -1,10 +1,9 @@
 // src/features/dashboard/utils/dashboardKpiSummary.adapter.ts
 
 import type { DashboardKpi } from "../types/dashboardSummary.types";
-import { formatDashboardKpiValue } from "./dashboardValueFormatters";
-import { dashboardKpiVariantOverrides } from "../constants/dashboardKpiStyle.config";
-import { dashboardKpiLabelsEs } from "../constants/dashboardText.es";
 
+import { formatDashboardKpiValue } from "./dashboardValueFormatters";
+import { dashboardKpiDisplayConfig } from "../constants/dashboardKpiDisplay.config";
 
 export type DashboardKpiCardItem = {
   id: string;
@@ -14,11 +13,7 @@ export type DashboardKpiCardItem = {
   variant: "default" | "green" | "red";
 };
 
-function getKpiDisplayLabel(kpi: DashboardKpi) {
-  return dashboardKpiLabelsEs[kpi.id] ?? kpi.label;
-}
-
-function splitKpiLabel(label: string) {
+function splitKpiLabelFallback(label: string) {
   const cleanLabel = label.trim();
 
   if (cleanLabel.length <= 24) {
@@ -41,14 +36,16 @@ export function adaptSummaryKpisToCards(kpis: DashboardKpi[] = []) {
   return [...kpis]
     .sort((a, b) => a.order - b.order)
     .map<DashboardKpiCardItem>((kpi) => {
-      const displayLabel = getKpiDisplayLabel(kpi);
-      const labelParts = splitKpiLabel(displayLabel)
+      const displayConfig = dashboardKpiDisplayConfig[kpi.id];
+      const fallbackLabel = splitKpiLabelFallback(kpi.label);
 
       return {
         id: kpi.id,
-        title: labelParts.title,
-        titleSecondLine: labelParts.titleSecondLine,
+        title: displayConfig?.title ?? fallbackLabel.title,
+        titleSecondLine:
+          displayConfig?.titleSecondLine ?? fallbackLabel.titleSecondLine,
         value: formatDashboardKpiValue(kpi),
-        variant: dashboardKpiVariantOverrides[kpi.id] ?? kpi.variant ?? "default",      };
+        variant: displayConfig?.variant ?? kpi.variant ?? "default",
+      };
     });
 }
