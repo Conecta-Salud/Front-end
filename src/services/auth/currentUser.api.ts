@@ -9,7 +9,7 @@ export type AuthUser = {
   firstName: string;
   lastName: string;
   email: string;
-  firebaseUiid: string;
+  firebaseUuid: string;
   role: UserRole;
 };
 
