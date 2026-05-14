@@ -14,9 +14,13 @@ import {
 type HealthMapLayerProps = {
   data: HealthMapFeatureCollection;
   mapLevel: HealthMapViewLevel;
+  layerKey: string;
   selectedMunicipalityCode?: string | null;
   onStateClick?: (stateCode: string, stateName: string) => void;
-  onMunicipalityClick?: (municipalityCode: string, municipalityName: string) => void;
+  onMunicipalityClick?: (
+    municipalityCode: string,
+    municipalityName: string
+  ) => void;
 };
 
 const buildTooltipContent = (feature: HealthMapFeature) => {
@@ -51,15 +55,14 @@ const isPathLayer = (layer: Layer): layer is Path => {
 export default function HealthMapLayer({
   data,
   mapLevel,
+  layerKey,
   selectedMunicipalityCode,
   onStateClick,
   onMunicipalityClick,
 }: HealthMapLayerProps) {
   return (
     <GeoJSON
-      key={`${mapLevel}-${selectedMunicipalityCode ?? "none"}-${data.features
-        .map((feature) => feature.properties.code)
-        .join("-")}`}
+      key={layerKey}
       data={data}
       style={(feature) => {
         const typedFeature = feature as HealthMapFeature;
