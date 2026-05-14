@@ -48,6 +48,7 @@ interface ComparisonBarChartProps {
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
   emptyMessage?: string;
+  valueFormatter?: (value: number) => string;
 }
 
 const CustomXAxisTick = ({
@@ -97,11 +98,12 @@ const CustomXAxisTick = ({
 export default function ComparisonBarChart({
   data,
   title = "Comparación",
-  rules,
+  rules = [],
   referenceLine,
   yDomain = [0, "auto"],
   chartHeight = 320,
   emptyMessage = "No hay datos disponibles.",
+  valueFormatter,
 }: ComparisonBarChartProps) {
   const chartId = useId();
 
@@ -127,11 +129,11 @@ export default function ComparisonBarChart({
   }
 
   const getToneForEntry = (entry: ChartData): ChartTone => {
-    if (entry.tone && entry.tone !== "default" && entry.tone !== "neutral") {
+    if (entry.tone && entry.tone !== "default") {
       return entry.tone;
     }
 
-    if (rules?.length) {
+    if (rules.length) {
       for (const rule of rules) {
         const meetsMin = rule.min === undefined || entry.value >= rule.min;
         const meetsMax = rule.max === undefined || entry.value <= rule.max;
@@ -142,13 +144,15 @@ export default function ComparisonBarChart({
       }
     }
 
-    return "yellow";
+    return "neutral";
   };
 
-  const gradientIds = {
+  const gradientIds: Record<ChartTone, string> = {
     green: `${chartId}-greenGradient`,
     yellow: `${chartId}-yellowGradient`,
     red: `${chartId}-redGradient`,
+    neutral: `${chartId}-neutralGradient`,
+    default: `${chartId}-neutralGradient`,
   };
 
   return (
@@ -184,6 +188,10 @@ export default function ComparisonBarChart({
               <linearGradient id={gradientIds.red} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--color-red-start)" />
                 <stop offset="100%" stopColor="var(--color-red)" />
+              </linearGradient>
+              <linearGradient id={gradientIds.neutral} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#A3A3A3" />
+                <stop offset="100%" stopColor="#D4D4D4" />
               </linearGradient>
             </defs>
 

@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import ComparisonSelector from "../features/comparison/components/ComparisonSelector";
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
+import ComparisonChartGrid from "../features/comparison/components/ComparisonChartGrid";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import { usePeriodsCatalogQuery, useStatesCatalogQuery, useMunicipalitiesCatalogQuery } from "../features/catalogs/queries/catalog.queries";
@@ -110,7 +111,7 @@ function ModuloComparacionPage() {
         onSecondLocationChange={setSecondLocation}
       />
 
-      <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
+      <section className="mt-6">
         {!periodId ? (
           <p className="text-[16px] text-gray-500">
             No se encontró periodo para el año seleccionado.
@@ -128,9 +129,11 @@ function ModuloComparacionPage() {
             No se pudo cargar la comparación.
           </p>
         ) : (
-          <pre className="max-h-[360px] overflow-auto text-[12px]">
-            {JSON.stringify(comparisonSummary.summary, null, 2)}
-          </pre>
+          <ComparisonChartGrid
+            charts={comparisonSummary.charts}
+            isLoading={comparisonSummary.isLoading}
+            isError={comparisonSummary.isError}
+          />
         )}
       </section>
     </main>
