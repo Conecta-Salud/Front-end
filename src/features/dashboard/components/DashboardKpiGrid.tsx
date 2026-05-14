@@ -33,7 +33,7 @@ export default function DashboardKpiGrid({
     return (
       <div className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          Could not load KPI data.
+          No se pudieron cargar los datos de KPI.
         </p>
       </div>
     );
@@ -43,7 +43,7 @@ export default function DashboardKpiGrid({
     return (
       <div className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-gray-500">
-          No KPI data available.
+          No hay datos de KPI disponibles.
         </p>
       </div>
     );

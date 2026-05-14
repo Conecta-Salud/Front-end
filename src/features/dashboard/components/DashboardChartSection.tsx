@@ -2,6 +2,7 @@ import CustomBarChart from "../../../components/charts/BarChart/BarChart";
 import CustomPieChart from "../../../components/charts/PieChart/PieChart";
 import type { DashboardChart } from "../types/dashboardSummary.types";
 import {
+  adaptSummaryChartTitle,
   adaptSummaryChartToBarData,
   adaptSummaryChartToPieData,
 } from "../utils/dashboardChart.adapter";
@@ -30,7 +31,7 @@ export default function DashboardChartSection({
     return (
       <div className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          Could not load chart data.
+          No se pudo cargar los datos del gráfico.
         </p>
       </div>
     );
@@ -40,20 +41,19 @@ export default function DashboardChartSection({
     return (
       <div className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-gray-500">
-          No chart data available.
+          No hay datos gráficos disponibles.
         </p>
       </div>
     );
   }
   
-  console.log("Chart received:", chart);
-
+  const translatedTitle = adaptSummaryChartTitle(chart);
   const chartType = String(chart.type).toLowerCase();
 
   if (chartType === "bar") {
     return (
       <CustomBarChart
-        title={chart.title}
+        title={translatedTitle}
         data={adaptSummaryChartToBarData(chart)}
         chartHeight={height}
         referenceLine={chart.referenceLine}
@@ -65,7 +65,7 @@ export default function DashboardChartSection({
   if (chartType === "pie") {
     return (
       <CustomPieChart
-        title={chart.title}
+        title={translatedTitle}
         data={adaptSummaryChartToPieData(chart)}
         chartHeight={height}
       />
@@ -83,7 +83,7 @@ export default function DashboardChartSection({
             color: "transparent",
           }}
         >
-          {chart.title}
+          {translatedTitle}
         </h2>
 
         <DashboardScatterChart chart={chart} height={height} />
@@ -94,7 +94,7 @@ export default function DashboardChartSection({
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-sm">
       <p className="text-[16px] text-gray-500">
-        Unsupported chart type: {String(chart.type)}
+        Tipo de gráfico no soportado: {String(chart.type)}
       </p>
     </div>
   );

@@ -39,7 +39,7 @@ export default function DashboardScatterChart({
   if (!data.length) {
     return (
       <div className="flex h-[220px] items-center justify-center text-gray-500">
-        No chart data available.
+        No hay datos gráficos disponibles.
       </div>
     );
   }

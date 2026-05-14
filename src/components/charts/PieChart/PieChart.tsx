@@ -1,7 +1,6 @@
 import {
   PieChart,
   Pie,
-  Legend,
   Cell,
   ResponsiveContainer,
   Tooltip,
@@ -159,51 +158,57 @@ export default function CustomPieChart({
         </h2>
       )}
 
-      <div className="w-full" style={{ height: `${chartHeight}px` }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="label"
-              cx={showLegend ? "38%" : "50%"}
-              cy="50%"
-              outerRadius="85%"
-              labelLine={false}
-              label={renderCustomizedLabel}
-              isAnimationActive={isAnimationActive}
-              stroke="#FFFFFF"
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`${entry.label}-${index}`}
-                  fill={getPieColor(entry, index, colors)}
+      <div
+        className="grid w-full grid-cols-[minmax(0,1fr)_minmax(180px,240px)] items-center gap-6"
+        style={{ minHeight: `${chartHeight}px` }}
+      >
+        <div className="h-full min-h-[260px] min-w-0">
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="label"
+                cx="50%"
+                cy="50%"
+                outerRadius="85%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                isAnimationActive={isAnimationActive}
+                stroke="#FFFFFF"
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`${entry.label}-${index}`}
+                    fill={getPieColor(entry, index, colors)}
+                  />
+                ))}
+              </Pie>
+
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {showLegend && (
+          <div className="flex min-w-0 flex-col gap-2">
+            {data.map((item, index) => (
+              <div
+                key={`${item.label}-${index}`}
+                className="flex min-w-0 items-start gap-2"
+              >
+                <span
+                  className="mt-[4px] h-[14px] w-[14px] shrink-0 rounded-full"
+                  style={{ backgroundColor: getPieColor(item, index, colors) }}
                 />
-              ))}
-            </Pie>
 
-            <Tooltip />
-
-            {showLegend && (
-              <Legend
-                layout="vertical"
-                align="right"
-                verticalAlign="middle"
-                iconType="circle"
-                wrapperStyle={{
-                  right: 0,
-                  paddingLeft: 4,
-                  fontSize: "14px",
-                }}
-                formatter={(value) => (
-                  <span style={{ color: "#111827", fontSize: 14 }}>
-                    {value}
-                  </span>
-                )}
-              />
-            )}
-          </PieChart>
-        </ResponsiveContainer>
+                <span className="min-w-0 max-w-[220px] break-words text-[14px] leading-[18px] text-[#111827]">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,10 @@ import type {
   DashboardChart,
   DashboardChartDataPoint,
 } from "../types/dashboardSummary.types";
+import {
+  translateDashboardChartTitle,
+  translateDashboardDataLabel,
+} from "./dashboardTranslation.utils";
 import type { ChartData } from "../../../components/charts/BarChart/BarChart";
 import type { PieChartDataItem } from "../../../components/charts/PieChart/PieChart";
 
@@ -12,6 +16,11 @@ export type DashboardScatterChartData = {
   code?: string;
   colorToken?: "green" | "yellow" | "red" | "neutral";
 };
+
+export function adaptSummaryChartTitle(chart?: DashboardChart) {
+  if (!chart?.title) return "";
+  return translateDashboardChartTitle(chart.title);
+}
 
 export function adaptSummaryChartToBarData(
   chart?: DashboardChart
@@ -25,8 +34,10 @@ export function adaptSummaryChartToBarData(
         name?: string;
       };
 
+      const label = rawPoint.label ?? rawPoint.name ?? "Unknown";
+
       return {
-        label: rawPoint.label ?? rawPoint.name ?? "Unknown",
+        label: translateDashboardDataLabel(label),
         value: rawPoint.value as number,
         colorToken: rawPoint.colorToken,
       };
@@ -45,8 +56,10 @@ export function adaptSummaryChartToPieData(
         name?: string;
       };
 
+      const label = rawPoint.label ?? rawPoint.name ?? "Unknown";
+
       return {
-        label: rawPoint.label ?? rawPoint.name ?? "Unknown",
+        label: translateDashboardDataLabel(label),
         value: rawPoint.value as number,
         colorToken: rawPoint.colorToken,
       };
@@ -67,7 +80,7 @@ export function adaptSummaryChartToScatterData(
     }
 
     acc.push({
-      label: point.label,
+      label: translateDashboardDataLabel(point.label),
       x,
       y,
       ...(point.code ? { code: point.code } : {}),

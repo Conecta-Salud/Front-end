@@ -1,5 +1,3 @@
-// src/pages/dashboard_prueba.tsx
-
 import { useState } from "react";
 
 import CustomButton from "../components/ui/Button/Button";
@@ -14,6 +12,7 @@ import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import { useDashboardScope } from "../features/dashboard/hooks/useDashboardScope";
 import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSummary";
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
+
 
 const categoryLabels = {
   medical_coverage: "Indicadores de cobertura médica",
