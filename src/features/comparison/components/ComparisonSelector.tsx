@@ -75,12 +75,12 @@ export default function ComparisonSelector({
 
   return (
   <section className="rounded-[10px] bg-white p-5 shadow-sm">
-    <div className="grid grid-cols-12 items-end gap-4">
+    <div className="grid grid-cols-12 items-center gap-4">
       {/* Primer territorio */}
       <div className="col-span-12 md:col-span-5">
-        <label className="mb-2 block text-[14px] font-semibold text-black">
+        {/*<label className="mb-2 block text-[14px] font-semibold text-black">
           Primer territorio
-        </label>
+        </label>*/}
 
         <LocationInput
           value={firstLocation}
@@ -109,47 +109,40 @@ export default function ComparisonSelector({
               className="
                 relative
                 flex
-                h-[68px]
+                h-[76px]
                 w-full
                 flex-col
                 items-center
                 justify-center
                 rounded-[15px]
-                border-[3px]
-                bg-[#F1F1F1]
-                px-5
-                pr-11
+                px-6
+                pr-12
                 shadow-md
                 outline-none
                 cursor-pointer
                 transition-all
-                hover:bg-white
+                hover:scale-[1.01]
+                hover:shadow-lg
+                active:scale-[0.98]
+                focus:shadow-[0_0_0_4px_rgba(20,184,166,0.22)]
               "
               style={{
-                borderColor: "var(--color-green-start)",
+                background: "var(--gradient-primary-green)",
               }}
             >
-              <span
-                className="text-[12px] font-medium leading-none">
+              <span className="text-[14px] font-medium leading-none text-white/90">
                 Comparar por
               </span>
 
-              <span className="mt-1 text-[20px] font-semibold leading-non"
-                style={{
-                  color: "var(--color-green-start)",
-                }}
-              >
+              <span className="mt-2 text-[28px] font-bold leading-none text-white">
                 {selectedLevelLabel}
               </span>
 
               <span
                 className={[
-                  "absolute right-4 top-1/2 -translate-y-1/2 text-[14px] transition-transform duration-200",
+                  "absolute right-5 top-1/2 -translate-y-1/2 text-[18px] text-white transition-transform duration-200",
                   levelDropdownOpen ? "rotate-180" : "rotate-0",
                 ].join(" ")}
-                style={{
-                  color: "var(--color-primary-green-solid)",
-                }}
               >
                 ▼
               </span>
@@ -194,9 +187,9 @@ export default function ComparisonSelector({
 
       {/* Segundo territorio */}
       <div className="col-span-12 md:col-span-5">
-        <label className="mb-2 block text-[14px] font-semibold text-black">
-          Segundo territorio
-        </label>
+        {/* <label className="mb-2 flex justify-end text-[14px] font-semibold text-black">          
+        Segundo territorio
+        </label>*/}
 
         <LocationInput
           value={secondLocation}

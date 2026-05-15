@@ -4,6 +4,7 @@ import ComparisonSelector from "../features/comparison/components/ComparisonSele
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
 import ComparisonChartGrid from "../features/comparison/components/ComparisonChartGrid";
+import PriorityIndexCards from "../features/comparison/components/PriorityIndexCards";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import { usePeriodsCatalogQuery, useStatesCatalogQuery, useMunicipalitiesCatalogQuery } from "../features/catalogs/queries/catalog.queries";
@@ -135,6 +136,24 @@ function ModuloComparacionPage() {
             isError={comparisonSummary.isError}
           />
         )}
+
+        <section className="mt-6">
+          <div className="mb-4">
+            <h2 className="text-[24px] font-semibold text-black">
+              Índice de prioridad
+            </h2>
+
+            <p className="text-[16px] text-gray-500">
+              Comparación del nivel de prioridad para atención gubernamental.
+            </p>
+          </div>
+
+          <PriorityIndexCards
+            priority={comparisonSummary.priority}
+            isLoading={comparisonSummary.isLoading}
+            isError={comparisonSummary.isError}
+          />
+        </section>
       </section>
     </main>
   );

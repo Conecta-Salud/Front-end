@@ -20,10 +20,6 @@ export function formatComparisonChartValue(
     return `${decimalFormatter.format(value)}%`;
   }
 
-  if (chartId === "doctor_deficit") {
-    return decimalFormatter.format(value);
-  }
-
   return decimalFormatter.format(value);
 }
 
@@ -37,11 +33,11 @@ export function formatPriorityFactorValue(factor: ComparisonPriorityFactor) {
   }
 
   if (factor.unit === "doctors_per_1000") {
-    return `${decimalFormatter.format(factor.value)}`;
+    return `${decimalFormatter.format(factor.value)} médicos / 1,000 hab.`;
   }
 
   if (factor.unit === "hospitals_per_100k") {
-    return `${decimalFormatter.format(factor.value)}`;
+    return `${decimalFormatter.format(factor.value)} hospitales / 100k hab.`;
   }
 
   return integerFormatter.format(factor.value);
