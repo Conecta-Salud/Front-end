@@ -71,8 +71,30 @@ function ModuloComparacionPage() {
     level,
     periodId,
     codes: selectedCodes,
-    enabled: !selectionError,
+    enabled: Boolean(periodId) && selectedCodes.length === 2 && !selectionError,
   });
+
+  const hasCompleteSelection =
+    Boolean(periodId) &&
+    selectedCodes.length === 2 &&
+    !selectionError;
+
+  const safeCharts = hasCompleteSelection ? comparisonSummary.charts : [];
+  const safePriority = hasCompleteSelection ? comparisonSummary.priority : [];
+
+  const shouldShowComparisonResult =
+    hasCompleteSelection &&
+    !comparisonSummary.isLoading &&
+    !comparisonSummary.isError;
+
+  const shouldShowEmptyState = !periodId || !hasCompleteSelection;
+
+  const shouldShowLoadingState =
+    hasCompleteSelection && comparisonSummary.isLoading;
+
+  const shouldShowErrorState =
+    hasCompleteSelection && comparisonSummary.isError;
+
 
   const handleLevelChange = (nextLevel: ComparisonLevel) => {
     setLevel(nextLevel);
@@ -112,55 +134,115 @@ function ModuloComparacionPage() {
         onSecondLocationChange={setSecondLocation}
       />
 
-      <section className="mt-6">
-        {!periodId ? (
-          <p className="text-[16px] text-gray-500">
-            No se encontró periodo para el año seleccionado.
-          </p>
-        ) : selectedCodes.length !== 2 ? (
-          <p className="text-[16px] text-gray-500">
-            Selecciona dos territorios para iniciar la comparación.
-          </p>
-        ) : comparisonSummary.isLoading ? (
-          <p className="text-[16px] text-gray-500">
-            Cargando comparación...
-          </p>
-        ) : comparisonSummary.isError ? (
-          <p className="text-[16px] text-red-500">
-            No se pudo cargar la comparación.
-          </p>
-        ) : (
-          <ComparisonChartGrid
-            charts={comparisonSummary.charts}
-            isLoading={comparisonSummary.isLoading}
-            isError={comparisonSummary.isError}
-          />
-        )}
-
+      {shouldShowEmptyState && (
         <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-[24px] font-semibold"
+          <h2
+            className="mb-2 text-[20px] font-semibold"
+            style={{
+              backgroundImage: "var(--gradient-primary-green)",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            Comparación pendiente
+          </h2>
+
+          <p className="text-[16px] text-gray-500">
+            {!periodId
+              ? "No se encontró periodo para el año seleccionado."
+              : "Selecciona dos territorios del mismo nivel para visualizar gráficas e índice de prioridad."}
+          </p>
+        </section>
+      )}
+
+      {shouldShowLoadingState && (
+        <>
+          <section className="mt-6">
+            <ComparisonChartGrid
+              charts={[]}
+              isLoading
+              isError={false}
+            />
+          </section>
+
+          <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
+            <h2
+              className="mb-2 text-[20px] font-semibold"
               style={{
                 backgroundImage: "var(--gradient-primary-green)",
                 WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent"
+                color: "transparent",
               }}
             >
               Índice de prioridad
             </h2>
 
-            <p className="text-[16px] text-gray-500">
+            <p className="mb-5 text-[16px] text-gray-500">
               Comparación del nivel de prioridad para atención gubernamental.
             </p>
-          </div>
 
-          <PriorityIndexCards
-            priority={comparisonSummary.priority}
-            isLoading={comparisonSummary.isLoading}
-            isError={comparisonSummary.isError}
-          />
+            <PriorityIndexCards
+              priority={[]}
+              isLoading
+              isError={false}
+            />
+          </section>
+        </>
+      )}
+
+      {shouldShowErrorState && (
+        <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
+          <h2
+            className="mb-2 text-[20px] font-semibold"
+            style={{
+              backgroundImage: "var(--gradient-primary-green)",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            No se pudo cargar la comparación
+          </h2>
+
+          <p className="text-[16px] text-red-500">
+            Intenta cambiar los territorios seleccionados o verifica que existan datos para el año seleccionado.
+          </p>
         </section>
-      </section>
+      )}
+
+      {shouldShowComparisonResult && (
+        <>
+          <section className="mt-6">
+            <ComparisonChartGrid
+              charts={safeCharts}
+              isLoading={false}
+              isError={false}
+            />
+          </section>
+
+          <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
+            <h2
+              className="mb-2 text-[20px] font-semibold"
+              style={{
+                backgroundImage: "var(--gradient-primary-green)",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              Índice de prioridad
+            </h2>
+
+            <p className="mb-5 text-[16px] text-gray-500">
+              Comparación del nivel de prioridad para atención gubernamental.
+            </p>
+
+            <PriorityIndexCards
+              priority={safePriority}
+              isLoading={false}
+              isError={false}
+            />
+          </section>
+        </>
+      )}
     </main>
   );
 }

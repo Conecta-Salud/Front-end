@@ -51,48 +51,60 @@ interface ComparisonBarChartProps {
   valueFormatter?: (value: number) => string;
 }
 
+const getShortLabel = (label: string, maxLength = 10) => {
+  const cleanLabel = label.trim();
+
+  if (cleanLabel.length <= maxLength) return cleanLabel;
+
+  return `${cleanLabel.slice(0, maxLength).trim()}...`;
+};
+
 const CustomXAxisTick = ({
   x = 0,
   y = 0,
   payload,
-  data,
 }: CustomXAxisTickProps) => {
-  const numericX = typeof x === "number" ? x : Number(x);
-  const numericY = typeof y === "number" ? y : Number(y);
-
   const label = payload?.value ?? "";
-  const currentItem = data.find((item) => item.label === label);
-  const subtitle = currentItem?.subtitle;
+  const shortLabel = getShortLabel(label, 11);
 
   return (
-    <g transform={`translate(${numericX},${numericY})`}>
+    <g transform={`translate(${x},${y})`}>
       <text
         x={0}
         y={0}
-        dy={16}
+        dy={18}
         textAnchor="middle"
-        fill="#000000"
-        fontSize="14"
-        fontWeight="500"
+        fill="#000"
+        fontSize={12}
+        fontWeight={500}
       >
-        {label}
+        {shortLabel}
       </text>
-
-      {subtitle && (
-        <text
-          x={0}
-          y={0}
-          dy={34}
-          textAnchor="middle"
-          fill="#7A7A7A"
-          fontSize="12"
-          fontWeight="400"
-        >
-          {subtitle}
-        </text>
-      )}
     </g>
   );
+};
+
+const splitTextIntoLines = (text: string, maxCharsPerLine = 12) => {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  words.forEach((word) => {
+    const testLine = currentLine
+      ? `${currentLine} ${word}`
+      : word;
+
+    if (testLine.length > maxCharsPerLine) {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  });
+
+  if (currentLine) lines.push(currentLine);
+
+  return lines;
 };
 
 export default function ComparisonBarChart({
@@ -172,7 +184,7 @@ export default function ComparisonBarChart({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
-            margin={{ top: 30, right: 40, left: 0, bottom: 50 }}
+            margin={{ top: 30, right: 40, left: 0, bottom: 15 }}
           >
             <defs>
               <linearGradient id={gradientIds.green} x1="0" y1="0" x2="0" y2="1">
@@ -200,7 +212,7 @@ export default function ComparisonBarChart({
               axisLine={{ stroke: "#BDBDBD" }}
               tickLine={false}
               interval={0}
-              height={50}
+              height={35}
               tick={(props) => <CustomXAxisTick {...props} data={data} />}
             />
 
@@ -211,7 +223,14 @@ export default function ComparisonBarChart({
               tick={{ fontSize: 12, fill: "#5B5B5B" }}
             />
 
-            <Tooltip />
+            <Tooltip
+              labelFormatter={(label) => String(label)}
+              formatter={(value) =>
+                typeof value === "number"
+                  ? valueFormatter?.(value) ?? value.toFixed(2)
+                  : value
+              }
+            />
 
             {referenceLine && (
               <ReferenceLine
