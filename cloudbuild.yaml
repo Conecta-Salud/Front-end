@@ -3,6 +3,7 @@ substitutions:
   _REPOSITORY: frontimage
   _IMAGE: frontend
   _SERVICE: frontend
+  _VITE_API_URL: https://backendn-887266426178.us-central1.run.app
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -23,6 +24,7 @@ steps:
         docker build \
           -t "$$IMAGE_BASE:$$VERSION" \
           -t "$$IMAGE_BASE:latest" \
+          --build-arg VITE_API_URL=${_VITE_API_URL} \
           .
 
         docker push "$$IMAGE_BASE:$$VERSION"
