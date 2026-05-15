@@ -137,9 +137,15 @@ function ModuloComparacionPage() {
           />
         )}
 
-        <section className="mt-6">
+        <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
           <div className="mb-4">
-            <h2 className="text-[24px] font-semibold text-black">
+            <h2 className="text-[24px] font-semibold"
+              style={{
+                backgroundImage: "var(--gradient-primary-green)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}
+            >
               Índice de prioridad
             </h2>
 
