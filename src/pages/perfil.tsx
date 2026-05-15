@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfileInfo } from "../features/profile/hooks/useProfileInfo";
 
 import Button from "../components/ui/Button/Button";
 import ProfileInfoCard from "../features/profile/components/ProfileInfoCard";
+import ChangePasswordModal from "../features/profile/components/ChangePasswordModal";
 
 import { useLogoutMutation } from "../features/auth/mutations/useLogoutMutation";
 
@@ -11,6 +13,7 @@ function PerfilPage() {
 
   const logoutMutation = useLogoutMutation();
   const { profile, isLoading, isError } = useProfileInfo();
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -41,12 +44,12 @@ function PerfilPage() {
         title={profile.title}
         lastLogin={profile.lastLogin}
         email={profile.email}
-        institution={profile.institution}
         dependency={profile.dependency}
         role={profile.role}
         password={profile.password}
         isLoading={isLoading}
         isError={isError}
+        onEditPassword={() => setIsPasswordModalOpen(true)}
       />
 
       {/* BOTON */}
@@ -58,6 +61,10 @@ function PerfilPage() {
           onClick={handleLogout}
         />
       </div>
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </div>
   );
 }

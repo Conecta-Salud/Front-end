@@ -22,7 +22,7 @@ export function useProfileInfo() {
       institution: "Pendiente de backend",
       dependency: user?.departmentName ?? "",
       role: roleLabel,
-      password: "ConectaSalud123",
+      password: "*******",
     },
     isLoading: query.isLoading,
     isError: query.isError,

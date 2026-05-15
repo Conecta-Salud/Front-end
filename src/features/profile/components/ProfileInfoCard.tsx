@@ -1,21 +1,17 @@
-import { useState } from "react";
-
 // ICONOS
 import MedicalIcon from "../../../assets/icons/MedicalBriefcase.svg";
 import PencilIcon from "../../../assets/icons/Pencil.svg";
-import EyeIconOpen from "../../../assets/icons/eyeOpenIcon.svg";
-import EyeIconClosed from "../../../assets/icons/eyeCloseIcon.svg";
 
 interface ProfileInfoCardProps {
   title: string;
   lastLogin: string;
   email: string;
-  institution: string;
   dependency: string;
   role: string;
   password: string;
   isLoading?: boolean;
   isError?: boolean;
+  onEditPassword?: () => void;
 }
 
 interface InfoRowProps {
@@ -62,9 +58,8 @@ function ProfileInfoCard({
   password,
   isLoading = false,
   isError = false,
+  onEditPassword,
 }: ProfileInfoCardProps) {
-  const [showPassword, setShowPassword] = useState(false);
-
   if (isLoading) {
     return (
       <div
@@ -170,25 +165,17 @@ function ProfileInfoCard({
                 fontWeight: "var(--font-weight-medium)",
               }}
             >
-              {showPassword ? password : "*".repeat(password.length)}
+              ********
             </p>
 
             <div className="flex items-center gap-4">
               {/* BOTON EDITAR */}
-              <button className="transition hover:scale-110">
-                <img src={PencilIcon} alt="edit-icon" className="h-5 w-5" />
-              </button>
-
-              {/* BOTON VER / OCULTAR */}
               <button
-                onClick={() => setShowPassword(!showPassword)}
+                type="button"
+                onClick={onEditPassword}
                 className="transition hover:scale-110"
               >
-                <img
-                  src={showPassword ? EyeIconClosed : EyeIconOpen}
-                  alt="eye-icon"
-                  className="h-5 w-5"
-                />
+                <img src={PencilIcon} alt="edit-icon" className="h-5 w-5" />
               </button>
             </div>
           </div>
