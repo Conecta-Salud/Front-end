@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import pinIcon from '../../../assets/icons/pin.svg';
+import pinIcon from '../../../assets/icons/pinIcon.svg';
 import cancelarIcon from '../../../assets/icons/cancelar.svg';
 
 export type LocationLevel = "state" | "municipality";
 
 export type LocationOption = {
   id: string;
+  code: string;
   name: string;
   level: LocationLevel;
   stateName?: string;
@@ -61,6 +62,19 @@ const LocationInput: React.FC<LocationInputProps> = ({
     return matchesLevel && matchesSearch;
   });
 
+  const renderSelectedLabel = (option: LocationOption) => {
+    if (option.level === "municipality" && option.stateName) {
+      return (
+        <>
+          <span className="font-medium">{option.name}</span>{" "}
+          <span className="font-normal text-gray-500">({option.stateName})</span>
+        </>
+      );
+    }
+
+    return <span className="font-medium">{option.name}</span>;
+  };
+
   const handleSelect = (option: LocationOption) => {
     onChange(option);
     setSearch(getDisplayLabel(option));
@@ -107,7 +121,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       <div
         className={`
           relative flex h-[60px] w-full items-center overflow-hidden
-          rounded-[15px] border-2 bg-[#F1F1F1] shadow-md transition-all
+          rounded-[15px] border-3 bg-[#F1F1F1] shadow-md transition-all
           ${disabled ? "cursor-not-allowed opacity-60" : ""}
           ${error ? "border-red-500" : "border-[var(--color-green-start)]"}
         `}
@@ -121,29 +135,46 @@ const LocationInput: React.FC<LocationInputProps> = ({
           />
         </div>
 
-        <input
-          type="text"
-          value={search}
-          placeholder={placeholder}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setOpen(true);
+        {value && !open ? (
+          <button
+            type="button"
+            onClick={() => {
+              if (!disabled) setOpen(true);
+            }}
+            disabled={disabled}
+            className="
+              h-full w-full bg-transparent
+              pl-[50px] pr-[60px] text-left text-[20px]
+              outline-none disabled:cursor-not-allowed
+            "
+          >
+            {renderSelectedLabel(value)}
+          </button>
+        ) : (
+          <input
+            type="text"
+            value={search}
+            placeholder={placeholder}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setOpen(true);
 
-            if (value) {
-              onChange(null);
-            }
-          }}
-          onFocus={() => {
-            if (!disabled) setOpen(true);
-          }}
-          disabled={disabled}
-          aria-invalid={Boolean(error)}
-          className="
-            h-full w-full bg-transparent
-            pl-[50px] pr-[60px] text-[20px] font-bold
-            outline-none disabled:cursor-not-allowed
-          "
-        />
+              if (value) {
+                onChange(null);
+              }
+            }}
+            onFocus={() => {
+              if (!disabled) setOpen(true);
+            }}
+            disabled={disabled}
+            aria-invalid={Boolean(error)}
+            className="
+              h-full w-full bg-transparent
+              pl-[50px] pr-[60px] text-[20px] font-medium
+              outline-none disabled:cursor-not-allowed
+            "
+          />
+        )}
 
         {(value || search) && !disabled && (
           <button
@@ -159,7 +190,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
               src={cancelarIcon}
               alt=""
               aria-hidden="true"
-              className="h-[42px] w-[42px] object-contain"
+              className="h-[24px] w-[24px] object-contain"
             />
           </button>
         )}
@@ -171,7 +202,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <button
-                  key={option.id}
+                  key={`${option.level}-${option.code}`}
                   type="button"
                   onClick={() => handleSelect(option)}
                   className="w-full rounded-[10px] px-4 py-3 text-left hover:bg-gray-100"

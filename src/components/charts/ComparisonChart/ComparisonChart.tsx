@@ -11,7 +11,7 @@ import {
   LabelList,
 } from "recharts";
 
-type ChartTone = "green" | "yellow" | "red";
+type ChartTone = "green" | "yellow" | "red" | "neutral" | "default";
 
 type CustomXAxisTickProps = {
   x?: string | number;
@@ -26,6 +26,7 @@ interface ChartData {
   label: string;
   value: number;
   subtitle?: string;
+  tone?: ChartTone;
 }
 
 interface StatusRule {
@@ -42,65 +43,79 @@ interface ReferenceConfig {
 interface ComparisonBarChartProps {
   data: ChartData[];
   title?: string;
-  rules: StatusRule[];
+  rules?: StatusRule[];
   referenceLine?: ReferenceConfig;
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
   emptyMessage?: string;
+  valueFormatter?: (value: number) => string;
 }
+
+const getShortLabel = (label: string, maxLength = 10) => {
+  const cleanLabel = label.trim();
+
+  if (cleanLabel.length <= maxLength) return cleanLabel;
+
+  return `${cleanLabel.slice(0, maxLength).trim()}...`;
+};
 
 const CustomXAxisTick = ({
   x = 0,
   y = 0,
   payload,
-  data,
 }: CustomXAxisTickProps) => {
-  const numericX = typeof x === "number" ? x : Number(x);
-  const numericY = typeof y === "number" ? y : Number(y);
-
   const label = payload?.value ?? "";
-  const currentItem = data.find((item) => item.label === label);
-  const subtitle = currentItem?.subtitle;
+  const shortLabel = getShortLabel(label, 11);
 
   return (
-    <g transform={`translate(${numericX},${numericY})`}>
+    <g transform={`translate(${x},${y})`}>
       <text
         x={0}
         y={0}
-        dy={16}
+        dy={18}
         textAnchor="middle"
-        fill="#000000"
-        fontSize="14"
-        fontWeight="500"
+        fill="#000"
+        fontSize={12}
+        fontWeight={500}
       >
-        {label}
+        {shortLabel}
       </text>
-
-      {subtitle && (
-        <text
-          x={0}
-          y={0}
-          dy={34}
-          textAnchor="middle"
-          fill="#7A7A7A"
-          fontSize="12"
-          fontWeight="400"
-        >
-          {subtitle}
-        </text>
-      )}
     </g>
   );
+};
+
+const splitTextIntoLines = (text: string, maxCharsPerLine = 12) => {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  words.forEach((word) => {
+    const testLine = currentLine
+      ? `${currentLine} ${word}`
+      : word;
+
+    if (testLine.length > maxCharsPerLine) {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  });
+
+  if (currentLine) lines.push(currentLine);
+
+  return lines;
 };
 
 export default function ComparisonBarChart({
   data,
   title = "Comparación",
-  rules,
+  rules = [],
   referenceLine,
   yDomain = [0, "auto"],
   chartHeight = 320,
   emptyMessage = "No hay datos disponibles.",
+  valueFormatter,
 }: ComparisonBarChartProps) {
   const chartId = useId();
 
@@ -125,23 +140,31 @@ export default function ComparisonBarChart({
     );
   }
 
-  const getToneForValue = (value: number): ChartTone => {
-    for (const rule of rules) {
-      const meetsMin = rule.min === undefined || value >= rule.min;
-      const meetsMax = rule.max === undefined || value <= rule.max;
+  const getToneForEntry = (entry: ChartData): ChartTone => {
+    if (entry.tone && entry.tone !== "default") {
+      return entry.tone;
+    }
 
-      if (meetsMin && meetsMax) {
-        return rule.tone;
+    if (rules.length) {
+      for (const rule of rules) {
+        const meetsMin = rule.min === undefined || entry.value >= rule.min;
+        const meetsMax = rule.max === undefined || entry.value <= rule.max;
+
+        if (meetsMin && meetsMax) {
+          return rule.tone;
+        }
       }
     }
 
-    return "yellow"; 
+    return "neutral";
   };
 
-  const gradientIds = {
+  const gradientIds: Record<ChartTone, string> = {
     green: `${chartId}-greenGradient`,
     yellow: `${chartId}-yellowGradient`,
     red: `${chartId}-redGradient`,
+    neutral: `${chartId}-neutralGradient`,
+    default: `${chartId}-neutralGradient`,
   };
 
   return (
@@ -161,7 +184,7 @@ export default function ComparisonBarChart({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
-            margin={{ top: 30, right: 40, left: 0, bottom: 50 }}
+            margin={{ top: 30, right: 40, left: 0, bottom: 15 }}
           >
             <defs>
               <linearGradient id={gradientIds.green} x1="0" y1="0" x2="0" y2="1">
@@ -178,6 +201,10 @@ export default function ComparisonBarChart({
                 <stop offset="0%" stopColor="var(--color-red-start)" />
                 <stop offset="100%" stopColor="var(--color-red)" />
               </linearGradient>
+              <linearGradient id={gradientIds.neutral} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#A3A3A3" />
+                <stop offset="100%" stopColor="#D4D4D4" />
+              </linearGradient>
             </defs>
 
             <XAxis
@@ -185,7 +212,7 @@ export default function ComparisonBarChart({
               axisLine={{ stroke: "#BDBDBD" }}
               tickLine={false}
               interval={0}
-              height={50}
+              height={35}
               tick={(props) => <CustomXAxisTick {...props} data={data} />}
             />
 
@@ -196,7 +223,14 @@ export default function ComparisonBarChart({
               tick={{ fontSize: 12, fill: "#5B5B5B" }}
             />
 
-            <Tooltip />
+            <Tooltip
+              labelFormatter={(label) => String(label)}
+              formatter={(value) =>
+                typeof value === "number"
+                  ? valueFormatter?.(value) ?? value.toFixed(2)
+                  : value
+              }
+            />
 
             {referenceLine && (
               <ReferenceLine
@@ -221,12 +255,14 @@ export default function ComparisonBarChart({
                 fontSize={14}
                 fontWeight={700}
                 formatter={(value) =>
-                  typeof value === "number" ? value.toFixed(1) : ""
+                  typeof value === "number"
+                    ? valueFormatter?.(value) ?? value.toFixed(2)
+                    : ""
                 }
               />
 
               {data.map((entry, index) => {
-                const tone = getToneForValue(entry.value);
+                const tone = getToneForEntry(entry);
 
                 return (
                   <Cell
