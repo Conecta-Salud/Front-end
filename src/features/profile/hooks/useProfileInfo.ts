@@ -1,29 +1,34 @@
+import { useMemo } from "react";
 import { useCurrentUserQuery } from "../../auth/queries/useCurrentUserQuery";
 
 export function useProfileInfo() {
   const query = useCurrentUserQuery();
 
-  const user = query.data;
+  const profile = useMemo(() => {
+    const user = query.data;
 
-  const fullName = user ? `${user.firstName} ${user.lastName}`.trim() : "";
-
-  const roleLabel =
-    user?.role === "admin"
-      ? "Administrador"
-      : user?.role === "strategic"
-      ? "Usuario estratégico"
+    const fullName = user
+      ? [user.firstName, user.lastName].filter(Boolean).join(" ").trim()
       : "";
 
-  return {
-    profile: {
-      title: fullName,
-      lastLogin: "Último ingreso pendiente",
+    const roleLabel =
+      user?.role === "admin"
+        ? "Administrador"
+        : user?.role === "strategic"
+        ? "Usuario estratégico"
+        : "";
+
+    return {
+      title: fullName || "Usuario",
+      lastLogin: "Último ingreso no disponible",
       email: user?.email ?? "",
-      institution: "Pendiente de backend",
       dependency: user?.departmentName ?? "",
       role: roleLabel,
-      password: "*******",
-    },
+    };
+  }, [query.data]);
+
+  return {
+    profile,
     isLoading: query.isLoading,
     isError: query.isError,
   };

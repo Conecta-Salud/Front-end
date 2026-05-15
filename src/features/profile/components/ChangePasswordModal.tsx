@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "../../../components/ui/Button/Button";
 import CustomInputField from "../../../components/ui/CustomInputField/CustomInputField";
@@ -17,29 +17,83 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
     newPassword: "",
   });
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleChange = (
     field: "currentPassword" | "newPassword",
     value: string
   ) => {
+    setValidationError(null);
+
     setForm((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleSubmit = async () => {
-    await changePasswordMutation.mutateAsync({
-      currentPassword: form.currentPassword,
-      newPassword: form.newPassword,
+  const resetModal = () => {
+    setForm({
+      currentPassword: "",
+      newPassword: "",
     });
+
+    setValidationError(null);
+    changePasswordMutation.reset();
   };
+
+  const handleClose = () => {
+    if (changePasswordMutation.isPending) return;
+
+    resetModal();
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (!form.currentPassword || !form.newPassword) {
+      setValidationError("Completa ambos campos para continuar.");
+      return;
+    }
+
+    if (form.newPassword.length < 8) {
+      setValidationError("La nueva contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    try {
+      await changePasswordMutation.mutateAsync({
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
+      });
+
+      resetModal();
+      onClose();
+    } catch {
+      // El mensaje visual lo maneja isError.
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      resetModal();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-6">
-      <div className="w-full max-w-[640px] rounded-[28px] bg-white p-6 shadow-lg">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="change-password-title"
+      onMouseDown={handleClose}
+    >
+      <div
+        className="w-full max-w-[640px] rounded-[10px] bg-white p-6 shadow-lg"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
         <h2
+          id="change-password-title"
           className="mb-6 text-[24px]"
           style={{
             color: "var(--color-green-end)",
@@ -67,15 +121,15 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
           />
         </div>
 
-        {changePasswordMutation.isError && (
+        {validationError && (
           <p className="mt-4 text-[14px] font-medium text-red-500">
-            No se pudo cambiar la contraseña. Revisa tu contraseña actual.
+            {validationError}
           </p>
         )}
 
-        {changePasswordMutation.isSuccess && (
-          <p className="mt-4 text-[14px] font-medium text-green-600">
-            Contraseña cambiada correctamente.
+        {changePasswordMutation.isError && (
+          <p className="mt-4 text-[14px] font-medium text-red-500">
+            No se pudo cambiar la contraseña. Revisa tu contraseña actual.
           </p>
         )}
 
@@ -84,14 +138,12 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
             label="Cancelar"
             tone="red"
             height="40"
-            onClick={onClose}
+            onClick={handleClose}
             disabled={changePasswordMutation.isPending}
           />
 
           <Button
-            label={
-              changePasswordMutation.isPending ? "Guardando..." : "Guardar"
-            }
+            label={changePasswordMutation.isPending ? "Guardando..." : "Guardar"}
             tone="green"
             height="40"
             onClick={handleSubmit}

@@ -8,21 +8,20 @@ interface ProfileInfoCardProps {
   email: string;
   dependency: string;
   role: string;
-  password: string;
   isLoading?: boolean;
   isError?: boolean;
-  onEditPassword?: () => void;
+  onEditPassword: () => void;
 }
 
 interface InfoRowProps {
-  label?: string;
-  value?: string;
+  label: string;
+  value?: string | null;
 }
 
-function InfoRow({ label = "Campo", value = "Sin información" }: InfoRowProps) {
+function InfoRow({ label, value }: InfoRowProps) {
   return (
     <div
-      className="pb-2 border-b-2"
+      className="border-b-2 pb-2"
       style={{
         borderColor: "var(--color-green-end)",
       }}
@@ -43,7 +42,7 @@ function InfoRow({ label = "Campo", value = "Sin información" }: InfoRowProps) 
           fontWeight: "var(--font-weight-medium)",
         }}
       >
-        {value || "Sin información"}
+        {value?.trim() || "Sin información"}
       </p>
     </div>
   );
@@ -55,7 +54,6 @@ function ProfileInfoCard({
   email,
   dependency,
   role,
-  password,
   isLoading = false,
   isError = false,
   onEditPassword,
@@ -63,7 +61,7 @@ function ProfileInfoCard({
   if (isLoading) {
     return (
       <div
-        className="rounded-[28px] bg-white p-6 shadow-sm"
+        className="rounded-[10px] bg-white p-6 shadow-sm"
         style={{
           fontFamily: "var(--font-primary)",
         }}
@@ -76,7 +74,7 @@ function ProfileInfoCard({
   if (isError) {
     return (
       <div
-        className="rounded-[28px] bg-white p-6 shadow-sm"
+        className="rounded-[10px] bg-white p-6 shadow-sm"
         style={{
           fontFamily: "var(--font-primary)",
         }}
@@ -90,7 +88,7 @@ function ProfileInfoCard({
 
   return (
     <div
-      className="w-full rounded-[28px] p-6 shadow-sm bg-white"
+      className="w-full rounded-[10px] p-6 shadow-sm bg-white"
       style={{
         fontFamily: "var(--font-primary)",
       }}
