@@ -1,0 +1,67 @@
+import { useMemo } from "react";
+import PriorityCard from "../../../components/charts/Priority/PriorityCard";
+import type { ComparisonPriorityResult } from "../types/comparisonSummary.types";
+import { adaptPriorityResultsToCards } from "../utils/comparisonPriority.adapter";
+
+type PriorityIndexCardsProps = {
+  priority?: ComparisonPriorityResult[];
+  isLoading?: boolean;
+  isError?: boolean;
+};
+
+export default function PriorityIndexCards({
+  priority = [],
+  isLoading = false,
+  isError = false,
+}: PriorityIndexCardsProps) {
+  const cards = useMemo(() => adaptPriorityResultsToCards(priority), [priority]);
+
+  if (isLoading) {
+    return (
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div
+            key={index}
+            className="h-[280px] rounded-[10px] bg-white shadow-sm animate-pulse"
+          />
+        ))}
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="rounded-[10px] bg-white p-6 shadow-sm">
+        <p className="text-[16px] text-red-500">
+          No se pudo cargar el índice de prioridad.
+        </p>
+      </section>
+    );
+  }
+
+  if (!cards.length) {
+    return (
+      <section className="rounded-[10px] bg-white p-6 shadow-sm">
+        <p className="text-[16px] text-gray-500">
+          Selecciona dos territorios para visualizar el índice de prioridad.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {cards.map((card) => (
+        <PriorityCard
+          key={card.id}
+          title={card.title}
+          subtitle={card.subtitle}
+          priority={card.priority}
+          progress={card.progress}
+          metrics={card.metrics}
+          gradientDirection="horizontal"
+        />
+      ))}
+    </section>
+  );
+}
