@@ -5,12 +5,19 @@ import type {
   RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
 
+const isJsonContentType = (contentType: string) => {
+  return (
+    contentType.includes("application/json") ||
+    contentType.includes("+json")
+  );
+};
+
 export async function fetchStatesGeoJson() {
   const response = await fetch("/geo/mexico-states.geojson");
 
   const contentType = response.headers.get("content-type") ?? "";
 
-  if (!response.ok || !contentType.includes("application/json")) {
+  if (!response.ok || !isJsonContentType(contentType)) {
     throw new Error("Could not load states GeoJSON.");
   }
 
@@ -22,7 +29,7 @@ export async function fetchMunicipalitiesGeoJson(stateCode: string) {
 
   const contentType = response.headers.get("content-type") ?? "";
 
-  if (!response.ok || !contentType.includes("application/json")) {
+  if (!response.ok || !isJsonContentType(contentType)) {
     throw new Error(
       `Could not load municipalities GeoJSON for state ${stateCode}.`
     );
