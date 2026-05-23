@@ -22,6 +22,7 @@ import {
 import HealthMapLayer from "./HealthMapLayer";
 import HealthMapFitBounds from "./HealthMapFitBounds";
 import HealthMapSelectedMarker from "./HealthMapSelectedMarker";
+import HealthMapLegend from "./HealthMapLegend";
 
 type HealthMapProps = {
   indicator: HealthMapIndicator;
@@ -182,76 +183,84 @@ export default function HealthMap({
   }
 
   return (
-    <div
-      className={[
-        "relative h-[500px] w-full overflow-hidden rounded-[10px] bg-white shadow-sm",
-        className,
-      ].join(" ")}
-    >
-      {isFetching && (
-        <div className="absolute inset-0 z-[500] flex items-center justify-center bg-white/50">
-          <p className="text-[16px] text-gray-500">Updating map...</p>
-        </div>
-      )}
-
-      <MapContainer
-        center={MEXICO_INITIAL_CENTER}
-        zoom={MEXICO_INITIAL_ZOOM}
-        minZoom={4}
-        maxZoom={10}
-        scrollWheelZoom={false}
-        zoomControl
-        className="h-full w-full"
+    <div className="w-full">
+      <div
+        className={[
+          "relative h-[500px] w-full overflow-hidden rounded-[10px] bg-white shadow-sm",
+          className,
+        ].join(" ")}
       >
-        <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {isFetching && (
+          <div className="absolute inset-0 z-[500] flex items-center justify-center bg-white/50">
+            <p className="text-[16px] text-gray-500">Updating map...</p>
+          </div>
+        )}
 
-        <HealthMapFitBounds
-          data={mergedData}
-          enabled={loadedNavigationKey === currentNavigationKey}
-          navigationKey={currentNavigationKey}
-          viewLevel={navigation.level}
-          maxZoom={STATE_MAX_FIT_ZOOM}
-        />
+        <MapContainer
+          center={MEXICO_INITIAL_CENTER}
+          zoom={MEXICO_INITIAL_ZOOM}
+          minZoom={4}
+          maxZoom={10}
+          scrollWheelZoom={false}
+          zoomControl
+          className="h-full w-full"
+        >
+          <TileLayer
+            attribution='&copy; OpenStreetMap contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
-        <HealthMapLayer
-          data={mergedData}
-          mapLevel={navigation.level}
-          layerKey={layerKey}
-          selectedMunicipalityCode={navigation.selectedMunicipality?.code}
-          onStateClick={(stateCode, stateName) => {
-            if (navigation.level !== "country") return;
+          <HealthMapFitBounds
+            data={mergedData}
+            enabled={loadedNavigationKey === currentNavigationKey}
+            navigationKey={currentNavigationKey}
+            viewLevel={navigation.level}
+            maxZoom={STATE_MAX_FIT_ZOOM}
+          />
 
-            onNavigationChange({
-              level: "state",
-              selectedState: {
-                code: stateCode,
-                name: stateName,
-              },
-              selectedMunicipality: null,
-            });
-          }}
-          onMunicipalityClick={(municipalityCode, municipalityName) => {
-            if (!navigation.selectedState) return;
+          <HealthMapLayer
+            data={mergedData}
+            mapLevel={navigation.level}
+            layerKey={layerKey}
+            selectedMunicipalityCode={navigation.selectedMunicipality?.code}
+            onStateClick={(stateCode, stateName) => {
+              if (navigation.level !== "country") return;
 
-            onNavigationChange({
-              level: "municipality",
-              selectedState: navigation.selectedState,
-              selectedMunicipality: {
-                code: municipalityCode,
-                name: municipalityName,
-              },
-            });
-          }}
-        />
+              onNavigationChange({
+                level: "state",
+                selectedState: {
+                  code: stateCode,
+                  name: stateName,
+                },
+                selectedMunicipality: null,
+              });
+            }}
+            onMunicipalityClick={(municipalityCode, municipalityName) => {
+              if (!navigation.selectedState) return;
 
-        <HealthMapSelectedMarker
-          data={mergedData}
-          selectedCode={navigation.selectedMunicipality?.code}
-        />
-      </MapContainer>
+              onNavigationChange({
+                level: "municipality",
+                selectedState: navigation.selectedState,
+                selectedMunicipality: {
+                  code: municipalityCode,
+                  name: municipalityName,
+                },
+              });
+            }}
+          />
+
+          <HealthMapSelectedMarker
+            data={mergedData}
+            selectedCode={navigation.selectedMunicipality?.code}
+          />
+        </MapContainer>
+      </div>
+
+      <HealthMapLegend
+        indicator={indicator}
+        indicators={activeIndicators}
+        level={navigation.level}
+      />
     </div>
   );
 }
