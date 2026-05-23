@@ -96,15 +96,24 @@ export default function HealthMapLegend({
         </div>
       </div>
 
-      <div className="mt-[15px] flex items-center justify-center gap-2">
-        <div className="h-[2px] w-full bg-[#C6C6C6]" />
+    <div className="mt-[15px] flex items-center gap-4">
+    <div className="h-[2px] flex-1 bg-[#C6C6C6]" />
 
-        <p className="text-center text-[16px] font-medium text-[#C6C6C6]">
-          {config.title}
-        </p>
+    <p
+        className="
+        shrink-0
+        whitespace-nowrap
+        text-center
+        text-[16px]
+        font-medium
+        text-[#C6C6C6]
+        "
+    >
+        {config.title}
+    </p>
 
-        <div className="h-[2px] w-full bg-[#C6C6C6]" />
-      </div>
+    <div className="h-[2px] flex-1 bg-[#C6C6C6]" />
+    </div>
 
       <p className="text-center text-[16px] font-normal text-[#C6C6C6]">
         {config.description}
