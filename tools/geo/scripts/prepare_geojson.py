@@ -1,62 +1,118 @@
-import geopandas as gpd
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+import geopandas as gpd
 
-INPUT_DIR = ROOT / "raw_geo"
-OUTPUT_DIR = ROOT / "public" / "geo"
+
+GEO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+INPUT_DIR = GEO_ROOT / "raw"
+OUTPUT_DIR = REPO_ROOT / "public" / "geo"
 OUTPUT_MUNICIPALITIES_DIR = OUTPUT_DIR / "municipalities"
 
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-OUTPUT_MUNICIPALITIES_DIR.mkdir(parents=True, exist_ok=True)
+STATE_SIMPLIFY_TOLERANCE = 0.005
+MUNICIPALITY_SIMPLIFY_TOLERANCE = 0.002
 
-def prepare_states():
-    input_file = INPUT_DIR / "mg_2025_integrado" / "conjunto_de_datos" / "00ent.shp"
+
+def ensure_output_dirs() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUTPUT_MUNICIPALITIES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def normalize_states(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    normalized = gdf.to_crs(epsg=4326).rename(
+        columns={
+            "CVEGEO": "code",
+            "NOMGEO": "name",
+        }
+    )
+
+    normalized = normalized[["code", "name", "geometry"]].copy()
+    normalized["geometry"] = normalized["geometry"].simplify(
+        tolerance=STATE_SIMPLIFY_TOLERANCE,
+        preserve_topology=True,
+    )
+
+    return normalized
+
+
+def normalize_municipalities(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    normalized = gdf.to_crs(epsg=4326).rename(
+        columns={
+            "CVEGEO": "code",
+            "CVE_ENT": "stateCode",
+            "CVE_MUN": "municipalityCode",
+            "NOMGEO": "name",
+        }
+    )
+
+    normalized = normalized[
+        ["code", "stateCode", "municipalityCode", "name", "geometry"]
+    ].copy()
+    normalized["geometry"] = normalized["geometry"].simplify(
+        tolerance=MUNICIPALITY_SIMPLIFY_TOLERANCE,
+        preserve_topology=True,
+    )
+
+    return normalized
+
+
+def is_states_shapefile(input_file: Path, gdf: gpd.GeoDataFrame) -> bool:
+    columns = set(gdf.columns)
+
+    return input_file.stem == "00ent" or (
+        {"CVEGEO", "NOMGEO"}.issubset(columns)
+        and "CVE_ENT" not in columns
+        and "CVE_MUN" not in columns
+    )
+
+
+def is_municipalities_shapefile(gdf: gpd.GeoDataFrame) -> bool:
+    return {"CVEGEO", "CVE_ENT", "CVE_MUN", "NOMGEO"}.issubset(gdf.columns)
+
+
+def write_states(input_file: Path, gdf: gpd.GeoDataFrame) -> None:
     output_file = OUTPUT_DIR / "mexico-states.geojson"
+    normalize_states(gdf).to_file(output_file, driver="GeoJSON")
+    print(f"Estados: {input_file} -> {output_file}")
 
+
+def write_municipalities_by_state(input_file: Path, gdf: gpd.GeoDataFrame) -> None:
+    municipalities = normalize_municipalities(gdf)
+
+    for state_code, state_municipalities in municipalities.groupby("stateCode"):
+        output_file = OUTPUT_MUNICIPALITIES_DIR / f"{state_code}.geojson"
+        state_municipalities.to_file(output_file, driver="GeoJSON")
+        print(f"Municipios: {input_file} -> {output_file}")
+
+
+def convert_shapefile(input_file: Path) -> None:
     gdf = gpd.read_file(input_file)
 
-    gdf = gdf.to_crs(epsg=4326)
+    if is_states_shapefile(input_file, gdf):
+        write_states(input_file, gdf)
+        return
 
-    gdf = gdf.rename(columns={
-        "CVEGEO": "code",
-        "NOMGEO": "name",
-    })
+    if is_municipalities_shapefile(gdf):
+        write_municipalities_by_state(input_file, gdf)
+        return
 
-    gdf = gdf[["code", "name", "geometry"]]
+    print(f"Omitido: {input_file} no parece capa de estados ni municipios.")
 
-    gdf["geometry"] = gdf["geometry"].simplify(
-        tolerance=0.005,
-        preserve_topology=True
-    )
 
-    gdf.to_file(output_file, driver="GeoJSON")
+def convert_all_raw() -> None:
+    ensure_output_dirs()
 
-def prepare_morelos_municipalities():
-    input_file = INPUT_DIR / "17_morelos" / "conjunto_de_datos" / "17mun.shp"
-    output_file = OUTPUT_MUNICIPALITIES_DIR / "17.geojson"
+    shapefiles = sorted(INPUT_DIR.rglob("*.shp"))
 
-    gdf = gpd.read_file(input_file)
+    if not shapefiles:
+        raise FileNotFoundError(f"No se encontraron shapefiles en {INPUT_DIR}")
 
-    gdf = gdf.to_crs(epsg=4326)
+    for input_file in shapefiles:
+        convert_shapefile(input_file)
 
-    gdf = gdf.rename(columns={
-        "CVEGEO": "code",
-        "CVE_ENT": "stateCode",
-        "CVE_MUN": "municipalityCode",
-        "NOMGEO": "name",
-    })
+    print("GeoJSON generado correctamente.")
 
-    gdf = gdf[["code", "stateCode", "municipalityCode", "name", "geometry"]]
-
-    gdf["geometry"] = gdf["geometry"].simplify(
-        tolerance=0.002,
-        preserve_topology=True
-    )
-
-    gdf.to_file(output_file, driver="GeoJSON")
 
 if __name__ == "__main__":
-    prepare_states()
-    prepare_morelos_municipalities()
-    print("GeoJSON generado correctamente.")
+    convert_all_raw()
