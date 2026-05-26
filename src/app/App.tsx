@@ -1,5 +1,5 @@
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 import { PrivateRoute } from "../routes/PrivateRoute";
 import { AdminRoute } from "../routes/AdminRoute";
@@ -8,11 +8,15 @@ import { useCurrentUserQuery } from "../features/auth/queries/useCurrentUserQuer
 // leyenda
 import AppLayout from "../layouts/AppLayout";
 
-import Login from "../pages/login";
-import Dashboard from "../pages/dashboard_prueba";
-import Comparison from "../pages/comparison_module";
-import Profile from "../pages/perfil";
-import Admin from "../pages/admin_panel";
+const Login = lazy(() => import("../pages/login"));
+const Dashboard = lazy(() => import("../pages/dashboard_prueba"));
+const Comparison = lazy(() => import("../pages/comparison_module"));
+const Profile = lazy(() => import("../pages/perfil"));
+const Admin = lazy(() => import("../pages/admin_panel"));
+
+function PageFallback() {
+  return <div>Cargando...</div>;
+}
 
 function LayoutWrapper() {
   const { data: user } = useCurrentUserQuery();
@@ -33,23 +37,25 @@ function App() {
   }, [initializeAuth]);
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
+    <Suspense fallback={<PageFallback />}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
 
-      <Route element={<PrivateRoute />}>
-        <Route element={<LayoutWrapper />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/comparison" element={<Comparison />} />
-          <Route path="/profile" element={<Profile />} />
+        <Route element={<PrivateRoute />}>
+          <Route element={<LayoutWrapper />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/comparison" element={<Comparison />} />
+            <Route path="/profile" element={<Profile />} />
 
-          <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<Admin />} />
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<Admin />} />
+            </Route>
           </Route>
         </Route>
-      </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 

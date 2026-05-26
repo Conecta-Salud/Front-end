@@ -11,7 +11,6 @@ import ComparisonBarChart from "../components/charts/ComparisonChart/ComparisonC
 import CustomPieChart from "../components/charts/PieChart/PieChart";
 import PriorityCard from "../components/charts/Priority/PriorityCard";
 import ImportButton from "../components/ui/ImportButton/ImportButton";
-import LocationInput, { type LocationOption } from "../components/ui/LocationInput/LocationInput";
 import HealthMap from "../features/health-map/components/HealthMap";
 
 import { chartData } from "../mocks/barchart.mock";
@@ -23,12 +22,10 @@ import {
 import { coberturaData, coberturaRules } from "../mocks/comparisonchart.mocks";
 import { data } from "../mocks/piechart.mock";
 import { data1, data2 } from "../mocks/prioritycard.mock";
-import { locationOptionsMock } from "../mocks/locationinput.mock";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
 
 function DashboardEstrategicoPage() {
-  const [location, setLocation] = useState<LocationOption | null>(null);
   const indicator = useHeaderFilterStore((state) => state.category);
   const year = useHeaderFilterStore((state) => state.year);
   const [isModalOpen, setIsModalOpen] = useState(false);

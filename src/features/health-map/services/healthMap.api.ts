@@ -12,8 +12,8 @@ const isJsonContentType = (contentType: string) => {
   );
 };
 
-export async function fetchStatesGeoJson() {
-  const response = await fetch("/geo/mexico-states.geojson");
+export async function fetchStatesGeoJson(signal?: AbortSignal) {
+  const response = await fetch("/geo/mexico-states.geojson", { signal });
 
   const contentType = response.headers.get("content-type") ?? "";
 
@@ -24,8 +24,13 @@ export async function fetchStatesGeoJson() {
   return response.json() as Promise<RawGeoJsonFeatureCollection>;
 }
 
-export async function fetchMunicipalitiesGeoJson(stateCode: string) {
-  const response = await fetch(`/geo/municipalities/${stateCode}.geojson`);
+export async function fetchMunicipalitiesGeoJson(
+  stateCode: string,
+  signal?: AbortSignal
+) {
+  const response = await fetch(`/geo/municipalities/${stateCode}.geojson`, {
+    signal,
+  });
 
   const contentType = response.headers.get("content-type") ?? "";
 
@@ -41,8 +46,10 @@ export async function fetchMunicipalitiesGeoJson(stateCode: string) {
 export async function fetchStateMapIndicators(params: {
   indicator: HealthMapIndicator;
   year: string;
+  signal?: AbortSignal;
 }) {
   const response = await api.get<unknown>("/api/v1/map/states", {
+    signal: params.signal,
     params: {
       indicator: params.indicator,
       year: params.year,
@@ -50,8 +57,7 @@ export async function fetchStateMapIndicators(params: {
   });
 
   if (!Array.isArray(response.data)) {
-    console.error("Invalid state map indicators response:", response.data);
-    return [];
+    throw new Error("Invalid state map indicators response.");
   }
 
   return response.data as HealthMapIndicatorResponse[];
@@ -61,8 +67,10 @@ export async function fetchMunicipalityMapIndicators(params: {
   stateCode: string;
   indicator: HealthMapIndicator;
   year: string;
+  signal?: AbortSignal;
 }) {
   const response = await api.get<unknown>("/api/v1/map/municipalities", {
+    signal: params.signal,
     params: {
       stateCode: params.stateCode,
       indicator: params.indicator,
@@ -71,8 +79,7 @@ export async function fetchMunicipalityMapIndicators(params: {
   });
 
   if (!Array.isArray(response.data)) {
-    console.error("Invalid municipality map indicators response:", response.data);
-    return [];
+    throw new Error("Invalid municipality map indicators response.");
   }
 
   return response.data as HealthMapIndicatorResponse[];

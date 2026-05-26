@@ -84,29 +84,6 @@ const CustomXAxisTick = ({
   );
 };
 
-const splitTextIntoLines = (text: string, maxCharsPerLine = 12) => {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let currentLine = "";
-
-  words.forEach((word) => {
-    const testLine = currentLine
-      ? `${currentLine} ${word}`
-      : word;
-
-    if (testLine.length > maxCharsPerLine) {
-      if (currentLine) lines.push(currentLine);
-      currentLine = word;
-    } else {
-      currentLine = testLine;
-    }
-  });
-
-  if (currentLine) lines.push(currentLine);
-
-  return lines;
-};
-
 export default function ComparisonBarChart({
   data,
   title = "Comparación",

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type {
   HealthMapFeatureCollection,
   HealthMapIndicator,
@@ -100,10 +101,6 @@ export default function HealthMap({
     year,
   ].join("-");
 
-  const [loadedNavigationKey, setLoadedNavigationKey] = useState<string | null>(
-    null
-  );
-
   const activeGeoJsonUpdatedAt = isCountryView
     ? statesGeoJsonQuery.dataUpdatedAt
     : municipalitiesGeoJsonQuery.dataUpdatedAt;
@@ -124,23 +121,9 @@ export default function HealthMap({
     navigation.selectedMunicipality?.code ?? "no-selection",
   ].join("-");
 
-  useEffect(() => {
-    setLoadedNavigationKey(null);
-  }, [currentNavigationKey]);
-
-  useEffect(() => {
-    if (!mergedData) return;
-    if (!activeGeoJsonUpdatedAt) return;
-    if (activeIsLoading) return;
-
-    setLoadedNavigationKey(currentNavigationKey);
-  }, [
-    mergedData,
-    activeGeoJsonUpdatedAt,
-    activeIndicatorsUpdatedAt,
-    activeIsLoading,
-    currentNavigationKey,
-  ]);
+  const canFitBounds = Boolean(
+    mergedData && activeGeoJsonUpdatedAt && !activeIsLoading
+  );
 
   const activeIndicatorsReady = activeIndicatorsUpdatedAt > 0;
 
@@ -212,7 +195,7 @@ export default function HealthMap({
 
           <HealthMapFitBounds
             data={mergedData}
-            enabled={loadedNavigationKey === currentNavigationKey}
+            enabled={canFitBounds}
             navigationKey={currentNavigationKey}
             viewLevel={navigation.level}
             maxZoom={STATE_MAX_FIT_ZOOM}

@@ -31,8 +31,8 @@ function LoginPage() {
       });
 
       navigate("/", { replace: true });
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch {
+      // El estado de la mutacion muestra el mensaje de error debajo del boton.
     }
   };
 

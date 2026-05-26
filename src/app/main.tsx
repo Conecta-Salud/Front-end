@@ -5,7 +5,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "../styles/global.css";
-import "leaflet/dist/leaflet.css";
 
 import App from "./App";
 import { queryClient } from "../lib/queryClient";
