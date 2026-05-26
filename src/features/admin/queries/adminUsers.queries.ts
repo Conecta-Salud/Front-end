@@ -1,0 +1,68 @@
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import type { AdminUsersQueryParams } from "../types/adminUsers.types";
+
+import {
+  deactivateAdminUser,
+  fetchAdminUsers,
+  reactivateAdminUser,
+  updateAdminUser,
+} from "../services/adminUsers.api";
+
+export const adminUsersQueryKeys = {
+  all: ["admin-users"] as const,
+  list: (params: AdminUsersQueryParams) =>
+    [...adminUsersQueryKeys.all, "list", params] as const,
+};
+
+export function useAdminUsersQuery(params: AdminUsersQueryParams) {
+  return useQuery({
+    queryKey: adminUsersQueryKeys.list(params),
+    queryFn: () => fetchAdminUsers(params),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useUpdateAdminUserMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateAdminUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminUsersQueryKeys.all,
+      });
+    },
+  });
+}
+
+export function useDeactivateAdminUserMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deactivateAdminUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminUsersQueryKeys.all,
+      });
+    },
+  });
+}
+
+export function useReactivateAdminUserMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: reactivateAdminUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminUsersQueryKeys.all,
+      });
+    },
+  });
+}
