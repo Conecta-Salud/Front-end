@@ -13,15 +13,16 @@ export const RankingTableCard = <T extends RankingTableBaseRow>({
   className = "",
   emptyMessage,
 }: RankingTableCardProps<T>) => {
+
   return (
     <div
       className={[
-        "w-full bg-white rounded-[20px] shadow-sm px-4 py-5",
+        "flex h-full min-h-0 w-full flex-col rounded-[20px] bg-white px-4 py-5 shadow-sm",
         className,
       ].join(" ")}
     >
       <h2
-        className="text-[20px] font-semibold mb-4"
+        className="mb-4 shrink-0 text-[20px] font-semibold"
         style={{
           backgroundImage: "var(--gradient-primary-green)",
           WebkitBackgroundClip: "text",
@@ -31,16 +32,18 @@ export const RankingTableCard = <T extends RankingTableBaseRow>({
         {title}
       </h2>
 
-      <RankingTable
-        columns={columns}
-        data={data.slice(0, 6)}
-        compact
-        rowHeight="sm"
-        emptyMessage={emptyMessage}
-      />
+      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <RankingTable
+          columns={columns}
+          data={data.slice(0, 8)}
+          compact
+          rowHeight="sm"
+          emptyMessage={emptyMessage}
+        />
+      </div>
 
       {footerText && onFooterClick && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex shrink-0 justify-center">
           <button
             type="button"
             onClick={onFooterClick}

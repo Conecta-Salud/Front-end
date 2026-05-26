@@ -11,6 +11,7 @@ export type AuthUser = {
   email: string;
   firebaseUuid: string;
   role: UserRole;
+  lastLoginAt: string;
 };
 
 export const getCurrentUser = async (): Promise<AuthUser> => {

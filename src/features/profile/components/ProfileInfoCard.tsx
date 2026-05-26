@@ -4,7 +4,7 @@ import PencilIcon from "../../../assets/icons/Pencil.svg";
 
 interface ProfileInfoCardProps {
   title: string;
-  lastLogin: string;
+  lastLoginAt: string;
   email: string;
   dependency: string;
   role: string;
@@ -50,7 +50,7 @@ function InfoRow({ label, value }: InfoRowProps) {
 
 function ProfileInfoCard({
   title,
-  lastLogin,
+  lastLoginAt,
   email,
   dependency,
   role,
@@ -127,7 +127,7 @@ function ProfileInfoCard({
             color: "var(--color-text-secundary)",
           }}
         >
-          {lastLogin}
+          {lastLoginAt}
         </p>
       </div>
 

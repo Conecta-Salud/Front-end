@@ -18,6 +18,7 @@ const centerKeys = new Set([
   "population",
   "hospitalBeds",
   "consultingRooms",
+  "coverageIndex"
 ]);
 
 const truncateKeys = new Set([

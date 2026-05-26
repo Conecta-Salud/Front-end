@@ -41,6 +41,7 @@ export const dashboardRankingColumnLabelsEs: Record<string, string> = {
   consultingRooms: "Consultorios",
   unitType: "Tipo",
   careLevel: "Nivel de atención",
+  coverageIndex: "Índice de cobertura",
 };
 
 export const dashboardRankingTitlesEs: Record<string, string> = {
