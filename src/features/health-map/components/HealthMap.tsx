@@ -160,7 +160,7 @@ export default function HealthMap({
 
   if (error) {
     return (
-      <div className="flex h-[500px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
+      <div className="flex min-h-[650px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
         <p className="text-[16px] text-red-500">Could not load map data.</p>
       </div>
     );
@@ -168,7 +168,7 @@ export default function HealthMap({
 
   if (!mergedData && isInitialLoading) {
     return (
-      <div className="flex h-[500px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
+      <div className="flex min-h-[650px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
         <p className="text-[16px] text-gray-500">Loading map...</p>
       </div>
     );
@@ -176,17 +176,17 @@ export default function HealthMap({
 
   if (!mergedData) {
     return (
-      <div className="flex h-[500px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
+      <div className="flex min-h-[650px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
         <p className="text-[16px] text-gray-500">No map data available.</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
+    <div className="flex h-full min-h-[650px] w-full flex-col overflow-hidden rounded-[10px] bg-white shadow-sm">
       <div
         className={[
-          "relative h-[500px] w-full overflow-hidden rounded-[10px] bg-white shadow-sm",
+          "relative min-h-[500px] flex-1 overflow-hidden rounded-t-[10px] rounded-b-none bg-white",
           className,
         ].join(" ")}
       >
