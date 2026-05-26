@@ -1,17 +1,15 @@
-import { MoreVertical, Pencil, UserCheck, UserX } from "lucide-react";
+import { MoreVertical, UserCheck, UserX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { AdminUser } from "../types/adminUsers.types";
 
 type UserActionsMenuProps = {
   user: AdminUser;
-  onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
 };
 export default function UserActionsMenu({
   user,
-  onEdit,
   onDeactivate,
   onReactivate,
 }: UserActionsMenuProps) {
@@ -47,18 +45,6 @@ export default function UserActionsMenu({
 
       {isOpen && (
         <div className="absolute right-0 top-10 z-50 w-[170px] rounded-[10px] border border-gray-200 bg-white p-2 text-left shadow-lg">
-          <button
-            type="button"
-            onClick={() => {
-              setIsOpen(false);
-              onEdit(user);
-            }}
-            className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100"
-          >
-            <Pencil size={16} />
-            Actualizar
-          </button>
-
           <button
             type="button"
             onClick={() => {

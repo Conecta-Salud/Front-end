@@ -6,9 +6,13 @@ import type {
   AdminUsersQueryParams,
 } from "../types/adminUsers.types";
 
-export async function fetchAdminUsers(params: AdminUsersQueryParams = {}) {
+export async function fetchAdminUsers(
+  params: AdminUsersQueryParams = {},
+  signal?: AbortSignal
+) {
   const response = await api.get<AdminUsersResponse>("/users", {
     params,
+    signal,
   });
 
   return response.data;
