@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Button from "../../../components/ui/Button/Button";
 import CustomInputField from "../../../components/ui/CustomInputField/CustomInputField";
@@ -10,6 +10,18 @@ type ChangePasswordModalProps = {
 };
 
 function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
+  if (!isOpen) return null;
+
+  return <ChangePasswordModalContent onClose={onClose} />;
+}
+
+type ChangePasswordModalContentProps = {
+  onClose: () => void;
+};
+
+function ChangePasswordModalContent({
+  onClose,
+}: ChangePasswordModalContentProps) {
   const changePasswordMutation = useChangePasswordMutation();
 
   const [form, setForm] = useState({
@@ -31,20 +43,9 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
     }));
   };
 
-  const resetModal = () => {
-    setForm({
-      currentPassword: "",
-      newPassword: "",
-    });
-
-    setValidationError(null);
-    changePasswordMutation.reset();
-  };
-
   const handleClose = () => {
     if (changePasswordMutation.isPending) return;
 
-    resetModal();
     onClose();
   };
 
@@ -65,20 +66,11 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
         newPassword: form.newPassword,
       });
 
-      resetModal();
       onClose();
     } catch {
       // El mensaje visual lo maneja isError.
     }
   };
-
-  useEffect(() => {
-    if (!isOpen) {
-      resetModal();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
 
   return (
     <div

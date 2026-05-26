@@ -39,13 +39,14 @@ export function useDashboardSummaryQuery(params: {
 
   return useQuery({
     queryKey: dashboardSummaryQueryKeys.summary(params),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchDashboardSummary({
         level: params.level,
         stateId: params.stateId,
         municipalityId: params.municipalityId,
         periodId: params.periodId as number,
         category: params.category,
+        signal,
       }),
     enabled: canRun && (params.enabled ?? true),
     staleTime: 1000 * 60 * 10,

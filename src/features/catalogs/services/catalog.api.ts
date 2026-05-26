@@ -67,17 +67,19 @@ const normalizePeriod = (period: RawPeriodResponse): PeriodCatalogItem => ({
   year: period.year ?? period.anio ?? period.periodYear ?? 0,
 });
 
-export async function fetchStatesCatalog() {
-  const response = await api.get<RawStateResponse[]>("/states");
+export async function fetchStatesCatalog(signal?: AbortSignal) {
+  const response = await api.get<RawStateResponse[]>("/states", { signal });
   return response.data.map(normalizeState);
 }
 
-export async function fetchMunicipalitiesCatalog() {
-  const response = await api.get<RawMunicipalityResponse[]>("/municipalities");
+export async function fetchMunicipalitiesCatalog(signal?: AbortSignal) {
+  const response = await api.get<RawMunicipalityResponse[]>("/municipalities", {
+    signal,
+  });
   return response.data.map(normalizeMunicipality);
 }
 
-export async function fetchPeriodsCatalog() {
-  const response = await api.get<RawPeriodResponse[]>("/periods");
+export async function fetchPeriodsCatalog(signal?: AbortSignal) {
+  const response = await api.get<RawPeriodResponse[]>("/periods", { signal });
   return response.data.map(normalizePeriod);
 }

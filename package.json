@@ -7,19 +7,16 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "typecheck": "tsc -b --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@heroui/react": "^3.0.3",
-    "@heroui/styles": "^3.0.3",
-    "@react-google-maps/api": "^2.20.8",
-    "@recharts/devtools": "^0.0.11",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-query": "^5.100.10",
     "axios": "^1.15.2",
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^12.12.1",
     "leaflet": "^1.9.4",
@@ -31,7 +28,6 @@
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
-    "vite-plugin-svgr": "^5.2.0",
     "zustand": "^5.0.12"
   },
   "devDependencies": {

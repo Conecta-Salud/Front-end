@@ -47,12 +47,15 @@ export function useComparisonSummaryQuery(params: {
       periodId: params.periodId,
       codes: params.codes,
     }),
-    queryFn: () =>
-      fetchComparisonSummary({
-        level: params.level,
-        periodId: params.periodId as number,
-        codes: params.codes as [string, string],
-      } satisfies GetComparisonSummaryParams),
+    queryFn: ({ signal }) =>
+      fetchComparisonSummary(
+        {
+          level: params.level,
+          periodId: params.periodId as number,
+          codes: params.codes as [string, string],
+        } satisfies GetComparisonSummaryParams,
+        signal
+      ),
     enabled: canRun && (params.enabled ?? true),
     staleTime: 1000 * 60 * 10,
     placeholderData: keepPreviousData,
