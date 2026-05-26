@@ -5,7 +5,7 @@ import { PrivateRoute } from "../routes/PrivateRoute";
 import { AdminRoute } from "../routes/AdminRoute";
 import { useAuthStore } from "../stores/authStore";
 import { useCurrentUserQuery } from "../features/auth/queries/useCurrentUserQuery";
-
+// leyenda
 import AppLayout from "../layouts/AppLayout";
 
 import Login from "../pages/login";

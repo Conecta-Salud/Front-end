@@ -28,7 +28,6 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   type = "button",
   ...props
 }) => {
-
   const heightClasses = {
     "40": "h-[40px]",
     "60": "h-[60px]",
@@ -69,17 +68,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   const resolvedPreset = buttonType ? presetConfig[buttonType] : null;
 
-  const resolvedIcon = icon
-    ? icon
-    : resolvedPreset
-    ? (
-        <img
-          src={resolvedPreset.src}
-          alt={resolvedPreset.alt}
-          className="w-[18px] h-[18px] object-contain"
-        />
-      )
-    : null;
+  const resolvedIcon = icon ? (
+    icon
+  ) : resolvedPreset ? (
+    <img
+      src={resolvedPreset.src}
+      alt={resolvedPreset.alt}
+      className="w-[18px] h-[18px] object-contain"
+    />
+  ) : null;
 
   const resolvedPlacement = resolvedPreset
     ? resolvedPreset.placement
