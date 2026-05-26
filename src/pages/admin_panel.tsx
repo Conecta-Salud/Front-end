@@ -7,8 +7,7 @@ import type { AdminTab } from "../features/admin/types/admin.types";
 function PanelAdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("users");
   return (
-    <main className="flex h-[calc(100vh-168px)] min-h-0 flex-col gap-3 overflow-hidden">
-      {" "}
+    <main className="flex h-[calc(100vh-168px)] min-h-0 flex-col gap-3 overflow-hidden p-6">
       <section className="shrink-0">
         <h1 className="text-[28px] font-bold leading-tight text-black">
           Panel de Administración
