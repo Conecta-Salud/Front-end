@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../features/auth/mutations/useLoginMutation";
 
-import loginShape from "../assets/backgrounds/login_shape.png"
 import ConectaSaludLogo from "../assets/ConectaSalud_Full.png";
 import CustomInputField from "../components/ui/CustomInputField/CustomInputField";
 import Button from "../components/ui/Button/Button";
@@ -39,12 +38,11 @@ function LoginPage() {
   return (
     <main className="grid min-h-screen grid-cols-[30%_70%] bg-white">
       {/* LADO IZQUIERDO */}
-      <div className="relative overflow-hidden">
-        <img
-          src={loginShape}
-          alt=""
+      <div className="relative overflow-hidden bg-white">
+        <div
           aria-hidden="true"
-          className="absolute left-0 top-0 h-full w-auto select-none pointer-events-none"
+          className="pointer-events-none absolute top-[-10%] h-[120%] w-[280%] select-none rounded-[50%] bg-[linear-gradient(180deg,#24C3AE_0%,#6EE3B7_100%)]"
+          style={{ left: "-190%" }}
         />
       </div>
 

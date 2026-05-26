@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import ComparisonBarChart from "../../../components/charts/ComparisonChart/ComparisonChart";
 import type { ComparisonChart } from "../types/comparisonSummary.types";
 import {
@@ -18,6 +20,17 @@ export default function ComparisonChartGrid({
   isLoading = false,
   isError = false,
 }: ComparisonChartGridProps) {
+  const chartCards = useMemo(
+    () =>
+      charts.map((chart) => ({
+        id: chart.id,
+        title: translateComparisonChartTitle(chart.title),
+        data: adaptComparisonChartData(chart.data),
+        referenceLine: adaptComparisonReferenceLine(chart),
+      })),
+    [charts]
+  );
+
   if (isLoading) {
     return (
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -53,12 +66,12 @@ export default function ComparisonChartGrid({
 
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {charts.map((chart) => (
+      {chartCards.map((chart) => (
         <ComparisonBarChart
           key={chart.id}
-          title={translateComparisonChartTitle(chart.title)}
-          data={adaptComparisonChartData(chart.data)}
-          referenceLine={adaptComparisonReferenceLine(chart)}
+          title={chart.title}
+          data={chart.data}
+          referenceLine={chart.referenceLine}
           chartHeight={220}
           yDomain={[0, "auto"]}
           valueFormatter={(value) =>
