@@ -35,36 +35,42 @@ export function getAdminUsersColumns({
       header: "Nombre",
       key: "fullName",
       truncate: true,
-      maxWidth: "max-w-[220px]",
+      maxWidth: "max-w-[180px]",
+      width: "22%",
     },
     {
       header: "Correo",
       key: "email",
       truncate: true,
-      maxWidth: "max-w-[240px]",
+      maxWidth: "max-w-[220px]",
+      width: "26%",
     },
     {
       header: "Dependencia",
       key: "departmentName",
       truncate: true,
-      maxWidth: "max-w-[220px]",
+      maxWidth: "max-w-[210px]",
+      width: "24%",
     },
     {
       header: "Rol",
       key: "role",
       align: "center",
+      width: "12%",
       render: (row) => roleLabels[row.role],
     },
     {
       header: "Estado",
       key: "active",
       align: "center",
+      width: "10%",
       render: (row) => (row.active ? "Activo" : "Inactivo"),
     },
     {
       header: "Acciones",
       key: "actions",
       align: "center",
+      width: "6%",
       render: (row) => (
         <UserActionsMenu
           user={row.originalUser}

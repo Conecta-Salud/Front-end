@@ -36,7 +36,7 @@ export default function AdminUsersView() {
           : undefined,
       departmentId: departmentFilter ? Number(departmentFilter) : undefined,
       page: 0,
-      size: 100,
+      size: 50,
     }),
     [debouncedSearchTerm, roleFilter, activeFilter, departmentFilter]
   );
@@ -137,14 +137,13 @@ export default function AdminUsersView() {
   }
 
   return (
-    <section className="rounded-[10px] bg-white p-6 shadow-sm">
-      <div className="mb-5">
+    <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
+      <div className="mb-3 shrink-0">
         <h2 className="text-[22px] font-semibold text-black">Usuarios</h2>
         <p className="text-[16px] text-gray-500">
           Consulta y administra los usuarios registrados.
         </p>
       </div>
-
       <AdminUsersToolbar
         searchTerm={searchTerm}
         roleFilter={roleFilter}
@@ -161,20 +160,20 @@ export default function AdminUsersView() {
           // Aquí luego abrimos UserCreateModal.
         }}
       />
-
       {usersQuery.isFetching && (
         <p className="mb-3 text-[14px] text-gray-500">
           Actualizando usuarios...
         </p>
       )}
-
-      <RankingTable
-        columns={columns}
-        data={rows}
-        rowHeight="md"
-        emptyMessage="No hay usuarios registrados."
-      />
-
+      <div className="min-h-0 flex-1 overflow-auto pr-2">
+        <RankingTable
+          columns={columns}
+          data={rows}
+          compact
+          rowHeight="sm"
+          emptyMessage="No hay usuarios registrados."
+        />
+      </div>
       <UserStatusConfirmModal
         user={statusActionUser}
         action={statusAction}

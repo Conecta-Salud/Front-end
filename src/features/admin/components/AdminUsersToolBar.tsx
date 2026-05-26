@@ -43,7 +43,7 @@ export default function AdminUsersToolbar({
   onCreateUser,
 }: AdminUsersToolbarProps) {
   return (
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
       <div className="flex flex-1 flex-wrap items-center gap-3">
         <SearchBar
           searchTerm={searchTerm}
@@ -85,7 +85,6 @@ export default function AdminUsersToolbar({
           className="w-fit max-sm:w-full"
         />
       </div>
-
       <Button
         label="Nuevo usuario"
         tone="green"

@@ -16,7 +16,7 @@ export default function AdminViewTabs({
   onTabChange,
 }: AdminViewTabsProps) {
   return (
-    <div className="mb-6 flex flex-wrap gap-3">
+    <div className="shrink-0 flex flex-wrap gap-3">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.value;
 
