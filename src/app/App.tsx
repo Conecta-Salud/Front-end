@@ -34,14 +34,16 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />x
-      <Route element={<LayoutWrapper />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/comparison" element={<Comparison />} />
-        <Route path="/profile" element={<Profile />} />
+      <Route path="/login" element={<Login />} />
+      <Route element={<PrivateRoute />}>
+        <Route element={<LayoutWrapper />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/comparison" element={<Comparison />} />
+          <Route path="/profile" element={<Profile />} />
 
-        <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<Admin />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<Admin />} />
+          </Route>
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
