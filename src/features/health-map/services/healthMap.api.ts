@@ -5,10 +5,19 @@ import type {
   RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
 
+const isJsonContentType = (contentType: string) => {
+  return (
+    contentType.includes("application/json") ||
+    contentType.includes("+json")
+  );
+};
+
 export async function fetchStatesGeoJson() {
   const response = await fetch("/geo/mexico-states.geojson");
 
-  if (!response.ok) {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!response.ok || !isJsonContentType(contentType)) {
     throw new Error("Could not load states GeoJSON.");
   }
 
@@ -18,7 +27,9 @@ export async function fetchStatesGeoJson() {
 export async function fetchMunicipalitiesGeoJson(stateCode: string) {
   const response = await fetch(`/geo/municipalities/${stateCode}.geojson`);
 
-  if (!response.ok) {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!response.ok || !isJsonContentType(contentType)) {
     throw new Error(
       `Could not load municipalities GeoJSON for state ${stateCode}.`
     );
@@ -31,17 +42,19 @@ export async function fetchStateMapIndicators(params: {
   indicator: HealthMapIndicator;
   year: string;
 }) {
-  const response = await api.get<HealthMapIndicatorResponse[]>(
-    "/api/v1/map/states",
-    {
-      params: {
-        indicator: params.indicator,
-        year: params.year,
-      },
-    }
-  );
+  const response = await api.get<unknown>("/api/v1/map/states", {
+    params: {
+      indicator: params.indicator,
+      year: params.year,
+    },
+  });
 
-  return response.data;
+  if (!Array.isArray(response.data)) {
+    console.error("Invalid state map indicators response:", response.data);
+    return [];
+  }
+
+  return response.data as HealthMapIndicatorResponse[];
 }
 
 export async function fetchMunicipalityMapIndicators(params: {
@@ -49,16 +62,18 @@ export async function fetchMunicipalityMapIndicators(params: {
   indicator: HealthMapIndicator;
   year: string;
 }) {
-  const response = await api.get<HealthMapIndicatorResponse[]>(
-    "/api/v1/map/municipalities",
-    {
-      params: {
-        stateCode: params.stateCode,
-        indicator: params.indicator,
-        year: params.year,
-      },
-    }
-  );
+  const response = await api.get<unknown>("/api/v1/map/municipalities", {
+    params: {
+      stateCode: params.stateCode,
+      indicator: params.indicator,
+      year: params.year,
+    },
+  });
 
-  return response.data;
+  if (!Array.isArray(response.data)) {
+    console.error("Invalid municipality map indicators response:", response.data);
+    return [];
+  }
+
+  return response.data as HealthMapIndicatorResponse[];
 }

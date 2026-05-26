@@ -12,13 +12,16 @@ type DashboardRankingSectionProps = {
   ranking?: DashboardRanking;
   isLoading?: boolean;
   isError?: boolean;
+  className?: string;
 };
 
 export default function DashboardRankingSection({
   ranking,
   isLoading = false,
   isError = false,
+  className = "",
 }: DashboardRankingSectionProps) {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const title = useMemo(() => adaptSummaryRankingTitle(ranking), [ranking]);
@@ -32,13 +35,23 @@ export default function DashboardRankingSection({
 
   if (isLoading) {
     return (
-      <div className="h-[300px] rounded-[20px] bg-white shadow-sm animate-pulse" />
+      <div
+        className={[
+          "rounded-[20px] bg-white shadow-sm animate-pulse",
+          className || "h-[300px]",
+        ].join(" ")}
+      />
     );
   }
 
   if (isError) {
     return (
-      <div className="rounded-[20px] bg-white p-6 shadow-sm">
+      <div
+        className={[
+          "rounded-[20px] bg-white p-6 shadow-sm",
+          className,
+        ].join(" ")}
+      >
         <p className="text-[16px] text-red-500">
           No se pudieron cargar los datos la tabla ranking.
         </p>
@@ -48,7 +61,12 @@ export default function DashboardRankingSection({
 
   if (!ranking || !columns.length) {
     return (
-      <div className="rounded-[20px] bg-white p-6 shadow-sm">
+      <div
+        className={[
+          "rounded-[20px] bg-white p-6 shadow-sm",
+          className,
+        ].join(" ")}
+      >
         <p className="text-[16px] text-red-500">
           No se pudo cargar la tabla ranking.
         </p>
@@ -60,11 +78,12 @@ export default function DashboardRankingSection({
     <>
       <RankingTableCard
         title={title}
-        columns={columns.slice(0, 4)}
+        columns={columns.slice(0, 5)}
         data={rows}
         footerText="Ver ranking completo"
         onFooterClick={() => setIsModalOpen(true)}
         emptyMessage="No hay datos de ranking disponibles."
+        className={className}
       />
 
       <RankingTableModal

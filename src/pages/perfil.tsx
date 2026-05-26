@@ -48,7 +48,7 @@ function PerfilPage() {
       <div className="w-full">
         <ProfileInfoCard
           title={profile.title}
-          lastLogin={profile.lastLogin}
+          lastLoginAt={profile.lastLoginAt}
           email={profile.email}
           dependency={profile.dependency}
           role={profile.role}

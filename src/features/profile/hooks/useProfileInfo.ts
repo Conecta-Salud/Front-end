@@ -20,7 +20,7 @@ export function useProfileInfo() {
 
     return {
       title: fullName || "Usuario",
-      lastLogin: "Último ingreso no disponible",
+      lastLoginAt: user?.lastLoginAt ?? "Último ingreso no disponible",
       email: user?.email ?? "",
       dependency: user?.departmentName ?? "",
       role: roleLabel,

@@ -24,9 +24,11 @@ export function getHealthMapStrokeColor() {
 }
 
 export function createIndicatorLookup(
-  indicators: HealthMapIndicatorResponse[]
+  indicators: HealthMapIndicatorResponse[] | unknown
 ) {
-  return new Map(indicators.map((item) => [item.code, item]));
+  const safeIndicators = Array.isArray(indicators) ? indicators : [];
+
+  return new Map(safeIndicators.map((item) => [item.code, item]));
 }
 
 export function normalizeGeoJson(
@@ -59,7 +61,7 @@ export function normalizeGeoJson(
 
 export function mergeGeoJsonWithIndicators(params: {
   geoJson: RawGeoJsonFeatureCollection;
-  indicators: HealthMapIndicatorResponse[];
+  indicators: HealthMapIndicatorResponse[] | unknown;
 }): HealthMapFeatureCollection {
   const normalizedGeoJson = normalizeGeoJson(params.geoJson);
   const indicatorLookup = createIndicatorLookup(params.indicators);

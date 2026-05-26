@@ -5,7 +5,7 @@ import { PrivateRoute } from "../routes/PrivateRoute";
 import { AdminRoute } from "../routes/AdminRoute";
 import { useAuthStore } from "../stores/authStore";
 import { useCurrentUserQuery } from "../features/auth/queries/useCurrentUserQuery";
-
+// leyenda
 import AppLayout from "../layouts/AppLayout";
 
 import Login from "../pages/login";
@@ -35,6 +35,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+
       <Route element={<PrivateRoute />}>
         <Route element={<LayoutWrapper />}>
           <Route path="/" element={<Dashboard />} />
@@ -46,6 +47,7 @@ function App() {
           </Route>
         </Route>
       </Route>
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
