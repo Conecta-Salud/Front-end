@@ -1,22 +1,21 @@
 substitutions:
-  _REGION: "us-central1"
-  _REPOSITORY: "frontimage"
-  _IMAGE: "frontend"
-  _SERVICE: "frontend"
+  _REGION: us-central1
+  _REPOSITORY: frontrepo
+  _IMAGE: frontend
+  _SERVICE: frontend
+  _PROJECT_ID: "conecta-salud-494022"
 
-  _VITE_API_URL: "https://backendn-887266426178.us-central1.run.app"
-
-  _VITE_FIREBASE_API_KEY: "AIzaSyCraxYl7v_hULqbknHEFYskR8PdKP0CJHM"
-  _VITE_FIREBASE_AUTH_DOMAIN: "conectasalud-eq3.firebaseapp.com"
-  _VITE_FIREBASE_PROJECT_ID: "conectasalud-eq3"
-  _VITE_FIREBASE_STORAGE_BUCKET: "conectasalud-eq3.firebasestorage.app"
-  _VITE_FIREBASE_MESSAGING_SENDER_ID: "884572026666"
-  _VITE_FIREBASE_APP_ID: "1:884572026666:web:282d590022bcdcc6b4d053"
+  _VITE_API_URL: "https://TU_BACKEND.run.app"
+  _VITE_FIREBASE_API_KEY: "api_key_value"
+  _VITE_FIREBASE_AUTH_DOMAIN: "auth_domain_value"
+  _VITE_FIREBASE_PROJECT_ID: "project_id_value"
+  _VITE_FIREBASE_STORAGE_BUCKET: "storage_bucket_value"
+  _VITE_FIREBASE_MESSAGING_SENDER_ID: "messaging_sender_id_value"
+  _VITE_FIREBASE_APP_ID: "app_id_value"
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
-timeout: 1800s
+  machineType: E2_HIGHCPU_8
 
 steps:
   - id: build-and-push
@@ -25,22 +24,24 @@ steps:
     args:
       - -c
       - |
-        set -euo pipefail
+        set -e
 
-        VERSION="${BUILD_ID}"
+        VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
+        IMAGE_BASE="${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE}"
 
-        IMAGE_BASE="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}"
+        echo "Building $$IMAGE_BASE:$$VERSION"
 
         docker build \
-          -t "$$IMAGE_BASE:$$VERSION" \
-          -t "$$IMAGE_BASE:latest" \
-          --build-arg "VITE_API_URL=${_VITE_API_URL}" \
-          --build-arg "VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}" \
-          --build-arg "VITE_FIREBASE_AUTH_DOMAIN=${_VITE_FIREBASE_AUTH_DOMAIN}" \
-          --build-arg "VITE_FIREBASE_PROJECT_ID=${_VITE_FIREBASE_PROJECT_ID}" \
-          --build-arg "VITE_FIREBASE_STORAGE_BUCKET=${_VITE_FIREBASE_STORAGE_BUCKET}" \
-          --build-arg "VITE_FIREBASE_MESSAGING_SENDER_ID=${_VITE_FIREBASE_MESSAGING_SENDER_ID}" \
-          --build-arg "VITE_FIREBASE_APP_ID=${_VITE_FIREBASE_APP_ID}" \
+          --build-arg VITE_API_URL="${_VITE_API_URL}" \
+          --build-arg VITE_FIREBASE_API_KEY="${_VITE_FIREBASE_API_KEY}" \
+          --build-arg VITE_FIREBASE_AUTH_DOMAIN="${_VITE_FIREBASE_AUTH_DOMAIN}" \
+          --build-arg VITE_FIREBASE_PROJECT_ID="${_VITE_FIREBASE_PROJECT_ID}" \
+          --build-arg VITE_FIREBASE_STORAGE_BUCKET="${_VITE_FIREBASE_STORAGE_BUCKET}" \
+          --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID="${_VITE_FIREBASE_MESSAGING_SENDER_ID}" \
+          --build-arg VITE_FIREBASE_APP_ID="${_VITE_FIREBASE_APP_ID}" \
+          --tag "$$IMAGE_BASE:$$VERSION" \
+          --tag "$$IMAGE_BASE:latest" \
+          --file=Dockerfile \
           .
 
         docker push "$$IMAGE_BASE:$$VERSION"
@@ -52,16 +53,15 @@ steps:
     args:
       - -c
       - |
-        set -euo pipefail
+        set -e
 
-        VERSION="${BUILD_ID}"
+        VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
+        IMAGE="${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:$$VERSION"
 
-        IMAGE="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:$$VERSION"
-
-        gcloud run deploy "${_SERVICE}" \
+        gcloud run deploy ${_SERVICE} \
           --image "$$IMAGE" \
-          --region "${_REGION}" \
+          --region ${_REGION} \
           --platform managed \
-          --allow-unauthenticated \
-          --port 8080 \
-          --quiet
+          --allow-unauthenticated
+
+timeout: 1800s
