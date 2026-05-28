@@ -23,6 +23,9 @@ steps:
       - -c
       - |
         set -e
+        
+        echo "API URL = ${_VITE_API_URL}"
+        echo "FIREBASE KEY = ${_VITE_FIREBASE_API_KEY}"
 
         VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
 
