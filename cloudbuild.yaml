@@ -1,7 +1,7 @@
 substitutions:
   _REGION: us-central1
-  _REPOSITORY: frontimage
-  _IMAGE: frontend
+  _REPOSITORY: cloud-run-source-deploy
+  _IMAGE: front-end/frontend
   _SERVICE: frontend
   _VITE_API_URL: https://backendn-887266426178.us-central1.run.app
   _VITE_FIREBASE_API_KEY: AIzaSyCraxYl7v_hULqbknHEFYskR8PdKP0CJHM
