@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -27,14 +27,6 @@ ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
 ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
 ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 
-RUN test -n "$VITE_API_URL" && \
-    test -n "$VITE_FIREBASE_API_KEY" && \
-    test -n "$VITE_FIREBASE_AUTH_DOMAIN" && \
-    test -n "$VITE_FIREBASE_PROJECT_ID" && \
-    test -n "$VITE_FIREBASE_STORAGE_BUCKET" && \
-    test -n "$VITE_FIREBASE_MESSAGING_SENDER_ID" && \
-    test -n "$VITE_FIREBASE_APP_ID"
-
 RUN npm run build
 
 
@@ -47,6 +39,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

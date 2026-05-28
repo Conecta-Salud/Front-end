@@ -2,3 +2,7 @@ node_modules
 .git
 .vscode
 .env*
+dist
+dist-ssr
+storybook-static
+*.log
