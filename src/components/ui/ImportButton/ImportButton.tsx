@@ -8,7 +8,7 @@ type ImportButtonProps = {
 
 const ImportButton: React.FC<ImportButtonProps> = ({
   onFileSelect,
-  accept = "*",
+  accept = ".csv,.xlsx",
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -20,12 +20,7 @@ const ImportButton: React.FC<ImportButtonProps> = ({
     const file = e.target.files?.[0];
 
     if (file) {
-      console.log("Archivo seleccionado:", file);
-      (window as any).selectedFile = file;
-      console.log("Puedes acceder en consola con: selectedFile");
-      if (onFileSelect) {
-        onFileSelect(file);
-      }
+      onFileSelect?.(file);
     }
   };
 
@@ -36,7 +31,7 @@ const ImportButton: React.FC<ImportButtonProps> = ({
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,.xlsx"
+        accept={accept}
         onChange={handleChange}
         hidden
       />

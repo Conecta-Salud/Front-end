@@ -1,4 +1,5 @@
 import L from "leaflet";
+import { useMemo } from "react";
 import { CircleMarker, Tooltip } from "react-leaflet";
 import type {
   HealthMapFeature,
@@ -14,20 +15,27 @@ export default function HealthMapSelectedMarker({
   data,
   selectedCode,
 }: HealthMapSelectedMarkerProps) {
-  if (!selectedCode) return null;
+  const selectedFeature = useMemo(
+    () =>
+      selectedCode
+        ? (data.features.find(
+            (feature) => feature.properties.code === selectedCode
+          ) as HealthMapFeature | undefined)
+        : undefined,
+    [data, selectedCode]
+  );
 
-  const selectedFeature = data.features.find(
-    (feature) => feature.properties.code === selectedCode
-  ) as HealthMapFeature | undefined;
+  const center = useMemo(() => {
+    if (!selectedFeature) return null;
 
-  if (!selectedFeature) return null;
+    const bounds = L.geoJSON(selectedFeature).getBounds();
 
-  const bounds = L.geoJSON(selectedFeature).getBounds();
+    if (!bounds.isValid()) return null;
 
-  if (!bounds.isValid()) return null;
+    return bounds.getCenter();
+  }, [selectedFeature]);
 
-  const center = bounds.getCenter();
-
+  if (!selectedFeature || !center) return null;
   return (
     <CircleMarker
       center={center}

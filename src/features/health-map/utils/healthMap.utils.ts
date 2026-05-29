@@ -60,15 +60,14 @@ export function normalizeGeoJson(
 }
 
 export function mergeGeoJsonWithIndicators(params: {
-  geoJson: RawGeoJsonFeatureCollection;
+  geoJson: HealthMapFeatureCollection;
   indicators: HealthMapIndicatorResponse[] | unknown;
 }): HealthMapFeatureCollection {
-  const normalizedGeoJson = normalizeGeoJson(params.geoJson);
   const indicatorLookup = createIndicatorLookup(params.indicators);
 
   return {
-    ...normalizedGeoJson,
-    features: normalizedGeoJson.features.map((feature) => {
+    ...params.geoJson,
+    features: params.geoJson.features.map((feature) => {
       const indicator = indicatorLookup.get(feature.properties.code);
 
       return {

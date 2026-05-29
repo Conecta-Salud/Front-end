@@ -3,9 +3,10 @@ import axios, { AxiosHeaders } from "axios";
 import { signOut } from "firebase/auth";
 import { auth } from "./auth/firebase";
 import { queryClient } from "../lib/queryClient";
+import { env } from "../config/env";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: env.apiUrl,
   timeout: 10000,
 });
 

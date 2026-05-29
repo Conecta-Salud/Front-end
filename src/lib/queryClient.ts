@@ -1,8 +1,11 @@
 import { QueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 
 const isUnauthorizedError = (error: unknown) => {
-  return error instanceof AxiosError && error.response?.status === 401;
+  if (!error || typeof error !== "object") return false;
+
+  const response = (error as { response?: { status?: number } }).response;
+
+  return response?.status === 401;
 };
 
 export const queryClient = new QueryClient({

@@ -1,4 +1,4 @@
-import { MoreVertical, Pencil, UserCheck, UserX } from "lucide-react";
+import { MoreVertical, Pencil, UserCheck, UserX, KeyRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -6,9 +6,9 @@ import type { AdminUser } from "../types/adminUsers.types";
 
 type UserActionsMenuProps = {
   user: AdminUser;
-  onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
+  onChangePassword: (user: AdminUser) => void;
 };
 
 type MenuPosition = {
@@ -18,9 +18,9 @@ type MenuPosition = {
 
 export default function UserActionsMenu({
   user,
-  onEdit,
   onDeactivate,
   onReactivate,
+  onChangePassword,
 }: UserActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
@@ -108,6 +108,18 @@ export default function UserActionsMenu({
             >
               <Pencil size={16} />
               Actualizar
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                onChangePassword(user);
+              }}
+              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100"
+            >
+              <KeyRound size={16} />
+              Cambiar contraseña
             </button>
 
             <button

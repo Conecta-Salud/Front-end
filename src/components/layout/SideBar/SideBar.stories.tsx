@@ -1,39 +1,29 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router-dom";
+
 import Sidebar from "./SideBar";
 
 const meta = {
-  title: "Components/Navigation/Sidebar",
+  title: "Components/Layout/Sidebar",
   component: Sidebar,
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <div style={{ height: "100vh", display: "flex" }}>
-          <Story />
-        </div>
-      </MemoryRouter>
-    ),
-  ],
   argTypes: {
     role: {
       control: "select",
-      options: ["user", "admin"],
-    },
-    activeItem: {
-      control: "select",
-      options: ["dashboard", "comparison", "admin", "profile"],
+      options: ["strategic", "admin"],
     },
     showProfileLabel: {
       control: "boolean",
     },
+    profileLabel: {
+      control: "text",
+    },
   },
   args: {
-    role: "user",
-    activeItem: "dashboard",
+    role: "strategic",
     showProfileLabel: false,
     profileLabel: "Perfil",
   },
@@ -42,42 +32,40 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const Admin: Story = {
-  args: {
-    role: "admin",
-  },
-};
+const renderSidebar = (
+  args: Story["args"],
+  initialRoute: "/" | "/comparison" | "/admin" | "/profile"
+) => (
+  <MemoryRouter initialEntries={[initialRoute]}>
+    <div className="flex h-screen bg-[#F8F9FB]">
+      <Sidebar {...args} />
+    </div>
+  </MemoryRouter>
+);
 
 export const DashboardSelected: Story = {
-  args: {
-    activeItem: "dashboard",
-  },
+  render: (args) => renderSidebar(args, "/"),
 };
 
 export const ComparisonSelected: Story = {
-  args: {
-    activeItem: "comparison",
-  },
+  render: (args) => renderSidebar(args, "/comparison"),
 };
 
 export const AdminSelected: Story = {
   args: {
     role: "admin",
-    activeItem: "admin",
   },
+  render: (args) => renderSidebar(args, "/admin"),
 };
 
 export const ProfileSelected: Story = {
-  args: {
-    activeItem: "profile",
-  },
+  render: (args) => renderSidebar(args, "/profile"),
 };
 
 export const ProfileWithLabel: Story = {
   args: {
     showProfileLabel: true,
-    profileLabel: "Mi Perfil",
+    profileLabel: "Mi perfil",
   },
+  render: (args) => renderSidebar(args, "/profile"),
 };

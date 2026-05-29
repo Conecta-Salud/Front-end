@@ -13,13 +13,6 @@ type HealthMapLegendProps = {
   level: HealthMapViewLevel;
 };
 
-const countByLevel = (
-  indicators: HealthMapIndicatorResponse[] = [],
-  level: HealthMapStatusLevel
-) => {
-  return indicators.filter((item) => item.level === level).length;
-};
-
 const getTerritoryLabel = (level: HealthMapViewLevel) => {
   if (level === "country") return "Estados";
   return "Municipios";
@@ -36,14 +29,20 @@ export default function HealthMapLegend({
   const tickPositions = ["0%", "42%", "65%", "100%"];
   const tickColors = ["#12D439", "#E8E338", "#F4B642", "#FC6767"];
 
-  const counts = useMemo(
-    () => ({
-      good: countByLevel(indicators, "good"),
-      risk: countByLevel(indicators, "risk"),
-      critical: countByLevel(indicators, "critical"),
-    }),
-    [indicators]
-  );
+  const counts = useMemo(() => {
+    const nextCounts: Record<HealthMapStatusLevel, number> = {
+      good: 0,
+      risk: 0,
+      critical: 0,
+      no_data: 0,
+    };
+
+    indicators.forEach((item) => {
+      nextCounts[item.level] += 1;
+    });
+
+    return nextCounts;
+  }, [indicators]);
   
   return (
     <section className="rounded-none bg-white px-[50px] py-[20px]">

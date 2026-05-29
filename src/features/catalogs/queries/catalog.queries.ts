@@ -23,7 +23,7 @@ type CatalogQueryOptions = {
 export function useStatesCatalogQuery(options?: CatalogQueryOptions) {
   return useQuery({
     queryKey: catalogQueryKeys.states(),
-    queryFn: fetchStatesCatalog,
+    queryFn: ({ signal }) => fetchStatesCatalog(signal),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,
@@ -33,7 +33,7 @@ export function useStatesCatalogQuery(options?: CatalogQueryOptions) {
 export function useMunicipalitiesCatalogQuery(options?: CatalogQueryOptions) {
   return useQuery({
     queryKey: catalogQueryKeys.municipalities(),
-    queryFn: fetchMunicipalitiesCatalog,
+    queryFn: ({ signal }) => fetchMunicipalitiesCatalog(signal),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,
@@ -43,7 +43,7 @@ export function useMunicipalitiesCatalogQuery(options?: CatalogQueryOptions) {
 export function usePeriodsCatalogQuery(options?: CatalogQueryOptions) {
   return useQuery({
     queryKey: catalogQueryKeys.periods(),
-    queryFn: fetchPeriodsCatalog,
+    queryFn: ({ signal }) => fetchPeriodsCatalog(signal),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,
