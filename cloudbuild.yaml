@@ -31,24 +31,6 @@ steps:
 
         IMAGE_BASE="${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}"
 
-        validate_build_var() {
-          local name="$$1"
-          local value="$$2"
-
-          if [ -z "$$value" ] || [ "$$value" = "SET_IN_CLOUD_BUILD_TRIGGER" ]; then
-            echo "Missing Cloud Build substitution: $$name"
-            exit 1
-          fi
-        }
-
-        validate_build_var "_VITE_API_URL" "${_VITE_API_URL}"
-        validate_build_var "_VITE_FIREBASE_API_KEY" "${_VITE_FIREBASE_API_KEY}"
-        validate_build_var "_VITE_FIREBASE_AUTH_DOMAIN" "${_VITE_FIREBASE_AUTH_DOMAIN}"
-        validate_build_var "_VITE_FIREBASE_PROJECT_ID" "${_VITE_FIREBASE_PROJECT_ID}"
-        validate_build_var "_VITE_FIREBASE_STORAGE_BUCKET" "${_VITE_FIREBASE_STORAGE_BUCKET}"
-        validate_build_var "_VITE_FIREBASE_MESSAGING_SENDER_ID" "${_VITE_FIREBASE_MESSAGING_SENDER_ID}"
-        validate_build_var "_VITE_FIREBASE_APP_ID" "${_VITE_FIREBASE_APP_ID}"
-
         docker build \
           -t "$$IMAGE_BASE:$$VERSION" \
           -t "$$IMAGE_BASE:latest" \
