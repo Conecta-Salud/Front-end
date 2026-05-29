@@ -24,9 +24,11 @@ export function adaptAdminUsersToRows(users: AdminUser[]): AdminUserTableRow[] {
 export function getAdminUsersColumns({
   onDeactivate,
   onReactivate,
+  onChangePassword,
 }: {
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
+  onChangePassword: (user: AdminUser) => void;
 }): RankingColumn<AdminUserTableRow>[] {
   return [
     {
@@ -74,6 +76,7 @@ export function getAdminUsersColumns({
           user={row.originalUser}
           onDeactivate={onDeactivate}
           onReactivate={onReactivate}
+          onChangePassword={onChangePassword}
         />
       ),
     },

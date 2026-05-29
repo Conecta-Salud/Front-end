@@ -4,6 +4,7 @@ import type {
   AdminUsersResponse,
   UpdateAdminUserPayload,
   AdminUsersQueryParams,
+  ChangeAdminUserPasswordPayload,
 } from "../types/adminUsers.types";
 
 export async function fetchAdminUsers(
@@ -36,4 +37,14 @@ export async function deactivateAdminUser(userId: string) {
 export async function reactivateAdminUser(userId: string) {
   const response = await api.put<AdminUser>(`/users/reactivate/${userId}`);
   return response.data;
+}
+
+export async function changeAdminUserPassword({
+  userId,
+  payload,
+}: {
+  userId: string;
+  payload: ChangeAdminUserPasswordPayload;
+}) {
+  await api.patch(`/users/${userId}/password`, payload);
 }
