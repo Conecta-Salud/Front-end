@@ -198,7 +198,7 @@ export default function Filter({
                   className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
                   style={{ color: "#14B8A6" }}
                 >
-                  Clear
+                  Limpiar
                 </div>
               )}
             </div>

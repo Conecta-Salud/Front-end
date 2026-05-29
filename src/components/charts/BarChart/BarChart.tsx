@@ -61,7 +61,7 @@ export default function CustomBarChart({
   referenceLine,
   showAverageLine = false,
   showTitle = true,
-  emptyMessage = "No chart data available.",
+  emptyMessage = "No hay datos disponibles.",
 }: CustomBarChartProps) {
   const dataLength = data.length;
 
@@ -178,7 +178,7 @@ export default function CustomBarChart({
                 strokeWidth={2}
                 strokeDasharray="6 6"
                 label={{
-                  value: `Average: ${average.toFixed(2)}`,
+                  value: `Promedio: ${average.toFixed(2)}`,
                   position: "insideTopRight",
                   fill: "var(--color-blue)",
                   fontSize: 12,

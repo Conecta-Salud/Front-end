@@ -55,7 +55,7 @@ export const RankingTableCard = <T extends RankingTableBaseRow>({
             }}
           >
             <span>{footerText}</span>
-            <span className="text-[22px] leading-none">›</span>
+            <span className="text-[22px] leading-none">&gt;</span>
           </button>
         </div>
       )}

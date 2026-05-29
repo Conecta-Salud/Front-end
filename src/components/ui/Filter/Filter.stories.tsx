@@ -1,29 +1,26 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 
 import Filter from "./Filter";
 
 const categoryOptions = [
-  { name: "Cobertura médica", value: "coverage" },
-  { name: "Déficit de médicos", value: "deficit" },
-  { name: "Camas hospitalarias", value: "beds" },
-  { name: "Población en pobreza", value: "poverty" },
+  { name: "Cobertura médica", value: "medical_coverage" },
+  { name: "Infraestructura hospitalaria", value: "hospital_beds" },
+  { name: "Vulnerabilidad poblacional", value: "healthcare_access_deficiency" },
 ];
 
 const yearOptions = [
-  { name: "2022", value: "2022" },
-  { name: "2023", value: "2023" },
   { name: "2024", value: "2024" },
   { name: "2025", value: "2025" },
   { name: "2026", value: "2026" },
 ];
 
-const longOptions = [
-  { name: "Estado de México", value: "edomex" },
-  { name: "Baja California Sur", value: "bcs" },
-  { name: "San Luis Potosí", value: "slp" },
-  { name: "Ciudad de México", value: "cdmx" },
+const stateOptions = [
+  { name: "Estado de México", value: "15" },
+  { name: "Baja California Sur", value: "03" },
+  { name: "San Luis Potosí", value: "24" },
+  { name: "Ciudad de México", value: "09" },
 ];
 
 const meta = {
@@ -37,58 +34,65 @@ const meta = {
     title: { control: "text" },
     values: { control: "text" },
     options: { control: "object" },
+    allowClear: { control: "boolean" },
     onChange: { action: "changed" },
+    onOpenChange: { action: "open changed" },
   },
   args: {
+    id: "category",
     title: "Categoría",
     options: categoryOptions,
     values: "",
+    isOpen: false,
+    allowClear: true,
     onChange: fn(),
+    onOpenChange: fn(),
   },
 } satisfies Meta<typeof Filter>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {},
-};
+export const Default: Story = {};
 
 export const WithSelectedValue: Story = {
   args: {
-    title: "Categoría",
-    options: categoryOptions,
-    values: "coverage",
+    values: "medical_coverage",
   },
 };
 
 export const Years: Story = {
   args: {
+    id: "year",
     title: "Año",
     options: yearOptions,
-    values: "",
+    values: "2026",
+    allowClear: false,
   },
 };
 
 export const LongLabels: Story = {
   args: {
+    id: "state",
     title: "Estado",
-    options: longOptions,
-    values: "cdmx",
+    options: stateOptions,
+    values: "09",
   },
 };
 
 export const Interactive: Story = {
-  args: {},
   render: (args) => {
     const Demo = () => {
       const [value, setValue] = useState(args.values ?? "");
+      const [openId, setOpenId] = useState<string | null>(null);
 
       return (
-        <div className="w-[220px]">
+        <div className="w-[260px]">
           <Filter
             {...args}
             values={value}
+            isOpen={openId === args.id}
+            onOpenChange={setOpenId}
             onChange={setValue}
           />
         </div>
@@ -100,26 +104,34 @@ export const Interactive: Story = {
 };
 
 export const TwoFiltersTogether: Story = {
-  args: {},
   render: () => {
     const Demo = () => {
-      const [category, setCategory] = useState("");
-      const [year, setYear] = useState("");
+      const [category, setCategory] = useState("medical_coverage");
+      const [year, setYear] = useState("2026");
+      const [openId, setOpenId] = useState<string | null>(null);
 
       return (
-        <div className="flex items-center gap-4">
+        <div className="flex w-[520px] items-center gap-4">
           <Filter
+            id="category"
             title="Categoría"
             options={categoryOptions}
             values={category}
+            isOpen={openId === "category"}
+            onOpenChange={setOpenId}
             onChange={setCategory}
+            allowClear={false}
           />
 
           <Filter
+            id="year"
             title="Año"
             options={yearOptions}
             values={year}
+            isOpen={openId === "year"}
+            onOpenChange={setOpenId}
             onChange={setYear}
+            allowClear={false}
           />
         </div>
       );

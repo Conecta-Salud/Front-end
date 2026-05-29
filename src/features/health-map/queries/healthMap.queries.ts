@@ -6,6 +6,7 @@ import {
   fetchStatesGeoJson,
 } from "../services/healthMap.api";
 import type { HealthMapIndicator } from "../types/healthMap.types";
+import { normalizeGeoJson } from "../utils/healthMap.utils";
 
 export const healthMapQueryKeys = {
   all: ["health-map"] as const,
@@ -49,6 +50,7 @@ export function useStatesGeoJsonQuery() {
   return useQuery({
     queryKey: healthMapQueryKeys.statesGeoJson(),
     queryFn: ({ signal }) => fetchStatesGeoJson(signal),
+    select: normalizeGeoJson,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 60 * 24,
   });
@@ -62,6 +64,7 @@ export function useMunicipalitiesGeoJsonQuery(
     queryFn: ({ signal }) =>
       fetchMunicipalitiesGeoJson(stateCode as string, signal),
     enabled: Boolean(stateCode),
+    select: normalizeGeoJson,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 60 * 24,
   });

@@ -42,11 +42,11 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
               type="button"
               onClick={onClose}
               className="shrink-0 transition-transform hover:scale-105"
-              aria-label="Close modal"
+              aria-label="Cerrar modal"
             >
               <img
                 src={closeIcon}
-                alt="Close"
+                alt="Cerrar"
                 className="w-[24px] h-[24px] object-contain"
               />
             </button>
