@@ -1,5 +1,5 @@
 // src/services/auth/firebase.ts
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 import { env } from "../../config/env";
@@ -7,3 +7,5 @@ import { env } from "../../config/env";
 const app = initializeApp(env.firebase);
 
 export const auth = getAuth(app);
+
+
