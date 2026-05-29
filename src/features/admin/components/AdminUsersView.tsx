@@ -5,6 +5,7 @@ import {
   useAdminUsersQuery,
   useDeactivateAdminUserMutation,
   useReactivateAdminUserMutation,
+  useChangeAdminUserPasswordMutation,
 } from "../queries/adminUsers.queries";
 import {
   adaptAdminUsersToRows,
@@ -17,6 +18,8 @@ import type {
   AdminUserStatusAction,
 } from "../types/adminUsers.types";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
+import PasswordFormModal from "../../../components/ui/PasswordFormModal/PasswordFormModal";
+
 export default function AdminUsersView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -24,6 +27,8 @@ export default function AdminUsersView() {
   const [activeFilter, setActiveFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [openFilterId, setOpenFilterId] = useState<string | null>(null);
+  const [userToChangePassword, setUserToChangePassword] =
+    useState<AdminUser | null>(null);
   const usersQueryParams = useMemo(
     () => ({
       search: debouncedSearchTerm || undefined,
@@ -43,6 +48,7 @@ export default function AdminUsersView() {
   const usersQuery = useAdminUsersQuery(usersQueryParams);
   const deactivateUserMutation = useDeactivateAdminUserMutation();
   const reactivateUserMutation = useReactivateAdminUserMutation();
+  const changePasswordMutation = useChangeAdminUserPasswordMutation();
   const [statusActionUser, setStatusActionUser] = useState<AdminUser | null>(
     null
   );
@@ -80,6 +86,7 @@ export default function AdminUsersView() {
         onEdit: setUserToEdit,
         onDeactivate: (user) => openStatusAction(user, "deactivate"),
         onReactivate: (user) => openStatusAction(user, "reactivate"),
+        onChangePassword: setUserToChangePassword,
       }),
     []
   );
@@ -97,6 +104,30 @@ export default function AdminUsersView() {
 
       setStatusActionUser(null);
       setStatusAction(null);
+    } catch {
+      // El modal muestra el error con isError.
+    }
+  };
+
+  const handleChangePassword = async ({
+    newPassword,
+  }: {
+    currentPassword?: string;
+    newPassword: string;
+  }) => {
+    if (!userToChangePassword) return;
+
+    try {
+      await changePasswordMutation.mutateAsync({
+        userId: userToChangePassword.id,
+        payload: {
+          newPassword,
+          revokeSessions: true,
+        },
+      });
+
+      setUserToChangePassword(null);
+      changePasswordMutation.reset();
     } catch {
       // El modal muestra el error con isError.
     }
@@ -189,6 +220,32 @@ export default function AdminUsersView() {
           }
         }}
         onConfirm={handleConfirmStatusAction}
+      />
+      <PasswordFormModal
+        isOpen={Boolean(userToChangePassword)}
+        title="Cambiar contraseña"
+        description={
+          userToChangePassword ? (
+            <>
+              Actualiza la contraseña de{" "}
+              <span className="font-semibold">
+                {userToChangePassword.fullName || userToChangePassword.email}
+              </span>
+              .
+            </>
+          ) : undefined
+        }
+        requireCurrentPassword={false}
+        isSaving={changePasswordMutation.isPending}
+        isError={changePasswordMutation.isError}
+        errorMessage="No se pudo cambiar la contraseña. Intenta nuevamente."
+        onClose={() => {
+          if (!changePasswordMutation.isPending) {
+            setUserToChangePassword(null);
+            changePasswordMutation.reset();
+          }
+        }}
+        onSubmit={handleChangePassword}
       />
     </section>
   );

@@ -25,10 +25,12 @@ export function getAdminUsersColumns({
   onEdit,
   onDeactivate,
   onReactivate,
+  onChangePassword,
 }: {
   onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
+  onChangePassword: (user: AdminUser) => void;
 }): RankingColumn<AdminUserTableRow>[] {
   return [
     {
@@ -77,6 +79,7 @@ export function getAdminUsersColumns({
           onEdit={onEdit}
           onDeactivate={onDeactivate}
           onReactivate={onReactivate}
+          onChangePassword={onChangePassword}
         />
       ),
     },
