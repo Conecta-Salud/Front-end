@@ -53,4 +53,9 @@ export type CreateAdminUserPayload = {
   role?: AdminUserRole;
 };
 
+export type ChangeAdminUserPasswordPayload = {
+  newPassword: string;
+  revokeSessions?: boolean;
+};
+
 export type AdminUserStatusAction = "deactivate" | "reactivate";

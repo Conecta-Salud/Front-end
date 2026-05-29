@@ -1,27 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+
 import ComparisonChart from "./ComparisonChart";
-
-const meta = {
-  title: "Components/Tables/ComparisonChart",
-  component: ComparisonChart,
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
-  argTypes: {
-    title: { control: "text" },
-    chartHeight: {
-      control: { type: "number", min: 220, max: 700, step: 20 },
-    },
-    yDomain: { control: "object" },
-    emptyMessage: { control: "text" },
-    referenceLine: { control: "object" },
-    rules: { control: "object" },
-  },
-} satisfies Meta<typeof ComparisonChart>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 const coberturaData = [
   { label: "Cuernavaca", subtitle: "(Morelos)", value: 0.7 },
@@ -63,19 +42,47 @@ const pobrezaRules = [
   { min: 50, tone: "red" as const },
 ];
 
-export const CoberturaMedica: Story = {
+const meta = {
+  title: "Components/Charts/ComparisonChart",
+  component: ComparisonChart,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    title: { control: "text" },
+    chartHeight: {
+      control: { type: "number", min: 220, max: 700, step: 20 },
+    },
+    yDomain: { control: "object" },
+    emptyMessage: { control: "text" },
+    referenceLine: { control: "object" },
+    rules: { control: "object" },
+  },
   args: {
     title: "Cobertura médica",
     data: coberturaData,
     rules: coberturaRules,
-    referenceLine: {
-      value: 2.3,
-      label: "Referencia mínima OMS / 2.3",
-      color: "#67B7C7",
-    },
     yDomain: [0, 3.5],
     chartHeight: 320,
   },
+} satisfies Meta<typeof ComparisonChart>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const CoberturaMedica: Story = {
+  args: {
+    referenceLine: {
+      value: 2.3,
+      label: "Referencia mínima OMS / 2.3",
+    },
+  },
+  render: (args) => (
+    <div className="w-[560px]">
+      <ComparisonChart {...args} />
+    </div>
+  ),
 };
 
 export const DeficitEstimado: Story = {
@@ -86,11 +93,13 @@ export const DeficitEstimado: Story = {
     referenceLine: {
       value: 1,
       label: "Umbral recomendado / 1.0",
-      color: "#67B7C7",
     },
-    yDomain: [0, 3.5],
-    chartHeight: 320,
   },
+  render: (args) => (
+    <div className="w-[560px]">
+      <ComparisonChart {...args} />
+    </div>
+  ),
 };
 
 export const CamasHospitalarias: Story = {
@@ -101,11 +110,15 @@ export const CamasHospitalarias: Story = {
     referenceLine: {
       value: 2.3,
       label: "Referencia mínima OMS / 2.3",
-      color: "#67B7C7",
     },
     yDomain: [0, 3],
     chartHeight: 340,
   },
+  render: (args) => (
+    <div className="w-[680px]">
+      <ComparisonChart {...args} />
+    </div>
+  ),
 };
 
 export const PoblacionEnPobreza: Story = {
@@ -116,29 +129,25 @@ export const PoblacionEnPobreza: Story = {
     referenceLine: {
       value: 30,
       label: "Meta de referencia / 30%",
-      color: "#67B7C7",
     },
     yDomain: [0, 80],
     chartHeight: 340,
   },
-};
-
-export const WithoutReferenceLine: Story = {
-  args: {
-    title: "Cobertura médica sin referencia",
-    data: coberturaData,
-    rules: coberturaRules,
-    yDomain: [0, 3.5],
-    chartHeight: 320,
-  },
+  render: (args) => (
+    <div className="w-[680px]">
+      <ComparisonChart {...args} />
+    </div>
+  ),
 };
 
 export const EmptyState: Story = {
   args: {
-    title: "Cobertura médica",
     data: [],
-    rules: coberturaRules,
     emptyMessage: "No hay datos disponibles para esta comparación.",
-    chartHeight: 320,
   },
+  render: (args) => (
+    <div className="w-[560px]">
+      <ComparisonChart {...args} />
+    </div>
+  ),
 };

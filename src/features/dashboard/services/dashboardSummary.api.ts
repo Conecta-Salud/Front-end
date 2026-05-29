@@ -39,7 +39,8 @@ export async function fetchDashboardSummary({
   municipalityId,
   periodId,
   category,
-}: DashboardSummaryRequest) {
+  signal,
+}: DashboardSummaryRequest & { signal?: AbortSignal }) {
   const path = getDashboardSummaryPath({
     level,
     stateId,
@@ -47,6 +48,7 @@ export async function fetchDashboardSummary({
   });
 
   const response = await api.get<DashboardSummaryResponse>(path, {
+    signal,
     params: {
       periodId,
       category,

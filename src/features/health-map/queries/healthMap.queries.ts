@@ -6,6 +6,7 @@ import {
   fetchStatesGeoJson,
 } from "../services/healthMap.api";
 import type { HealthMapIndicator } from "../types/healthMap.types";
+import { normalizeGeoJson } from "../utils/healthMap.utils";
 
 export const healthMapQueryKeys = {
   all: ["health-map"] as const,
@@ -48,7 +49,8 @@ export const healthMapQueryKeys = {
 export function useStatesGeoJsonQuery() {
   return useQuery({
     queryKey: healthMapQueryKeys.statesGeoJson(),
-    queryFn: fetchStatesGeoJson,
+    queryFn: ({ signal }) => fetchStatesGeoJson(signal),
+    select: normalizeGeoJson,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 60 * 24,
   });
@@ -59,8 +61,10 @@ export function useMunicipalitiesGeoJsonQuery(
 ) {
   return useQuery({
     queryKey: healthMapQueryKeys.municipalitiesGeoJson(stateCode),
-    queryFn: () => fetchMunicipalitiesGeoJson(stateCode as string),
+    queryFn: ({ signal }) =>
+      fetchMunicipalitiesGeoJson(stateCode as string, signal),
     enabled: Boolean(stateCode),
+    select: normalizeGeoJson,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 60 * 24,
   });
@@ -76,10 +80,11 @@ export function useStateMapIndicatorsQuery(params: {
       indicator: params.indicator,
       year: params.year,
     }),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchStateMapIndicators({
         indicator: params.indicator,
         year: params.year,
+        signal,
       }),
     enabled: params.enabled ?? true,
     staleTime: 1000 * 60 * 10,
@@ -99,11 +104,12 @@ export function useMunicipalityMapIndicatorsQuery(params: {
       indicator: params.indicator,
       year: params.year,
     }),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchMunicipalityMapIndicators({
         stateCode: params.stateCode as string,
         indicator: params.indicator,
         year: params.year,
+        signal,
       }),
     enabled: Boolean(params.stateCode) && (params.enabled ?? true),
     staleTime: 1000 * 60 * 10,

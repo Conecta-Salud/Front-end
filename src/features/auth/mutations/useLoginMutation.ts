@@ -17,7 +17,7 @@ export function useLoginMutation() {
 
       const currentUser = await queryClient.fetchQuery({
         queryKey: queryKeys.auth.currentUser(),
-        queryFn: getCurrentUser,
+        queryFn: ({ signal }) => getCurrentUser(signal),
         staleTime: 5 * 60 * 1000,
       });
 

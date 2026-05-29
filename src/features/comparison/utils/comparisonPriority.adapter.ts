@@ -2,7 +2,10 @@ import type {
   ComparisonPriorityFactor,
   ComparisonPriorityResult,
 } from "../types/comparisonSummary.types";
-import { formatPriorityFactorValue, formatPriorityScore } from "./comparisonFormatters";
+import {
+  formatPriorityFactorValue,
+  formatPriorityScore,
+} from "./comparisonFormatters";
 
 type PriorityCardLevel = "alta" | "media" | "baja";
 
@@ -21,7 +24,10 @@ export type PriorityCardViewData = {
   metrics: PriorityCardMetric[];
 };
 
-const priorityLevelMap: Record<ComparisonPriorityResult["level"], PriorityCardLevel> = {
+const priorityLevelMap: Record<
+  ComparisonPriorityResult["level"],
+  PriorityCardLevel
+> = {
   high: "alta",
   medium: "media",
   low: "baja",
@@ -47,7 +53,9 @@ function translateFactorLabel(label: string) {
   return factorLabelTranslations[label] ?? label;
 }
 
-function adaptPriorityFactor(factor: ComparisonPriorityFactor): PriorityCardMetric {
+function adaptPriorityFactor(
+  factor: ComparisonPriorityFactor
+): PriorityCardMetric {
   return {
     id: factor.id,
     label: translateFactorLabel(factor.label),

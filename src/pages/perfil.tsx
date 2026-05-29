@@ -27,8 +27,7 @@ function PerfilPage() {
       navigate("/login", {
         replace: true,
       });
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+    } catch {
       setLogoutError("No se pudo cerrar la sesión. Intenta nuevamente.");
     }
   };

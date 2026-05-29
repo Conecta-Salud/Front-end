@@ -1,10 +1,11 @@
-import { useMemo, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import RankingTable from "../../../components/ui/RankingTable/RankingTable";
 import {
   useAdminUsersQuery,
   useDeactivateAdminUserMutation,
   useReactivateAdminUserMutation,
+  useChangeAdminUserPasswordMutation,
 } from "../queries/adminUsers.queries";
 import {
   adaptAdminUsersToRows,
@@ -17,6 +18,8 @@ import type {
   AdminUserStatusAction,
 } from "../types/adminUsers.types";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
+import PasswordFormModal from "../../../components/ui/PasswordFormModal/PasswordFormModal";
+
 export default function AdminUsersView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -24,6 +27,8 @@ export default function AdminUsersView() {
   const [activeFilter, setActiveFilter] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [openFilterId, setOpenFilterId] = useState<string | null>(null);
+  const [userToChangePassword, setUserToChangePassword] =
+    useState<AdminUser | null>(null);
   const usersQueryParams = useMemo(
     () => ({
       search: debouncedSearchTerm || undefined,
@@ -43,12 +48,14 @@ export default function AdminUsersView() {
   const usersQuery = useAdminUsersQuery(usersQueryParams);
   const deactivateUserMutation = useDeactivateAdminUserMutation();
   const reactivateUserMutation = useReactivateAdminUserMutation();
+  const changePasswordMutation = useChangeAdminUserPasswordMutation();
+  const resetDeactivateUserMutation = deactivateUserMutation.reset;
+  const resetReactivateUserMutation = reactivateUserMutation.reset;
   const [statusActionUser, setStatusActionUser] = useState<AdminUser | null>(
     null
   );
   const [statusAction, setStatusAction] =
     useState<AdminUserStatusAction | null>(null);
-  const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
 
   const rows = useMemo(
     () => adaptAdminUsersToRows(usersQuery.data?.items ?? []),
@@ -67,21 +74,28 @@ export default function AdminUsersView() {
       value: String(id),
     }));
   }, [usersQuery.data]);
-  const openStatusAction = (user: AdminUser, action: AdminUserStatusAction) => {
-    setStatusActionUser(user);
-    setStatusAction(action);
-    deactivateUserMutation.reset();
-    reactivateUserMutation.reset();
-  };
+  const resetStatusMutations = useCallback(() => {
+    resetDeactivateUserMutation();
+    resetReactivateUserMutation();
+  }, [resetDeactivateUserMutation, resetReactivateUserMutation]);
+
+  const openStatusAction = useCallback(
+    (user: AdminUser, action: AdminUserStatusAction) => {
+      setStatusActionUser(user);
+      setStatusAction(action);
+      resetStatusMutations();
+    },
+    [resetStatusMutations]
+  );
 
   const columns = useMemo(
     () =>
       getAdminUsersColumns({
-        onEdit: setUserToEdit,
         onDeactivate: (user) => openStatusAction(user, "deactivate"),
         onReactivate: (user) => openStatusAction(user, "reactivate"),
+        onChangePassword: setUserToChangePassword,
       }),
-    []
+    [openStatusAction]
   );
 
   const handleConfirmStatusAction = async (
@@ -97,6 +111,30 @@ export default function AdminUsersView() {
 
       setStatusActionUser(null);
       setStatusAction(null);
+    } catch {
+      // El modal muestra el error con isError.
+    }
+  };
+
+  const handleChangePassword = async ({
+    newPassword,
+  }: {
+    currentPassword?: string;
+    newPassword: string;
+  }) => {
+    if (!userToChangePassword) return;
+
+    try {
+      await changePasswordMutation.mutateAsync({
+        userId: userToChangePassword.id,
+        payload: {
+          newPassword,
+          revokeSessions: true,
+        },
+      });
+
+      setUserToChangePassword(null);
+      changePasswordMutation.reset();
     } catch {
       // El modal muestra el error con isError.
     }
@@ -184,11 +222,36 @@ export default function AdminUsersView() {
           if (!isStatusActionPending) {
             setStatusActionUser(null);
             setStatusAction(null);
-            deactivateUserMutation.reset();
-            reactivateUserMutation.reset();
+            resetStatusMutations();
           }
         }}
         onConfirm={handleConfirmStatusAction}
+      />
+      <PasswordFormModal
+        isOpen={Boolean(userToChangePassword)}
+        title="Cambiar contraseña"
+        description={
+          userToChangePassword ? (
+            <>
+              Actualiza la contraseña de{" "}
+              <span className="font-semibold">
+                {userToChangePassword.fullName || userToChangePassword.email}
+              </span>
+              .
+            </>
+          ) : undefined
+        }
+        requireCurrentPassword={false}
+        isSaving={changePasswordMutation.isPending}
+        isError={changePasswordMutation.isError}
+        errorMessage="No se pudo cambiar la contraseña. Intenta nuevamente."
+        onClose={() => {
+          if (!changePasswordMutation.isPending) {
+            setUserToChangePassword(null);
+            changePasswordMutation.reset();
+          }
+        }}
+        onSubmit={handleChangePassword}
       />
     </section>
   );

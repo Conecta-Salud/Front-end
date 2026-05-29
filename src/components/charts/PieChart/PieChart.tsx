@@ -118,7 +118,7 @@ export default function CustomPieChart({
   showLegend = true,
   showTitle = true,
   isAnimationActive = true,
-  emptyMessage = "No chart data available.",
+  emptyMessage = "No hay datos disponibles.",
 }: CustomPieChartProps) {
   if (!data.length) {
     return (

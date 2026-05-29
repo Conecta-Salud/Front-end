@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type {
   HealthMapFeatureCollection,
   HealthMapIndicator,
   HealthMapNavigationState,
   HealthMapIndicatorResponse,
-  RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
 import {
   useMunicipalitiesGeoJsonQuery,
@@ -63,7 +63,7 @@ export default function HealthMap({
     enabled: isTerritoryView,
   });
 
-  const activeGeoJson = useMemo<RawGeoJsonFeatureCollection | undefined>(() => {
+  const activeGeoJson = useMemo<HealthMapFeatureCollection | undefined>(() => {
     if (isCountryView) return statesGeoJsonQuery.data;
     return municipalitiesGeoJsonQuery.data;
   }, [
@@ -92,30 +92,29 @@ export default function HealthMap({
     });
   }, [activeGeoJson, activeIndicators]);
 
-  const currentNavigationKey = [
+  const geometryNavigationKey = [
     navigation.level,
     navigation.selectedState?.code ?? "country",
     navigation.selectedMunicipality?.code ?? "none",
+  ].join("-");
+
+  const currentNavigationKey = [
+    geometryNavigationKey,
     indicator,
     year,
   ].join("-");
-
-  const [loadedNavigationKey, setLoadedNavigationKey] = useState<string | null>(
-    null
-  );
 
   const activeGeoJsonUpdatedAt = isCountryView
     ? statesGeoJsonQuery.dataUpdatedAt
     : municipalitiesGeoJsonQuery.dataUpdatedAt;
 
+  const activeGeoJsonIsLoading = isCountryView
+    ? statesGeoJsonQuery.isLoading
+    : municipalitiesGeoJsonQuery.isLoading;
+
   const activeIndicatorsUpdatedAt = isCountryView
     ? stateIndicatorsQuery.dataUpdatedAt
     : municipalityIndicatorsQuery.dataUpdatedAt;
-
-  const activeIsLoading = isCountryView
-    ? statesGeoJsonQuery.isLoading || stateIndicatorsQuery.isLoading
-    : municipalitiesGeoJsonQuery.isLoading ||
-      municipalityIndicatorsQuery.isLoading;
 
   const layerKey = [
     currentNavigationKey,
@@ -124,23 +123,9 @@ export default function HealthMap({
     navigation.selectedMunicipality?.code ?? "no-selection",
   ].join("-");
 
-  useEffect(() => {
-    setLoadedNavigationKey(null);
-  }, [currentNavigationKey]);
-
-  useEffect(() => {
-    if (!mergedData) return;
-    if (!activeGeoJsonUpdatedAt) return;
-    if (activeIsLoading) return;
-
-    setLoadedNavigationKey(currentNavigationKey);
-  }, [
-    mergedData,
-    activeGeoJsonUpdatedAt,
-    activeIndicatorsUpdatedAt,
-    activeIsLoading,
-    currentNavigationKey,
-  ]);
+  const canFitBounds = Boolean(
+    activeGeoJson && activeGeoJsonUpdatedAt && !activeGeoJsonIsLoading
+  );
 
   const activeIndicatorsReady = activeIndicatorsUpdatedAt > 0;
 
@@ -166,7 +151,7 @@ export default function HealthMap({
     );
   }
 
-  if (!mergedData && isInitialLoading) {
+  if ((!activeGeoJson || !mergedData) && isInitialLoading) {
     return (
       <div className="flex min-h-[650px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
         <p className="text-[16px] text-gray-500">Loading map...</p>
@@ -174,7 +159,7 @@ export default function HealthMap({
     );
   }
 
-  if (!mergedData) {
+  if (!activeGeoJson || !mergedData) {
     return (
       <div className="flex min-h-[650px] w-full items-center justify-center rounded-[10px] bg-white shadow-sm">
         <p className="text-[16px] text-gray-500">No map data available.</p>
@@ -211,9 +196,9 @@ export default function HealthMap({
           />
 
           <HealthMapFitBounds
-            data={mergedData}
-            enabled={loadedNavigationKey === currentNavigationKey}
-            navigationKey={currentNavigationKey}
+            data={activeGeoJson}
+            enabled={canFitBounds}
+            navigationKey={geometryNavigationKey}
             viewLevel={navigation.level}
             maxZoom={STATE_MAX_FIT_ZOOM}
           />
