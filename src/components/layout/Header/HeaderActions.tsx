@@ -66,7 +66,7 @@ export default function HeaderActions({
       {showCategoryFilter && (
         <Filter
           id="category"
-          title="Categoria"
+          title="Categoría"
           values={category}
           isOpen={openDropdown === "category"}
           onOpenChange={(id) => setOpenDropdown(id as HeaderDropdownId | null)}

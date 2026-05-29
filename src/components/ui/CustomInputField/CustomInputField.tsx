@@ -95,14 +95,15 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
             >
               <img
                 src={iconToShow}
-                alt="toggle password visibility"
+                alt="Mostrar u ocultar contraseña"
                 className="w-[22px] h-auto max-h-[22px] object-contain"
               />
             </button>
           ) : (
             <img
               src={iconToShow}
-              alt="field icon"
+              alt=""
+              aria-hidden="true"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-[22px] h-auto max-h-[22px] object-contain"
             />
           )}

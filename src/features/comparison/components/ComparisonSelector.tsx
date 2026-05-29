@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ComparisonLevel } from "../types/comparisonSummary.types";
 import LocationInput, {
   type LocationOption,
@@ -45,15 +45,21 @@ export default function ComparisonSelector({
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const levelDropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedLevelLabel =
-  levelOptions.find((option) => option.value === level)?.label ?? "Selecciona";
-
-  const firstOptions = options.filter(
-    (option) => option.code !== secondLocation?.code
+  const selectedLevelLabel = useMemo(
+    () =>
+      levelOptions.find((option) => option.value === level)?.label ??
+      "Selecciona",
+    [level]
   );
 
-  const secondOptions = options.filter(
-    (option) => option.code !== firstLocation?.code
+  const firstOptions = useMemo(
+    () => options.filter((option) => option.code !== secondLocation?.code),
+    [options, secondLocation?.code]
+  );
+
+  const secondOptions = useMemo(
+    () => options.filter((option) => option.code !== firstLocation?.code),
+    [options, firstLocation?.code]
   );
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import pinIcon from '../../../assets/icons/pinIcon.svg';
 import cancelarIcon from '../../../assets/icons/cancelar.svg';
 
@@ -48,19 +48,21 @@ const LocationInput: React.FC<LocationInputProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const normalizedSearch = search.toLowerCase().trim();
+  const normalizedSearch = useMemo(() => search.toLowerCase().trim(), [search]);
 
-  const filteredOptions = options.filter((option) => {
-    const matchesLevel = restrictedLevel
-      ? option.level === restrictedLevel
-      : true;
+  const filteredOptions = useMemo(() => {
+    return options.filter((option) => {
+      const matchesLevel = restrictedLevel
+        ? option.level === restrictedLevel
+        : true;
 
-    const matchesSearch = normalizedSearch
-      ? getDisplayLabel(option).toLowerCase().includes(normalizedSearch)
-      : true;
+      const matchesSearch = normalizedSearch
+        ? getDisplayLabel(option).toLowerCase().includes(normalizedSearch)
+        : true;
 
-    return matchesLevel && matchesSearch;
-  });
+      return matchesLevel && matchesSearch;
+    });
+  }, [normalizedSearch, options, restrictedLevel]);
 
   const renderSelectedLabel = (option: LocationOption) => {
     if (option.level === "municipality" && option.stateName) {
@@ -91,20 +93,12 @@ const LocationInput: React.FC<LocationInputProps> = ({
   };
 
   useEffect(() => {
-    setSearch(value ? getDisplayLabel(value) : "");
-  }, [value]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
-
-        if (value) {
-          setSearch(getDisplayLabel(value));
-        }
       }
     };
 
@@ -113,7 +107,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [value]);
+  }, []);
 
 
   return (
@@ -139,7 +133,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
           <button
             type="button"
             onClick={() => {
-              if (!disabled) setOpen(true);
+              if (!disabled) {
+                setSearch(value ? getDisplayLabel(value) : "");
+                setOpen(true);
+              }
             }}
             disabled={disabled}
             className="
@@ -153,7 +150,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
         ) : (
           <input
             type="text"
-            value={search}
+            value={open ? search : ""}
             placeholder={placeholder}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -164,7 +161,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
               }
             }}
             onFocus={() => {
-              if (!disabled) setOpen(true);
+              if (!disabled) {
+                setSearch(value ? getDisplayLabel(value) : "");
+                setOpen(true);
+              }
             }}
             disabled={disabled}
             aria-invalid={Boolean(error)}

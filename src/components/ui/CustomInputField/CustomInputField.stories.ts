@@ -11,6 +11,9 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
+    label: { control: "text" },
+    placeholder: { control: "text" },
+    value: { control: "text" },
     type: {
       control: "select",
       options: ["text", "password", "email"],
@@ -23,6 +26,12 @@ const meta = {
     },
   },
   args: {
+    name: "email",
+    label: "Correo",
+    placeholder: "correo@conectasalud.mx",
+    value: "",
+    type: "email",
+    importance: false,
     onChange: fn(),
   },
 } satisfies Meta<typeof CustomInputField>;
@@ -30,35 +39,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    name: "username",
-    label: "Username",
-    placeholder: "Enter your username",
-    value: "",
-    type: "text",
-    importance: false,
-  },
-};
+export const Default: Story = {};
 
 export const Required: Story = {
   args: {
     name: "fullName",
-    label: "Full Name",
-    placeholder: "Enter your full name",
-    value: "",
+    label: "Nombre completo",
+    placeholder: "Nombre y apellidos",
     type: "text",
-    importance: true,
-  },
-};
-
-export const Email: Story = {
-  args: {
-    name: "email",
-    label: "Email",
-    placeholder: "Enter your email",
-    value: "",
-    type: "email",
     importance: true,
   },
 };
@@ -66,9 +54,8 @@ export const Email: Story = {
 export const Password: Story = {
   args: {
     name: "password",
-    label: "Password",
-    placeholder: "Enter your password",
-    value: "",
+    label: "Contraseña",
+    placeholder: "Ingresa tu contraseña",
     type: "password",
     importance: true,
   },
@@ -77,10 +64,9 @@ export const Password: Story = {
 export const WithValue: Story = {
   args: {
     name: "user",
-    label: "User",
-    placeholder: "Enter your user",
+    label: "Usuario",
+    placeholder: "Nombre de usuario",
     value: "Gabriel",
     type: "text",
-    importance: false,
   },
 };

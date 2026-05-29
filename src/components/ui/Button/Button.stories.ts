@@ -12,34 +12,28 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     label: { control: "text" },
-
     tone: {
       control: "select",
       options: ["green", "blue", "red"],
     },
-
     height: {
       control: "select",
       options: ["40", "60"],
     },
-
     textSize: {
       control: "select",
       options: ["md", "lg"],
     },
-
     buttonType: {
       control: "select",
       options: ["add", "download"],
     },
-
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
-
     onClick: { action: "clicked" },
   },
   args: {
-    label: "Botón",
+    label: "Continuar",
     tone: "green",
     height: "40",
     textSize: "md",
@@ -54,67 +48,46 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const Blue: Story = {
+export const PrimaryAction: Story = {
   args: {
-    label: "Ver detalles",
-    tone: "blue",
+    label: "Nuevo usuario",
+    buttonType: "add",
   },
 };
 
-export const Red: Story = {
+export const SecondaryAction: Story = {
   args: {
-    label: "Cerrar Sesión",
+    label: "Exportar",
+    tone: "blue",
+    buttonType: "download",
+  },
+};
+
+export const DestructiveAction: Story = {
+  args: {
+    label: "Cerrar sesión",
     tone: "red",
   },
 };
 
-export const Height60: Story = {
+export const Large: Story = {
   args: {
-    label: "Comparar",
+    label: "Comparar indicadores",
     height: "60",
     textSize: "lg",
   },
 };
 
-export const TextMedium: Story = {
-  args: {
-    label: "Texto 18px",
-    textSize: "md",
-  },
-};
-
-export const TextLarge: Story = {
-  args: {
-    label: "Texto 24px",
-    textSize: "lg",
-  },
-};
-
-export const AddButton: Story = {
-  args: {
-    label: "Nuevo Usuario",
-    buttonType: "add",
-  },
-};
-
-export const DownloadButton: Story = {
-  args: {
-    label: "Exportar",
-    buttonType: "download",
-    tone: "blue",
-  },
-};
-
 export const Loading: Story = {
   args: {
-    label: "Cargando",
+    label: "Guardando",
     loading: true,
   },
 };
 
 export const Disabled: Story = {
   args: {
-    label: "Deshabilitado",
+    label: "Sin permisos",
     disabled: true,
   },
 };

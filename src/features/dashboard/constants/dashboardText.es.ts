@@ -45,38 +45,26 @@ export const dashboardRankingColumnLabelsEs: Record<string, string> = {
 };
 
 export const dashboardRankingTitlesEs: Record<string, string> = {
-  "States with lowest medical coverage":
-    "Estados con menor cobertura médica",
-
+  "States with lowest medical coverage": "Estados con menor cobertura médica",
   "Municipalities with lowest medical coverage":
     "Municipios con menor cobertura médica",
-
   "Health units by available doctors":
     "Unidades médicas por médicos disponibles",
-
   "States with lowest hospital capacity":
     "Estados con menor capacidad hospitalaria",
-
   "Municipalities with lowest hospital capacity":
     "Municipios con menor capacidad hospitalaria",
-  
   "Health units by hospital infrastructure":
     "Unidades médicas por infraestructura hospitalaria",
-
   "Health units with beds and consulting rooms":
     "Unidades médicas con camas y consultorios",
-
   "Priority states for healthcare investment":
     "Estados prioritarios para inversión en salud",
-
   "Priority municipalities for healthcare investment":
     "Municipios prioritarios para inversión en salud",
-
-  "Priority municipalities":
-    "Municipios prioritarios",
-
-  "Available health units":
-    "Unidades médicas disponibles",
+  "Priority municipalities": "Municipios prioritarios",
+  "Top municipalities": "Municipios prioritarios",
+  "Available health units": "Unidades médicas disponibles",
 };
 
 export const dashboardValueLabelsEs: Record<string, string> = {
@@ -92,88 +80,63 @@ export const dashboardValueLabelsEs: Record<string, string> = {
 };
 
 export const dashboardChartTitlesEs: Record<string, string> = {
+  "Medical coverage by state": "Cobertura médica por estado",
   "States vs doctors per 1,000 inhabitants":
     "Estados vs médicos por 1000 habitantes",
-
   "Municipalities vs doctors per 1,000 inhabitants":
     "Municipios vs médicos por 1000 habitantes",
-
-  "Doctors by health unit":
-    "Médicos por unidad médica",
-
-  "Total doctors by state":
-    "Total de médicos por estado",
-
-  "Total doctors by municipality":
-    "Total de médicos por municipio",
-
-  "Distribution of specialties":
-    "Distribución de especialidades",
-
-  "Health units by care level":
-    "Unidades médicas por nivel de atención",
-
+  "Doctors by health unit": "Médicos por unidad médica",
+  "Total doctors by state": "Total de médicos por estado",
+  "Total doctors by municipality": "Total de médicos por municipio",
+  "Distribution of specialties": "Distribución de especialidades",
+  "Health units by care level": "Unidades médicas por nivel de atención",
   "States vs hospital beds per 1,000 inhabitants":
     "Estados vs camas hospitalarias por 1000 habitantes",
-
   "Municipalities vs hospital beds per 1,000 inhabitants":
     "Municipios vs camas hospitalarias por 1000 habitantes",
-
-  "Hospital beds by health unit":
-    "Camas hospitalarias por unidad médica",
-
+  "Hospital beds by health unit": "Camas hospitalarias por unidad médica",
   "Health units by establishment type":
     "Unidades médicas por tipo de establecimiento",
-
-  "Infrastructure distribution":
-    "Distribución de infraestructura",
-
-  "Population vs doctors":
-    "Relación población vs médicos",
-
+  "Infrastructure distribution": "Distribución de infraestructura",
+  "Population vs doctors": "Relación población vs médicos",
   "States with highest vulnerable population":
     "Estados con mayor población vulnerable",
-
   "Municipalities with highest vulnerable population":
     "Municipios con mayor población vulnerable",
-  
-  "Healthcare access distribution":
-    "Distribución del acceso a la salud",
+  "Healthcare access distribution": "Distribución del acceso a la salud",
 };
 
 export const dashboardChartLabelsEs: Record<string, string> = {
-  "Anesthesiologists": "Anestesiólogos",
-  "Cardiologists": "Cardiólogos",
-  "Dentists": "Odontólogos",
+  Anesthesiologists: "Anestesiólogos",
+  Cardiologists: "Cardiólogos",
+  Dentists: "Odontólogos",
   "Emergency physicians": "Urgenciólogos",
   "General practitioners": "Médicos generales",
   "Gynecologists and obstetricians": "Ginecoobstetras",
-  "Internists": "Internistas",
-  "Pediatricians": "Pediatras",
-  "Surgeons": "Cirujanos",
-  "Traumatologists": "Traumatólogos",
+  Internists: "Internistas",
+  Pediatricians: "Pediatras",
+  Surgeons: "Cirujanos",
+  Traumatologists: "Traumatólogos",
 
-  "Primary": "Primer nivel",
-  "Secondary": "Segundo nivel",
-  "Tertiary": "Tercer nivel",
+  Primary: "Primer nivel",
+  Secondary: "Segundo nivel",
+  Tertiary: "Tercer nivel",
   "Not specified": "No especificado",
 
-  "primary": "Primer nivel",
-  "secondary": "Segundo nivel",
-  "tertiary": "Tercer nivel",
-  "not_specified": "No especificado",
+  primary: "Primer nivel",
+  secondary: "Segundo nivel",
+  tertiary: "Tercer nivel",
+  not_specified: "No especificado",
 
   "Consulting rooms": "Consultorios",
   "Hospital beds": "Camas hospitalarias",
-
   "Population with healthcare access deficiency":
     "Población con deficiencia de acceso a la salud",
-
-  "Population without healthcare access deficiency":    
+  "Population without healthcare access deficiency":
     "Población sin deficiencia de acceso a la salud",
 
-  "Hospital": "Hospital",
-  "Clinic": "Clínica",
+  Hospital: "Hospital",
+  Clinic: "Clínica",
   "Health center": "Centro de salud",
   "Medical unit": "Unidad médica",
 };
@@ -187,4 +150,3 @@ export const dashboardCommonTextEs = {
   unsupportedChartType: "Tipo de gráfica no soportado",
   updatingDashboard: "Actualizando dashboard...",
 };
-
