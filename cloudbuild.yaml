@@ -1,15 +1,16 @@
 substitutions:
-  _REGION: us-central1
-  _REPOSITORY: frontimage
-  _IMAGE: frontend
-  _SERVICE: frontend
-  _VITE_API_URL: https://backendn-887266426178.us-central1.run.app
-  _VITE_FIREBASE_API_KEY: SET_IN_CLOUD_BUILD_TRIGGER
-  _VITE_FIREBASE_AUTH_DOMAIN: SET_IN_CLOUD_BUILD_TRIGGER
-  _VITE_FIREBASE_PROJECT_ID: SET_IN_CLOUD_BUILD_TRIGGER
-  _VITE_FIREBASE_STORAGE_BUCKET: SET_IN_CLOUD_BUILD_TRIGGER
-  _VITE_FIREBASE_MESSAGING_SENDER_ID: SET_IN_CLOUD_BUILD_TRIGGER
-  _VITE_FIREBASE_APP_ID: SET_IN_CLOUD_BUILD_TRIGGER
+  _REGION: "us-central1"
+  _REPOSITORY: "frontimage"
+  _IMAGE: "frontend"
+  _SERVICE: "frontend"
+
+  _VITE_API_URL: "https://backendn-887266426178.us-central1.run.app"
+  _VITE_FIREBASE_API_KEY: "AIzaSyCraxYl7v_hULqbknHEFYskR8PdKP0CJHM"
+  _VITE_FIREBASE_AUTH_DOMAIN: "conectasalud-eq3.firebaseapp.com"
+  _VITE_FIREBASE_PROJECT_ID: "conectasalud-eq3"
+  _VITE_FIREBASE_STORAGE_BUCKET: "conectasalud-eq3.firebasestorage.app"
+  _VITE_FIREBASE_MESSAGING_SENDER_ID: "884572026666"
+  _VITE_FIREBASE_APP_ID: "1:884572026666:web:282d590022bcdcc6b4d053"
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -22,6 +23,9 @@ steps:
       - -c
       - |
         set -e
+
+        echo "API URL = ${_VITE_API_URL}"
+        echo "FIREBASE KEY = ${_VITE_FIREBASE_API_KEY}"
 
         VERSION="$${TAG_NAME:-$${SHORT_SHA:-dev}}"
 
@@ -48,13 +52,13 @@ steps:
         docker build \
           -t "$$IMAGE_BASE:$$VERSION" \
           -t "$$IMAGE_BASE:latest" \
-          --build-arg "VITE_API_URL=${_VITE_API_URL}" \
-          --build-arg "VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}" \
-          --build-arg "VITE_FIREBASE_AUTH_DOMAIN=${_VITE_FIREBASE_AUTH_DOMAIN}" \
-          --build-arg "VITE_FIREBASE_PROJECT_ID=${_VITE_FIREBASE_PROJECT_ID}" \
-          --build-arg "VITE_FIREBASE_STORAGE_BUCKET=${_VITE_FIREBASE_STORAGE_BUCKET}" \
-          --build-arg "VITE_FIREBASE_MESSAGING_SENDER_ID=${_VITE_FIREBASE_MESSAGING_SENDER_ID}" \
-          --build-arg "VITE_FIREBASE_APP_ID=${_VITE_FIREBASE_APP_ID}" \
+          --build-arg="VITE_API_URL=${_VITE_API_URL}" \
+          --build-arg="VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}" \
+          --build-arg="VITE_FIREBASE_AUTH_DOMAIN=${_VITE_FIREBASE_AUTH_DOMAIN}" \
+          --build-arg="VITE_FIREBASE_PROJECT_ID=${_VITE_FIREBASE_PROJECT_ID}" \
+          --build-arg="VITE_FIREBASE_STORAGE_BUCKET=${_VITE_FIREBASE_STORAGE_BUCKET}" \
+          --build-arg="VITE_FIREBASE_MESSAGING_SENDER_ID=${_VITE_FIREBASE_MESSAGING_SENDER_ID}" \
+          --build-arg="VITE_FIREBASE_APP_ID=${_VITE_FIREBASE_APP_ID}" \
           .
 
         docker push "$$IMAGE_BASE:$$VERSION"
@@ -78,5 +82,3 @@ steps:
           --platform managed \
           --allow-unauthenticated \
           --port 80
-
-timeout: 1800s
