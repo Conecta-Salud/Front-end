@@ -1,42 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+
 import BarChart from "./BarChart";
 
-const meta = {
-  title: "Components/Tables/CustomBarChart",
-  component: BarChart,
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
-  argTypes: {
-    title: { control: "text" },
-    barColor: { control: "color" },
-    gridColor: { control: "color" },
-    chartHeight: {
-      control: { type: "number", min: 200, max: 700, step: 20 },
-    },
-    showAverageLine: {
-      control: "boolean",
-    },
-    yDomain: {
-      control: "object",
-    },
-  },
-  args: {
-    title: "Gráfica de barras",
-    chartHeight: 320,
-    showAverageLine: false,
-  },
-} satisfies Meta<typeof BarChart>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 const basicData = [
-  { label: "CDMX", value: 3.2 },
-  { label: "Jalisco", value: 2.8 },
-  { label: "Nuevo León", value: 3.5 },
-  { label: "Puebla", value: 2.6 },
+  { label: "CDMX", value: 3.2, colorToken: "green" as const },
+  { label: "Jalisco", value: 2.8, colorToken: "green" as const },
+  { label: "Nuevo León", value: 3.5, colorToken: "green" as const },
+  { label: "Puebla", value: 2.6, colorToken: "yellow" as const },
 ];
 
 const longLabelData = [
@@ -53,18 +23,43 @@ const largeValuesData = [
   { label: "Hospital D", value: 410 },
 ];
 
-const smallValuesData = [
-  { label: "Zona 1", value: 0.2 },
-  { label: "Zona 2", value: 0.5 },
-  { label: "Zona 3", value: 0.8 },
-  { label: "Zona 4", value: 0.3 },
-];
+const meta = {
+  title: "Components/Charts/BarChart",
+  component: BarChart,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    title: { control: "text" },
+    barColor: { control: "color" },
+    chartHeight: {
+      control: { type: "number", min: 200, max: 700, step: 20 },
+    },
+    showAverageLine: { control: "boolean" },
+    showTitle: { control: "boolean" },
+    emptyMessage: { control: "text" },
+    yDomain: { control: "object" },
+    referenceLine: { control: "object" },
+  },
+  args: {
+    title: "Estados vs médicos por 1000 habitantes",
+    data: basicData,
+    chartHeight: 320,
+    showAverageLine: false,
+    showTitle: true,
+  },
+} satisfies Meta<typeof BarChart>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    title: "Estados vs médicos",
-    data: basicData,
-  },
+  render: (args) => (
+    <div className="w-[720px]">
+      <BarChart {...args} />
+    </div>
+  ),
 };
 
 export const LongLabels: Story = {
@@ -72,6 +67,11 @@ export const LongLabels: Story = {
     title: "Estados con nombres largos",
     data: longLabelData,
   },
+  render: (args) => (
+    <div className="w-[720px]">
+      <BarChart {...args} />
+    </div>
+  ),
 };
 
 export const LargeValues: Story = {
@@ -79,43 +79,36 @@ export const LargeValues: Story = {
     title: "Capacidad hospitalaria",
     data: largeValuesData,
   },
+  render: (args) => (
+    <div className="w-[720px]">
+      <BarChart {...args} />
+    </div>
+  ),
 };
 
-export const SmallValues: Story = {
+export const WithReferenceLine: Story = {
   args: {
-    title: "Indicadores pequeños",
-    data: smallValuesData,
+    referenceLine: {
+      value: 2.3,
+      label: "Referencia OMS / 2.3",
+    },
+    yDomain: [0, 4],
   },
+  render: (args) => (
+    <div className="w-[720px]">
+      <BarChart {...args} />
+    </div>
+  ),
 };
 
-export const CustomColor: Story = {
+export const EmptyState: Story = {
   args: {
-    title: "Color personalizado",
-    data: basicData,
-    barColor: "#3B82F6",
+    data: [],
+    emptyMessage: "No hay datos para esta selección.",
   },
-};
-
-export const CustomGrid: Story = {
-  args: {
-    title: "Grid personalizado",
-    data: basicData,
-    gridColor: "#D1D5DB",
-  },
-};
-
-export const WithAverageLine: Story = {
-  args: {
-    title: "Con línea de promedio",
-    data: basicData,
-    showAverageLine: true,
-  },
-};
-
-export const LargeValuesWithAverage: Story = {
-  args: {
-    title: "Valores grandes con promedio",
-    data: largeValuesData,
-    showAverageLine: true,
-  },
+  render: (args) => (
+    <div className="w-[720px]">
+      <BarChart {...args} />
+    </div>
+  ),
 };

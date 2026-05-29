@@ -45,7 +45,7 @@ const getCellValue = <T extends RankingTableBaseRow>(
 };
 
 const formatCellValue = (value: unknown) => {
-  if (value === null || value === undefined || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "Sin dato";
 
   if (typeof value === "number") {
     return new Intl.NumberFormat("en-US", {
@@ -68,7 +68,7 @@ export const RankingTable = <T extends RankingTableBaseRow>({
   data,
   compact = false,
   rowHeight = "md",
-  emptyMessage = "No data available.",
+  emptyMessage = "Sin datos disponibles.",
   className = "",
 }: RankingTableProps<T>) => {
   const cellPadding = compact ? "px-2" : "px-3";

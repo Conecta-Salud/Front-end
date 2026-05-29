@@ -23,7 +23,7 @@ export const adminUsersQueryKeys = {
 export function useAdminUsersQuery(params: AdminUsersQueryParams) {
   return useQuery({
     queryKey: adminUsersQueryKeys.list(params),
-    queryFn: () => fetchAdminUsers(params),
+    queryFn: ({ signal }) => fetchAdminUsers(params, signal),
     staleTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
   });

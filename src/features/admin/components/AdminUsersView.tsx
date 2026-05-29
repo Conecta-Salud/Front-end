@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import RankingTable from "../../../components/ui/RankingTable/RankingTable";
 import {
@@ -49,12 +49,13 @@ export default function AdminUsersView() {
   const deactivateUserMutation = useDeactivateAdminUserMutation();
   const reactivateUserMutation = useReactivateAdminUserMutation();
   const changePasswordMutation = useChangeAdminUserPasswordMutation();
+  const resetDeactivateUserMutation = deactivateUserMutation.reset;
+  const resetReactivateUserMutation = reactivateUserMutation.reset;
   const [statusActionUser, setStatusActionUser] = useState<AdminUser | null>(
     null
   );
   const [statusAction, setStatusAction] =
     useState<AdminUserStatusAction | null>(null);
-  const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
 
   const rows = useMemo(
     () => adaptAdminUsersToRows(usersQuery.data?.items ?? []),
@@ -73,22 +74,28 @@ export default function AdminUsersView() {
       value: String(id),
     }));
   }, [usersQuery.data]);
-  const openStatusAction = (user: AdminUser, action: AdminUserStatusAction) => {
-    setStatusActionUser(user);
-    setStatusAction(action);
-    deactivateUserMutation.reset();
-    reactivateUserMutation.reset();
-  };
+  const resetStatusMutations = useCallback(() => {
+    resetDeactivateUserMutation();
+    resetReactivateUserMutation();
+  }, [resetDeactivateUserMutation, resetReactivateUserMutation]);
+
+  const openStatusAction = useCallback(
+    (user: AdminUser, action: AdminUserStatusAction) => {
+      setStatusActionUser(user);
+      setStatusAction(action);
+      resetStatusMutations();
+    },
+    [resetStatusMutations]
+  );
 
   const columns = useMemo(
     () =>
       getAdminUsersColumns({
-        onEdit: setUserToEdit,
         onDeactivate: (user) => openStatusAction(user, "deactivate"),
         onReactivate: (user) => openStatusAction(user, "reactivate"),
         onChangePassword: setUserToChangePassword,
       }),
-    []
+    [openStatusAction]
   );
 
   const handleConfirmStatusAction = async (
@@ -215,8 +222,7 @@ export default function AdminUsersView() {
           if (!isStatusActionPending) {
             setStatusActionUser(null);
             setStatusAction(null);
-            deactivateUserMutation.reset();
-            reactivateUserMutation.reset();
+            resetStatusMutations();
           }
         }}
         onConfirm={handleConfirmStatusAction}

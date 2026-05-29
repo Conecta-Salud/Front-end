@@ -14,7 +14,9 @@ export type AuthUser = {
   lastLoginAt: string;
 };
 
-export const getCurrentUser = async (): Promise<AuthUser> => {
-  const response = await api.get<AuthUser>("/users/profile");
+export const getCurrentUser = async (
+  signal?: AbortSignal
+): Promise<AuthUser> => {
+  const response = await api.get<AuthUser>("/users/profile", { signal });
   return response.data;
 };

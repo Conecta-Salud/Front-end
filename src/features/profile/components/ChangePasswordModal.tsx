@@ -7,6 +7,18 @@ type ChangePasswordModalProps = {
 };
 
 function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
+  if (!isOpen) return null;
+
+  return <ChangePasswordModalContent onClose={onClose} />;
+}
+
+type ChangePasswordModalContentProps = {
+  onClose: () => void;
+};
+
+function ChangePasswordModalContent({
+  onClose,
+}: ChangePasswordModalContentProps) {
   const changePasswordMutation = useChangePasswordMutation();
 
   const handleClose = () => {

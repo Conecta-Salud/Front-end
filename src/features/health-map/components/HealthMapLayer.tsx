@@ -23,13 +23,22 @@ type HealthMapLayerProps = {
   ) => void;
 };
 
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
 const buildTooltipContent = (feature: HealthMapFeature) => {
   const { name, indicator } = feature.properties;
+  const safeName = escapeHtml(name);
 
   if (!indicator) {
     return `
       <div style="min-width:160px">
-        <strong>${name}</strong>
+        <strong>${safeName}</strong>
         <div style="font-size:12px;color:#6B7280;margin-top:4px">
           No data
         </div>
@@ -39,10 +48,10 @@ const buildTooltipContent = (feature: HealthMapFeature) => {
 
   return `
     <div style="min-width:160px">
-      <strong>${name}</strong>
+      <strong>${safeName}</strong>
       <div style="font-size:12px;color:#6B7280;margin-top:4px">
         <div>Value: ${getFeatureDisplayValue(indicator.value)}</div>
-        <div>Level: ${indicator.level}</div>
+        <div>Level: ${escapeHtml(indicator.level)}</div>
       </div>
     </div>
   `;
