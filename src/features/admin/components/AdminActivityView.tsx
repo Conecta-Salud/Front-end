@@ -6,7 +6,7 @@ import {
   adaptAdminActivityToRows,
   getAdminActivityColumns,
 } from "../utils/adminActivityTable.adapter";
-import AdminActivityToolbar from "./AdminActivityToolbar";
+import AdminActivityToolbar from "./AdminActivityToolBar";
 
 export default function AdminActivityView() {
   const [searchTerm, setSearchTerm] = useState("");
