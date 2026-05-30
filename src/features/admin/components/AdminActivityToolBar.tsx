@@ -1,5 +1,10 @@
 import Filter from "../../../components/ui/Filter/Filter";
 import SearchBar from "../../../components/ui/SearchBar/SearchBar";
+import {
+  ADMIN_ACTIVITY_ACTION_OPTIONS,
+  ADMIN_ACTIVITY_MODULE_OPTIONS,
+  ADMIN_ACTIVITY_RESULT_OPTIONS,
+} from "../constants/adminDisplay.constants";
 
 type AdminActivityToolbarProps = {
   searchTerm: string;
@@ -14,25 +19,6 @@ type AdminActivityToolbarProps = {
   onOpenFilterChange: (id: string | null) => void;
 };
 
-const actionOptions = [
-  { name: "Inicio de sesión", value: "LOGIN" },
-  { name: "Comparación de estados", value: "COMPARE_STATES" },
-  { name: "Comparación de municipios", value: "COMPARE_MUNICIPALITIES" },
-];
-
-const moduleOptions = [
-  { name: "Autenticación", value: "auth" },
-  { name: "Comparación", value: "comparison" },
-  { name: "Dashboard", value: "dashboard" },
-  { name: "Administración", value: "admin" },
-];
-
-const resultOptions = [
-  { name: "Exitoso", value: "success" },
-  { name: "Error", value: "error" },
-  { name: "Fallido", value: "failure" },
-];
-
 export default function AdminActivityToolbar({
   searchTerm,
   actionFilter,
@@ -46,7 +32,7 @@ export default function AdminActivityToolbar({
   onOpenFilterChange,
 }: AdminActivityToolbarProps) {
   return (
-    <div className="mb-3 flex shrink-0 flex-wrap items-center gap-3">
+    <div className="mb-9 flex shrink-0 flex-wrap items-center gap-3">
       <SearchBar
         searchTerm={searchTerm}
         placeholder="Buscar por correo, usuario o detalle..."
@@ -57,7 +43,7 @@ export default function AdminActivityToolbar({
       <Filter
         id="activity-action"
         title="Acción"
-        options={actionOptions}
+        options={ADMIN_ACTIVITY_ACTION_OPTIONS}
         values={actionFilter}
         isOpen={openFilterId === "activity-action"}
         onOpenChange={onOpenFilterChange}
@@ -68,7 +54,7 @@ export default function AdminActivityToolbar({
       <Filter
         id="activity-module"
         title="Módulo"
-        options={moduleOptions}
+        options={ADMIN_ACTIVITY_MODULE_OPTIONS}
         values={moduleFilter}
         isOpen={openFilterId === "activity-module"}
         onOpenChange={onOpenFilterChange}
@@ -79,7 +65,7 @@ export default function AdminActivityToolbar({
       <Filter
         id="activity-result"
         title="Estado"
-        options={resultOptions}
+        options={ADMIN_ACTIVITY_RESULT_OPTIONS}
         values={resultFilter}
         isOpen={openFilterId === "activity-result"}
         onOpenChange={onOpenFilterChange}

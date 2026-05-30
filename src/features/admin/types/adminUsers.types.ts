@@ -14,6 +14,10 @@ export type AdminUser = {
 
 export type AdminUsersResponse = {
   items: AdminUser[];
+  page?: number;
+  size?: number;
+  totalItems?: number;
+  totalPages?: number;
 };
 
 export type UpdateAdminUserPayload = Partial<{
@@ -59,3 +63,15 @@ export type ChangeAdminUserPasswordPayload = {
 };
 
 export type AdminUserStatusAction = "deactivate" | "reactivate";
+
+export type AdminUserDetail = {
+  id: string;
+  departmentId: number;
+  departmentName: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  role: AdminUserRole;
+  active: boolean;
+};

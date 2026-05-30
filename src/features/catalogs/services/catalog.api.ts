@@ -3,6 +3,7 @@ import type {
   MunicipalityCatalogItem,
   PeriodCatalogItem,
   StateCatalogItem,
+  DepartmentCatalogItem,
 } from "../types/catalog.types";
 
 type RawStateResponse = {
@@ -34,6 +35,10 @@ type RawPeriodResponse = {
   anio?: number;
   periodYear?: number;
   status?: string;
+};
+
+type DepartmentOptionsResponse = {
+  items: DepartmentCatalogItem[];
 };
 
 const normalizeState = (state: RawStateResponse): StateCatalogItem => ({
@@ -82,4 +87,12 @@ export async function fetchMunicipalitiesCatalog(signal?: AbortSignal) {
 export async function fetchPeriodsCatalog(signal?: AbortSignal) {
   const response = await api.get<RawPeriodResponse[]>("/periods", { signal });
   return response.data.map(normalizePeriod);
+}
+
+export async function fetchDepartmentsCatalog(signal?: AbortSignal) {
+  const response = await api.get<DepartmentOptionsResponse>("/departments", {
+    signal,
+  });
+
+  return response.data.items;
 }

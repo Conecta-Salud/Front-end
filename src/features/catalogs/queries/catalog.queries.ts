@@ -3,6 +3,7 @@ import {
   fetchMunicipalitiesCatalog,
   fetchPeriodsCatalog,
   fetchStatesCatalog,
+  fetchDepartmentsCatalog,
 } from "../services/catalog.api";
 
 export const catalogQueryKeys = {
@@ -10,10 +11,11 @@ export const catalogQueryKeys = {
 
   states: () => [...catalogQueryKeys.all, "states"] as const,
 
-  municipalities: () =>
-    [...catalogQueryKeys.all, "municipalities"] as const,
+  municipalities: () => [...catalogQueryKeys.all, "municipalities"] as const,
 
   periods: () => [...catalogQueryKeys.all, "periods"] as const,
+
+  departments: () => [...catalogQueryKeys.all, "departments"] as const,
 };
 
 type CatalogQueryOptions = {
@@ -44,6 +46,16 @@ export function usePeriodsCatalogQuery(options?: CatalogQueryOptions) {
   return useQuery({
     queryKey: catalogQueryKeys.periods(),
     queryFn: ({ signal }) => fetchPeriodsCatalog(signal),
+    enabled: options?.enabled ?? true,
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
+}
+
+export function useDepartmentsCatalogQuery(options?: CatalogQueryOptions) {
+  return useQuery({
+    queryKey: catalogQueryKeys.departments(),
+    queryFn: ({ signal }) => fetchDepartmentsCatalog(signal),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,

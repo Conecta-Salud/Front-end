@@ -23,6 +23,16 @@ type HealthMapLayerProps = {
   ) => void;
 };
 
+const healthMapLevelLabelsEs: Record<string, string> = {
+  good: "Bueno",
+  risk: "Riesgo",
+  critical: "Crítico",
+};
+
+const translateHealthMapLevel = (level: string) => {
+  return healthMapLevelLabelsEs[level] ?? level;
+};
+
 const escapeHtml = (value: string) =>
   value
     .replaceAll("&", "&amp;")
@@ -40,7 +50,7 @@ const buildTooltipContent = (feature: HealthMapFeature) => {
       <div style="min-width:160px">
         <strong>${safeName}</strong>
         <div style="font-size:12px;color:#6B7280;margin-top:4px">
-          No data
+          Sin datos
         </div>
       </div>
     `;
@@ -50,8 +60,8 @@ const buildTooltipContent = (feature: HealthMapFeature) => {
     <div style="min-width:160px">
       <strong>${safeName}</strong>
       <div style="font-size:12px;color:#6B7280;margin-top:4px">
-        <div>Value: ${getFeatureDisplayValue(indicator.value)}</div>
-        <div>Level: ${escapeHtml(indicator.level)}</div>
+        <div>Valor: ${getFeatureDisplayValue(indicator.value)}</div>
+        <div>Nivel: ${escapeHtml(translateHealthMapLevel(indicator.level))}</div>
       </div>
     </div>
   `;

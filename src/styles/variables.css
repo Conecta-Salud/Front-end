@@ -16,7 +16,9 @@
   --color-blue-end: #1E4F9C;
 
   --color-green: #12D439; /* Verde - status bueno */
+  
   --color-text-secundary: #C6C6C6; /* Texto secundario */
+  --color-gray: #A3A3A3; /* Gris - texto secundario */
 
   /* Colores Pie Chart */
 --color-pie-1: #6EE7B7;

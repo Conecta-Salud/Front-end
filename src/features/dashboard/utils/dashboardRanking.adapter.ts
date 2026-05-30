@@ -68,8 +68,15 @@ export function adaptSummaryRankingRows(
 ): DashboardRankingRow[] {
   if (!ranking?.rows?.length) return [];
 
-  return ranking.rows.map((row, index) => ({
-    ...row,
-    id: row.id ?? row.code ?? String(index),
-  }));
+  return [...ranking.rows]
+    .sort((a, b) => {
+      const rankA = typeof a.rank === "number" ? a.rank : Number.MAX_SAFE_INTEGER;
+      const rankB = typeof b.rank === "number" ? b.rank : Number.MAX_SAFE_INTEGER;
+
+      return rankA - rankB;
+    })
+    .map((row, index) => ({
+      ...row,
+      id: row.id ?? row.code ?? String(index),
+    }));
 }

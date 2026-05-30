@@ -16,7 +16,7 @@ export default function AdminViewTabs({
   onTabChange,
 }: AdminViewTabsProps) {
   return (
-    <div className="shrink-0 flex flex-wrap gap-3">
+    <div className="flex shrink-0 flex-wrap gap-3" role="tablist">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.value;
 
@@ -24,9 +24,11 @@ export default function AdminViewTabs({
           <button
             key={tab.value}
             type="button"
+            role="tab"
+            aria-selected={isActive}
             onClick={() => onTabChange(tab.value)}
             className={[
-              "h-[40px] rounded-[6px] px-5 text-[16px] font-semibold shadow-sm transition",
+              "h-[40px] rounded-[6px] px-5 text-[16px] font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-[#57D8BE] focus:ring-offset-2",
               isActive
                 ? "text-white"
                 : "border-2 border-[#14B8A6] bg-white text-black hover:bg-gray-50",

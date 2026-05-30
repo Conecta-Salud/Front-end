@@ -4,16 +4,9 @@ import ComparisonSelector from "../features/comparison/components/ComparisonSele
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
 
-import {
-  useMunicipalitiesCatalogQuery,
-  usePeriodsCatalogQuery,
-  useStatesCatalogQuery,
-} from "../features/catalogs/queries/catalog.queries";
+import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
-import {
-  adaptMunicipalitiesToLocationOptions,
-  adaptStatesToLocationOptions,
-} from "../features/comparison/utils/comparisonLocationOptions.adapter";
+
 import type { LocationOption } from "../components/ui/LocationInput/LocationInput";
 
 const ComparisonChartGrid = lazy(
@@ -61,12 +54,6 @@ function ModuloComparacionPage() {
   );
 
   const periodsQuery = usePeriodsCatalogQuery();
-  const statesQuery = useStatesCatalogQuery({
-    enabled: level === "state" || level === "municipality",
-  });
-  const municipalitiesQuery = useMunicipalitiesCatalogQuery({
-    enabled: level === "municipality",
-  });
 
   const periodId = useMemo(() => {
     const selectedYear = Number(year);
@@ -77,17 +64,6 @@ function ModuloComparacionPage() {
       )?.id ?? null
     );
   }, [periodsQuery.data, year]);
-
-  const locationOptions = useMemo(() => {
-    if (level === "state") {
-      return adaptStatesToLocationOptions(statesQuery.data);
-    }
-
-    return adaptMunicipalitiesToLocationOptions({
-      municipalities: municipalitiesQuery.data,
-      states: statesQuery.data,
-    });
-  }, [level, statesQuery.data, municipalitiesQuery.data]);
 
   const selectedCodes = useMemo(() => {
     if (!firstLocation?.code || !secondLocation?.code) return [];
@@ -137,10 +113,7 @@ function ModuloComparacionPage() {
     setSecondLocation(null);
   };
 
-  const isLoadingOptions =
-    periodsQuery.isLoading ||
-    statesQuery.isLoading ||
-    (level === "municipality" && municipalitiesQuery.isLoading);
+  const isLoadingOptions = periodsQuery.isLoading;
 
   return (
     <main className="min-h-full p-6">
@@ -161,8 +134,6 @@ function ModuloComparacionPage() {
         level={level}
         firstLocation={firstLocation}
         secondLocation={secondLocation}
-        options={locationOptions}
-        isLoadingOptions={isLoadingOptions}
         error={selectionError}
         onLevelChange={handleLevelChange}
         onFirstLocationChange={setFirstLocation}
@@ -182,7 +153,11 @@ function ModuloComparacionPage() {
             Comparación pendiente
           </h2>
 
-          <p className="text-[16px] text-gray-500">
+          <p className="text-[16px]"
+            style={{
+              color: "var(--color-text-secundary)",
+            }}
+          >
             {!periodId
               ? "No se encontró periodo para el año seleccionado."
               : "Selecciona dos territorios del mismo nivel para visualizar gráficas e índice de prioridad."}

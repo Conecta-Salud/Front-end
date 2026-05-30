@@ -1,27 +1,13 @@
 import type { RankingColumn } from "../../../components/ui/RankingTable/RankingTable.types";
+import {
+  translateAdminActivityAction,
+  translateAdminActivityModule,
+  translateAdminActivityResult,
+} from "../utils/adminActivityTranslation";
 import type {
   AdminActivityLog,
   AdminActivityTableRow,
 } from "../types/adminActivity.types";
-
-const actionLabels: Record<string, string> = {
-  LOGIN: "Inicio de sesión",
-  COMPARE_STATES: "Comparación de estados",
-  COMPARE_MUNICIPALITIES: "Comparación de municipios",
-};
-
-const moduleLabels: Record<string, string> = {
-  auth: "Autenticación",
-  comparison: "Comparación",
-  dashboard: "Dashboard",
-  admin: "Administración",
-};
-
-const resultLabels: Record<string, string> = {
-  success: "Exitoso",
-  error: "Error",
-  failure: "Fallido",
-};
 
 function formatDateTime(value: string) {
   if (!value) return "—";
@@ -31,8 +17,12 @@ function formatDateTime(value: string) {
   if (Number.isNaN(date.getTime())) return value;
 
   return new Intl.DateTimeFormat("es-MX", {
-    dateStyle: "medium",
-    timeStyle: "short",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   }).format(date);
 }
 
@@ -43,9 +33,9 @@ export function adaptAdminActivityToRows(
     id: log.id,
     createdAt: formatDateTime(log.createdAt),
     userEmail: log.userEmail,
-    action: actionLabels[log.action] ?? log.action,
-    module: moduleLabels[log.module] ?? log.module,
-    result: resultLabels[log.result] ?? log.result,
+    action: translateAdminActivityAction(log.action),
+    module: translateAdminActivityModule(log.module),
+    result: translateAdminActivityResult(log.result),
     originalLog: log,
   }));
 }

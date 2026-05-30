@@ -1,5 +1,9 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
+import {
+  PASSWORD_MAX_LENGTH,
+  validateStrongPassword,
+} from "../../../lib/passwordValidation";
 import Button from "../Button/Button";
 import CustomInputField from "../CustomInputField/CustomInputField";
 
@@ -18,8 +22,9 @@ type PasswordFormModalProps = {
   }) => void;
 };
 
-function PasswordFormModal({
-  isOpen,
+type PasswordFormModalContentProps = Omit<PasswordFormModalProps, "isOpen">;
+
+function PasswordFormModalContent({
   title,
   description,
   requireCurrentPassword = false,
@@ -28,7 +33,7 @@ function PasswordFormModal({
   errorMessage = "No se pudo cambiar la contraseña. Intenta nuevamente.",
   onClose,
   onSubmit,
-}: PasswordFormModalProps) {
+}: PasswordFormModalContentProps) {
   const [form, setForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -37,20 +42,25 @@ function PasswordFormModal({
 
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const resetModal = () => {
-    setForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+  useEffect(() => {
+    if (isSaving) return;
 
-    setValidationError(null);
-  };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSaving, onClose]);
 
   const handleClose = () => {
     if (isSaving) return;
 
-    resetModal();
     onClose();
   };
 
@@ -66,7 +76,9 @@ function PasswordFormModal({
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+
     if (requireCurrentPassword && !form.currentPassword) {
       setValidationError("Ingresa tu contraseña actual.");
       return;
@@ -77,19 +89,10 @@ function PasswordFormModal({
       return;
     }
 
-    if (form.newPassword.length < 8) {
-      setValidationError("La contraseña debe tener al menos 8 caracteres.");
-      return;
-    }
+    const passwordError = validateStrongPassword(form.newPassword);
 
-    const hasUppercase = /[A-Z]/.test(form.newPassword);
-    const hasLowercase = /[a-z]/.test(form.newPassword);
-    const hasNumber = /\d/.test(form.newPassword);
-
-    if (!hasUppercase || !hasLowercase || !hasNumber) {
-      setValidationError(
-        "La contraseña debe incluir mayúscula, minúscula y número."
-      );
+    if (passwordError) {
+      setValidationError(passwordError);
       return;
     }
 
@@ -106,14 +109,6 @@ function PasswordFormModal({
     });
   };
 
-  useEffect(() => {
-    if (!isOpen) {
-      resetModal();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
   return (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-6"
@@ -126,28 +121,36 @@ function PasswordFormModal({
         className="w-full max-w-[640px] rounded-[10px] bg-white p-6 shadow-lg"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <h2
-          id="password-form-title"
-          className="mb-2 text-[24px]"
-          style={{
-            color: "var(--color-green-end)",
-            fontWeight: "var(--font-weight-bold)",
-          }}
-        >
-          {title}
-        </h2>
+        <div className="mb-7 flex flex-col gap-2">
+          <h2
+            id="password-form-title"
+            className="text-[24px] font-semibold leading-none"
+            style={{
+              backgroundImage: "var(--gradient-primary-green)",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            {title}
+          </h2>
 
-        {description && (
-          <div className="mb-6 text-[16px] text-gray-500">{description}</div>
-        )}
+          {description && (
+            <div className="text-[16px] leading-snug text-gray-500">
+              {description}
+            </div>
+          )}
+        </div>
 
-        <div className="flex flex-col gap-5">
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           {requireCurrentPassword && (
             <CustomInputField
               name="currentPassword"
               label="Contraseña actual"
               type="password"
               value={form.currentPassword}
+              autoComplete="current-password"
+              maxLength={PASSWORD_MAX_LENGTH}
+              disabled={isSaving}
               onChange={(value) => handleChange("currentPassword", value)}
             />
           )}
@@ -157,6 +160,9 @@ function PasswordFormModal({
             label="Nueva contraseña"
             type="password"
             value={form.newPassword}
+            autoComplete="new-password"
+            maxLength={PASSWORD_MAX_LENGTH}
+            disabled={isSaving}
             onChange={(value) => handleChange("newPassword", value)}
           />
 
@@ -165,42 +171,51 @@ function PasswordFormModal({
             label="Confirmar contraseña"
             type="password"
             value={form.confirmPassword}
+            autoComplete="new-password"
+            maxLength={PASSWORD_MAX_LENGTH}
+            disabled={isSaving}
             onChange={(value) => handleChange("confirmPassword", value)}
           />
-        </div>
 
-        {validationError && (
-          <p className="mt-4 text-[14px] font-medium text-red-500">
-            {validationError}
-          </p>
-        )}
+          {validationError && (
+            <p className="mt-4 text-[14px] font-medium text-red-500">
+              {validationError}
+            </p>
+          )}
 
-        {isError && (
-          <p className="mt-4 text-[14px] font-medium text-red-500">
-            {errorMessage}
-          </p>
-        )}
+          {isError && (
+            <p className="mt-4 text-[14px] font-medium text-red-500">
+              {errorMessage}
+            </p>
+          )}
 
-        <div className="mt-6 flex justify-end gap-3">
-          <Button
-            label="Cancelar"
-            tone="red"
-            height="40"
-            onClick={handleClose}
-            disabled={isSaving}
-          />
+          <div className="mt-1 flex justify-end gap-3">
+            <Button
+              label="Cancelar"
+              tone="red"
+              height="40"
+              onClick={handleClose}
+              disabled={isSaving}
+            />
 
-          <Button
-            label={isSaving ? "Guardando..." : "Guardar"}
-            tone="green"
-            height="40"
-            onClick={handleSubmit}
-            disabled={isSaving}
-          />
-        </div>
+            <Button
+              type="submit"
+              label={isSaving ? "Guardando..." : "Guardar"}
+              tone="green"
+              height="40"
+              disabled={isSaving}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
+}
+
+function PasswordFormModal({ isOpen, ...contentProps }: PasswordFormModalProps) {
+  if (!isOpen) return null;
+
+  return <PasswordFormModalContent {...contentProps} />;
 }
 
 export default PasswordFormModal;

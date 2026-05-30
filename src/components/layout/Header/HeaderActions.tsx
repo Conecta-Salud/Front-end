@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Filter from "../../ui/Filter/Filter";
-import SearchBar from "../../ui/SearchBar/SearchBar";
 import type { HealthMapIndicator } from "../../../features/health-map/types/healthMap.types";
+import type { LocationSearchResult } from "../../../features/locations/types/locationSearch.types";
+import LocationAutocomplete from "../../ui/LocationAutocomplete/LocationAutocomplete";
 
 type HeaderActionsProps = {
   showCategoryFilter?: boolean;
@@ -10,11 +11,11 @@ type HeaderActionsProps = {
 
   category?: HealthMapIndicator;
   year?: string;
-  search?: string;
+  selectedLocation?: LocationSearchResult | null;
 
   onCategoryChange?: (value: HealthMapIndicator) => void;
   onYearChange?: (value: string) => void;
-  onSearchChange?: (value: string) => void;
+  onLocationChange?: (location: LocationSearchResult | null) => void;
 };
 
 type HeaderDropdownId = "category" | "year";
@@ -46,11 +47,11 @@ export default function HeaderActions({
 
   category = "medical_coverage",
   year = "2024",
-  search = "",
+  selectedLocation = null,
 
   onCategoryChange,
   onYearChange,
-  onSearchChange,
+  onLocationChange,
 }: HeaderActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<HeaderDropdownId | null>(
     null
@@ -92,10 +93,11 @@ export default function HeaderActions({
       )}
 
       {showSearchBar && (
-        <SearchBar
-          searchTerm={search}
-          onSearch={(value) => onSearchChange?.(value)}
+        <LocationAutocomplete
+          value={selectedLocation}
+          onChange={(location) => onLocationChange?.(location)}
           placeholder="Ingrese el estado o municipio..."
+          limit={8}
           className="w-[300px] max-lg:w-[260px] max-sm:w-full"
         />
       )}

@@ -1,7 +1,10 @@
 import Button from "../../../components/ui/Button/Button";
 import Filter from "../../../components/ui/Filter/Filter";
 import SearchBar from "../../../components/ui/SearchBar/SearchBar";
-import type { AdminUserRole } from "../types/adminUsers.types";
+import {
+  ADMIN_ACTIVE_OPTIONS,
+  ADMIN_ROLE_OPTIONS,
+} from "../constants/adminDisplay.constants";
 
 type AdminUsersToolbarProps = {
   searchTerm: string;
@@ -18,16 +21,6 @@ type AdminUsersToolbarProps = {
   onCreateUser: () => void;
 };
 
-const roleOptions: Array<{ name: string; value: AdminUserRole }> = [
-  { name: "Administrador", value: "admin" },
-  { name: "Estratégico", value: "strategic" },
-];
-
-const activeOptions = [
-  { name: "Activo", value: "active" },
-  { name: "Inactivo", value: "inactive" },
-];
-
 export default function AdminUsersToolbar({
   searchTerm,
   roleFilter,
@@ -43,7 +36,7 @@ export default function AdminUsersToolbar({
   onCreateUser,
 }: AdminUsersToolbarProps) {
   return (
-    <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
+    <div className="mb-9 flex shrink-0 flex-wrap items-center justify-between gap-3">
       <div className="flex flex-1 flex-wrap items-center gap-3">
         <SearchBar
           searchTerm={searchTerm}
@@ -66,7 +59,7 @@ export default function AdminUsersToolbar({
         <Filter
           id="role"
           title="Rol"
-          options={roleOptions}
+          options={ADMIN_ROLE_OPTIONS}
           values={roleFilter}
           isOpen={openFilterId === "role"}
           onOpenChange={onOpenFilterChange}
@@ -77,7 +70,7 @@ export default function AdminUsersToolbar({
         <Filter
           id="active"
           title="Estado"
-          options={activeOptions}
+          options={ADMIN_ACTIVE_OPTIONS}
           values={activeFilter}
           isOpen={openFilterId === "active"}
           onOpenChange={onOpenFilterChange}

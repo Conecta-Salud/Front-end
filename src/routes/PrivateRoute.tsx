@@ -1,15 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useCurrentUserQuery } from "../features/auth/queries/useCurrentUserQuery";
-import { isE2EAuthBypassEnabled } from "../config/e2e";
 
 export function PrivateRoute() {
   const status = useAuthStore((state) => state.status);
   const currentUserQuery = useCurrentUserQuery();
-
-  if (isE2EAuthBypassEnabled()) {
-    return <Outlet />;
-  }
 
   if (status === "checking") {
     return <div>Cargando...</div>;
