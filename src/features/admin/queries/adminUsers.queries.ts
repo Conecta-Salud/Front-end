@@ -12,12 +12,16 @@ import {
   reactivateAdminUser,
   updateAdminUser,
   changeAdminUserPassword,
+  createAdminUser,
+  fetchAdminUserDetail,
 } from "../services/adminUsers.api";
 
 export const adminUsersQueryKeys = {
   all: ["admin-users"] as const,
   list: (params: AdminUsersQueryParams) =>
     [...adminUsersQueryKeys.all, "list", params] as const,
+  detail: (userId: string | null) =>
+    [...adminUsersQueryKeys.all, "detail", userId] as const,
 };
 
 export function useAdminUsersQuery(params: AdminUsersQueryParams) {
@@ -71,5 +75,27 @@ export function useReactivateAdminUserMutation() {
 export function useChangeAdminUserPasswordMutation() {
   return useMutation({
     mutationFn: changeAdminUserPassword,
+  });
+}
+
+export function useAdminUserDetailQuery(userId: string | null) {
+  return useQuery({
+    queryKey: adminUsersQueryKeys.detail(userId),
+    queryFn: ({ signal }) => fetchAdminUserDetail(userId as string, signal),
+    enabled: Boolean(userId),
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useCreateAdminUserMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createAdminUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminUsersQueryKeys.all,
+      });
+    },
   });
 }

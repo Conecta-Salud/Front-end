@@ -6,6 +6,9 @@ import {
   useDeactivateAdminUserMutation,
   useReactivateAdminUserMutation,
   useChangeAdminUserPasswordMutation,
+  useAdminUserDetailQuery,
+  useCreateAdminUserMutation,
+  useUpdateAdminUserMutation,
 } from "../queries/adminUsers.queries";
 import {
   adaptAdminUsersToRows,
@@ -19,7 +22,8 @@ import type {
 } from "../types/adminUsers.types";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
 import PasswordFormModal from "../../../components/ui/PasswordFormModal/PasswordFormModal";
-
+import { useDepartmentsCatalogQuery } from "../../catalogs/queries/catalog.queries";
+import UserFormModal from "./UserFormModal";
 export default function AdminUsersView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -29,6 +33,8 @@ export default function AdminUsersView() {
   const [openFilterId, setOpenFilterId] = useState<string | null>(null);
   const [userToChangePassword, setUserToChangePassword] =
     useState<AdminUser | null>(null);
+  const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const usersQueryParams = useMemo(
     () => ({
       search: debouncedSearchTerm || undefined,
@@ -51,6 +57,10 @@ export default function AdminUsersView() {
   const changePasswordMutation = useChangeAdminUserPasswordMutation();
   const resetDeactivateUserMutation = deactivateUserMutation.reset;
   const resetReactivateUserMutation = reactivateUserMutation.reset;
+  const userDetailQuery = useAdminUserDetailQuery(userToEdit?.id ?? null);
+  const departmentsQuery = useDepartmentsCatalogQuery();
+  const createUserMutation = useCreateAdminUserMutation();
+  const updateUserMutation = useUpdateAdminUserMutation();
   const [statusActionUser, setStatusActionUser] = useState<AdminUser | null>(
     null
   );
@@ -91,6 +101,7 @@ export default function AdminUsersView() {
   const columns = useMemo(
     () =>
       getAdminUsersColumns({
+        onEdit: setUserToEdit,
         onDeactivate: (user) => openStatusAction(user, "deactivate"),
         onReactivate: (user) => openStatusAction(user, "reactivate"),
         onChangePassword: setUserToChangePassword,
@@ -194,9 +205,7 @@ export default function AdminUsersView() {
         onActiveChange={setActiveFilter}
         onDepartmentChange={setDepartmentFilter}
         onOpenFilterChange={setOpenFilterId}
-        onCreateUser={() => {
-          // Aquí luego abrimos UserCreateModal.
-        }}
+        onCreateUser={() => setIsCreateModalOpen(true)}
       />
       {usersQuery.isFetching && (
         <p className="mb-3 text-[14px] text-gray-500">
@@ -252,6 +261,46 @@ export default function AdminUsersView() {
           }
         }}
         onSubmit={handleChangePassword}
+      />
+
+      <UserFormModal
+        mode="create"
+        isOpen={isCreateModalOpen}
+        departments={departmentsQuery.data ?? []}
+        isSaving={createUserMutation.isPending}
+        isError={createUserMutation.isError}
+        onClose={() => {
+          if (!createUserMutation.isPending) {
+            setIsCreateModalOpen(false);
+            createUserMutation.reset();
+          }
+        }}
+        onCreate={async (payload) => {
+          await createUserMutation.mutateAsync(payload);
+          setIsCreateModalOpen(false);
+        }}
+        onUpdate={() => {}}
+      />
+
+      <UserFormModal
+        mode="edit"
+        isOpen={Boolean(userToEdit)}
+        user={userDetailQuery.data}
+        departments={departmentsQuery.data ?? []}
+        isLoadingUser={userDetailQuery.isLoading}
+        isSaving={updateUserMutation.isPending}
+        isError={updateUserMutation.isError}
+        onClose={() => {
+          if (!updateUserMutation.isPending) {
+            setUserToEdit(null);
+            updateUserMutation.reset();
+          }
+        }}
+        onCreate={() => {}}
+        onUpdate={async (userId, payload) => {
+          await updateUserMutation.mutateAsync({ userId, payload });
+          setUserToEdit(null);
+        }}
       />
     </section>
   );
