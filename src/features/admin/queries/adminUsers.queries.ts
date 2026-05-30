@@ -1,5 +1,6 @@
 import {
   keepPreviousData,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
@@ -15,6 +16,8 @@ import {
   createAdminUser,
   fetchAdminUserDetail,
 } from "../services/adminUsers.api";
+import { ADMIN_PAGE_SIZE } from "../constants/adminDisplay.constants";
+import { getNextAdminPageParam } from "../utils/adminPagination.utils";
 
 export const adminUsersQueryKeys = {
   all: ["admin-users"] as const,
@@ -30,6 +33,27 @@ export function useAdminUsersQuery(params: AdminUsersQueryParams) {
     queryFn: ({ signal }) => fetchAdminUsers(params, signal),
     staleTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useAdminUsersInfiniteQuery(params: AdminUsersQueryParams) {
+  const pageSize = params.size ?? ADMIN_PAGE_SIZE;
+
+  return useInfiniteQuery({
+    queryKey: adminUsersQueryKeys.list(params),
+    queryFn: ({ pageParam, signal }) =>
+      fetchAdminUsers(
+        {
+          ...params,
+          page: pageParam,
+          size: pageSize,
+        },
+        signal
+      ),
+    initialPageParam: params.page ?? 0,
+    getNextPageParam: (lastPage, allPages) =>
+      getNextAdminPageParam(lastPage, allPages, pageSize),
+    staleTime: 1000 * 60 * 5,
   });
 }
 

@@ -6,6 +6,26 @@ import ProfileInfoCard from "../features/profile/components/ProfileInfoCard";
 import ChangePasswordModal from "../features/profile/components/ChangePasswordModal";
 import { useProfileInfo } from "../features/profile/hooks/useProfileInfo";
 import { useLogoutMutation } from "../features/auth/mutations/useLogoutMutation";
+import ConfirmModal from "../components/ui/ConfirmModal/ConfirmModal";
+
+const formatDateTimeEs = (value?: string | null) => {
+  if (!value) return "Sin registro";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Fecha inválida";
+  }
+
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+};
 
 function PerfilPage() {
   const navigate = useNavigate();
@@ -15,6 +35,8 @@ function PerfilPage() {
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;
@@ -47,7 +69,7 @@ function PerfilPage() {
       <div className="w-full">
         <ProfileInfoCard
           title={profile.title}
-          lastLoginAt={profile.lastLoginAt}
+          lastLoginAt={formatDateTimeEs(profile.lastLoginAt)}
           email={profile.email}
           dependency={profile.dependency}
           role={profile.role}
@@ -67,7 +89,7 @@ function PerfilPage() {
             label={logoutMutation.isPending ? "Cerrando..." : "Cerrar sesión"}
             tone="red"
             height="40"
-            onClick={handleLogout}
+            onClick={() => setIsLogoutModalOpen(true)}
             disabled={logoutMutation.isPending}
           />
         </div>
@@ -76,6 +98,21 @@ function PerfilPage() {
       <ChangePasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        title="Cerrar sesión"
+        description="¿Seguro que deseas cerrar tu sesión actual?"
+        confirmLabel="Cerrar sesión"
+        tone="red"
+        isPending={logoutMutation.isPending}
+        onClose={() => {
+          if (!logoutMutation.isPending) {
+            setIsLogoutModalOpen(false);
+          }
+        }}
+        onConfirm={handleLogout}
       />
     </main>
   );

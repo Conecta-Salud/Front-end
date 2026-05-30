@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Option = {
   label: string;
@@ -6,110 +6,141 @@ type Option = {
 };
 
 type CustomSelectProps = {
+  id: string;
   label: string;
   value: string;
   options?: Option[];
   placeholder?: string;
   disabled?: boolean;
+  isOpen: boolean;
+  onOpenChange: (id: string | null) => void;
   onChange: (value: string) => void;
 };
 
 export default function CustomSelect({
+  id,
   label,
   value,
   options = [],
   placeholder = "Selecciona una opción",
   disabled = false,
+  isOpen,
+  onOpenChange,
   onChange,
 }: CustomSelectProps) {
-  const [isOpen, setIsOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((option) => option.value === value);
 
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      const clickedInsideButton =
+        containerRef.current && containerRef.current.contains(target);
+
+      const clickedInsideDropdown =
+        dropdownRef.current && dropdownRef.current.contains(target);
+
+      if (!clickedInsideButton && !clickedInsideDropdown) {
+        onOpenChange(null);
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onOpenChange(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
-  }, []);
+  }, [isOpen, onOpenChange]);
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={[
-          "relative flex h-[72px] w-full items-end justify-between rounded-[16px] bg-white px-5 pb-3 pt-2 text-left transition-all duration-200",
-          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
-        ].join(" ")}
-        style={{
-          border: "2px solid var(--color-green-end)",
-        }}
+      <div
+        className="h-[65px] w-full rounded-[10px] px-0.75 py-0.75"
+        style={{ background: "var(--gradient-primary-green)" }}
       >
-        <span
-          className="absolute left-5 top-2 text-[14px]"
-          style={{
-            color: "var(--color-green-end)",
-            fontFamily: "var(--font-primary)",
-            fontWeight: "var(--font-weight-bold)",
+        <button
+          type="button"
+          disabled={disabled}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          onClick={() => {
+            if (disabled) return;
+            onOpenChange(isOpen ? null : id);
           }}
-        >
-          {label}
-        </span>
-
-        <span
-          className={
-            selectedOption
-              ? "text-[15px] text-black"
-              : "text-[15px] text-[#98A2B3]"
-          }
-          style={{
-            fontFamily: "var(--font-primary)",
-            fontWeight: "var(--font-weight-medium)",
-          }}
-        >
-          {selectedOption?.label ?? placeholder}
-        </span>
-
-        <svg
           className={[
-            "h-5 w-5 transition-transform duration-200",
-            isOpen ? "rotate-180" : "",
+            "relative flex h-full w-full flex-col justify-center rounded-[7.5px] bg-white px-2.5 py-2.5 text-left leading-none transition-all duration-200",
+            disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
           ].join(" ")}
-          viewBox="0 0 24 24"
-          fill="none"
         >
-          <path
-            d="M6 9L12 15L18 9"
-            stroke="var(--color-green-end)"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+          <span
+            className="bg-clip-text text-[14px] font-semibold text-transparent"
+            style={{ backgroundImage: "var(--gradient-primary-green)" }}
+          >
+            {label}
+          </span>
+
+          <span
+            className={[
+              "mt-1 block w-full h-full truncate pr-10 text-[20px] leading-none",
+              selectedOption ? "text-black" : "text-[#98A2B3]",
+            ].join(" ")}
+          >
+            {selectedOption?.label ?? placeholder}
+          </span>
+
+          <svg
+            className={[
+              "absolute right-3 top-1/2 h-[22px] w-[22px] -translate-y-1/2 transition-transform duration-200",
+              isOpen ? "rotate-180" : "",
+            ].join(" ")}
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 9L12 15L18 9"
+              stroke="var(--color-green-end)"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
 
       {isOpen && (
         <div
-          className="absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-[16px] bg-white shadow-lg"
-          style={{
-            border: "1px solid rgba(110, 231, 183, 0.35)",
-          }}
+          ref={dropdownRef}
+          role="listbox"
+          aria-label={label}
+          className="
+            absolute
+            left-0
+            right-0
+            z-[9999]
+            mt-2
+            rounded-xl
+            border-2
+            border-gray-200
+            bg-white
+            shadow-lg
+          "
         >
-          <div className="max-h-[220px] overflow-y-auto py-1">
+          <div className="max-h-60 overflow-y-auto p-2">
             {options.map((option) => {
               const isSelected = option.value === value;
 
@@ -117,20 +148,17 @@ export default function CustomSelect({
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
                     onChange(option.value);
-                    setIsOpen(false);
+                    onOpenChange(null);
                   }}
                   className={[
-                    "w-full px-5 py-3 text-left transition-colors duration-150",
-                    isSelected ? "bg-[#F3FFFA]" : "hover:bg-[#F8FFFC]",
+                    "w-full cursor-pointer whitespace-nowrap rounded-md px-3 py-2 text-left text-sm",
+                    "hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]",
+                    isSelected ? "bg-gray-100 font-semibold" : "",
                   ].join(" ")}
-                  style={{
-                    color: "#111111",
-                    fontSize: "15px",
-                    fontFamily: "var(--font-primary)",
-                    fontWeight: "var(--font-weight-regular)",
-                  }}
                 >
                   {option.label}
                 </button>
@@ -138,7 +166,7 @@ export default function CustomSelect({
             })}
           </div>
         </div>
-      )}
+)}
     </div>
   );
 }

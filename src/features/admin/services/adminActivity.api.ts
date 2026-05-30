@@ -5,12 +5,14 @@ import type {
 } from "../types/adminActivity.types";
 
 export async function fetchAdminActivityLogs(
-  params: AdminActivityQueryParams = {}
+  params: AdminActivityQueryParams = {},
+  signal?: AbortSignal
 ) {
   const response = await api.get<AdminActivityLogsResponse>(
     "/admin/activity-logs",
     {
       params,
+      signal,
     }
   );
 

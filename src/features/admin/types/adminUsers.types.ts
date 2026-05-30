@@ -14,6 +14,10 @@ export type AdminUser = {
 
 export type AdminUsersResponse = {
   items: AdminUser[];
+  page?: number;
+  size?: number;
+  totalItems?: number;
+  totalPages?: number;
 };
 
 export type UpdateAdminUserPayload = Partial<{

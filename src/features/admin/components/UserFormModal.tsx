@@ -1,8 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import Button from "../../../components/ui/Button/Button";
 import CustomInputField from "../../../components/ui/CustomInputField/CustomInputField";
 import CustomSelect from "../../../components/ui/CustomSelect/CustomSelect";
+import {
+  PASSWORD_MAX_LENGTH,
+  validateStrongPassword,
+} from "../../../lib/passwordValidation";
+import { ADMIN_ROLE_OPTIONS } from "../constants/adminDisplay.constants";
 
 import type {
   AdminUserDetail,
@@ -44,9 +49,29 @@ const INITIAL_FORM: FormState = {
   role: "strategic",
 };
 
-export default function UserFormModal({
+const getInitialForm = (
+  mode: UserFormModalProps["mode"],
+  user?: AdminUserDetail | null
+): FormState => {
+  if (mode === "edit" && user) {
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: "",
+      confirmPassword: "",
+      departmentId: String(user.departmentId),
+      role: user.role,
+    };
+  }
+
+  return INITIAL_FORM;
+};
+
+type UserFormModalContentProps = Omit<UserFormModalProps, "isOpen">;
+
+function UserFormModalContent({
   mode,
-  isOpen,
   user,
   departments,
   isLoadingUser = false,
@@ -55,41 +80,35 @@ export default function UserFormModal({
   onClose,
   onCreate,
   onUpdate,
-}: UserFormModalProps) {
-  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+}: UserFormModalContentProps) {
 
+  const [form, setForm] = useState<FormState>(() =>
+    getInitialForm(mode, user)
+  );
+
+  const [openSelectId, setOpenSelectId] = useState<string | null>(null);
+  
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const isEditMode = mode === "edit";
 
-  const modalTitle = useMemo(
-    () => (isEditMode ? "Actualizar usuario" : "Crear usuario"),
-    [isEditMode]
-  );
+  const modalTitle = isEditMode ? "Actualizar usuario" : "Crear usuario";
 
   useEffect(() => {
-    if (!isOpen) {
-      setForm(INITIAL_FORM);
-      setValidationError(null);
-      return;
-    }
+    if (isSaving) return;
 
-    if (isEditMode && user) {
-      setForm({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: "",
-        confirmPassword: "",
-        departmentId: String(user.departmentId),
-        role: user.role,
-      });
-    }
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
 
-    if (!isEditMode) {
-      setForm(INITIAL_FORM);
-    }
-  }, [isOpen, isEditMode, user]);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSaving, onClose]);
 
   const handleChange = (field: keyof FormState, value: string) => {
     setValidationError(null);
@@ -101,6 +120,9 @@ export default function UserFormModal({
   };
 
   const validateForm = () => {
+    const normalizedEmail = form.email.trim().toLowerCase();
+    const departmentId = Number(form.departmentId);
+
     if (!form.firstName.trim()) {
       return "Ingresa el nombre del usuario.";
     }
@@ -109,17 +131,17 @@ export default function UserFormModal({
       return "Ingresa el apellido del usuario.";
     }
 
-    if (!form.email.trim()) {
+    if (!normalizedEmail) {
       return "Ingresa el correo electrónico.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(form.email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return "Ingresa un correo electrónico válido.";
     }
 
-    if (!form.departmentId) {
+    if (!Number.isInteger(departmentId) || departmentId <= 0) {
       return "Selecciona un departamento.";
     }
 
@@ -128,18 +150,10 @@ export default function UserFormModal({
         return "Ingresa una contraseña.";
       }
 
-      if (form.password.length < 8) {
-        return "La contraseña debe tener al menos 8 caracteres.";
-      }
+      const passwordError = validateStrongPassword(form.password);
 
-      const hasUppercase = /[A-Z]/.test(form.password);
-
-      const hasLowercase = /[a-z]/.test(form.password);
-
-      const hasNumber = /\d/.test(form.password);
-
-      if (!hasUppercase || !hasLowercase || !hasNumber) {
-        return "La contraseña debe incluir mayúscula, minúscula y número.";
+      if (passwordError) {
+        return passwordError;
       }
 
       if (form.password !== form.confirmPassword) {
@@ -150,8 +164,12 @@ export default function UserFormModal({
     return null;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+
     const error = validateForm();
+    const normalizedEmail = form.email.trim().toLowerCase();
+    const departmentId = Number(form.departmentId);
 
     if (error) {
       setValidationError(error);
@@ -162,8 +180,8 @@ export default function UserFormModal({
       onUpdate(user.id, {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
-        email: form.email.trim(),
-        departmentId: Number(form.departmentId),
+        email: normalizedEmail,
+        departmentId,
         role: form.role,
       });
 
@@ -173,9 +191,9 @@ export default function UserFormModal({
     onCreate({
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
-      email: form.email.trim(),
+      email: normalizedEmail,
       password: form.password,
-      departmentId: Number(form.departmentId),
+      departmentId,
       role: form.role,
     });
   };
@@ -183,11 +201,8 @@ export default function UserFormModal({
   const handleClose = () => {
     if (isSaving) return;
 
-    setValidationError(null);
     onClose();
   };
-
-  if (!isOpen) return null;
 
   return (
     <div
@@ -203,24 +218,34 @@ export default function UserFormModal({
       >
         <h2
           id="user-form-modal-title"
-          className="mb-2 text-[24px]"
+          className="text-[24px] font-semibold"
           style={{
-            color: "var(--color-green-end)",
-            fontWeight: "var(--font-weight-bold)",
+            backgroundImage: "var(--gradient-primary-green)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
           }}
         >
           {modalTitle}
         </h2>
 
-        <p className="mb-6 text-[16px] text-gray-500">
+        <p className="mb-6 text-[16px]"
+          style={{
+            color: "var(--color-text-secundary)",
+          }}
+        >
           {isEditMode
             ? "Actualiza la información del usuario seleccionado."
             : "Completa la información para registrar un nuevo usuario."}
         </p>
 
-        {isEditMode && isLoadingUser ? (
+        <form onSubmit={handleSubmit}>
+          {isEditMode && isLoadingUser ? (
           <div className="py-10 text-center text-[15px] text-gray-500">
             Cargando información del usuario...
+          </div>
+        ) : isEditMode && !user ? (
+          <div className="py-10 text-center text-[15px] text-red-500">
+            No se pudo cargar la informacion del usuario.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -228,6 +253,10 @@ export default function UserFormModal({
               name="firstName"
               label="Nombre"
               value={form.firstName}
+              autoComplete="given-name"
+              maxLength={80}
+              disabled={isSaving}
+              showIcon={false}
               onChange={(value) => handleChange("firstName", value)}
             />
 
@@ -235,6 +264,10 @@ export default function UserFormModal({
               name="lastName"
               label="Apellido"
               value={form.lastName}
+              autoComplete="family-name"
+              maxLength={120}
+              disabled={isSaving}
+              showIcon={false}
               onChange={(value) => handleChange("lastName", value)}
             />
 
@@ -244,6 +277,10 @@ export default function UserFormModal({
                 label="Correo electrónico"
                 type="email"
                 value={form.email}
+                autoComplete="email"
+                maxLength={180}
+                disabled={isSaving}
+                showIcon={false}
                 onChange={(value) => handleChange("email", value)}
               />
             </div>
@@ -255,6 +292,9 @@ export default function UserFormModal({
                   label="Contraseña"
                   type="password"
                   value={form.password}
+                  autoComplete="new-password"
+                  maxLength={PASSWORD_MAX_LENGTH}
+                  disabled={isSaving}
                   onChange={(value) => handleChange("password", value)}
                 />
 
@@ -263,12 +303,16 @@ export default function UserFormModal({
                   label="Confirmar contraseña"
                   type="password"
                   value={form.confirmPassword}
+                  autoComplete="new-password"
+                  maxLength={PASSWORD_MAX_LENGTH}
+                  disabled={isSaving}
                   onChange={(value) => handleChange("confirmPassword", value)}
                 />
               </>
             )}
 
             <CustomSelect
+              id="department"
               label="Departamento"
               value={form.departmentId}
               options={departments.map((department) => ({
@@ -276,23 +320,24 @@ export default function UserFormModal({
                 value: String(department.id),
               }))}
               placeholder="Selecciona un departamento"
+              disabled={isSaving}
+              isOpen={openSelectId === "department"}
+              onOpenChange={setOpenSelectId}
               onChange={(value) => handleChange("departmentId", value)}
             />
 
             <CustomSelect
+              id="role"
               label="Rol"
               value={form.role}
-              options={[
-                {
-                  label: "Strategic",
-                  value: "strategic",
-                },
-                {
-                  label: "Admin",
-                  value: "admin",
-                },
-              ]}
-              onChange={(value) => handleChange("role", value as AdminUserRole)}
+              options={ADMIN_ROLE_OPTIONS.map((roleOption) => ({
+                label: roleOption.name,
+                value: roleOption.value,
+              }))}
+              disabled={isSaving}
+              isOpen={openSelectId === "role"}
+              onOpenChange={setOpenSelectId}
+              onChange={(value) => handleChange("role", value)}
             />
           </div>
         )}
@@ -309,7 +354,7 @@ export default function UserFormModal({
           </p>
         )}
 
-        <div className="mt-8 flex justify-end gap-3">
+          <div className="mt-8 flex justify-end gap-3">
           <Button
             label="Cancelar"
             tone="red"
@@ -318,15 +363,30 @@ export default function UserFormModal({
             disabled={isSaving}
           />
 
-          <Button
-            label={isSaving ? "Guardando..." : "Guardar"}
-            tone="green"
-            height="40"
-            onClick={handleSubmit}
-            disabled={isSaving || (isEditMode && isLoadingUser)}
-          />
-        </div>
+            <Button
+              type="submit"
+              label={isSaving ? "Guardando..." : "Guardar"}
+              tone="green"
+              height="40"
+              disabled={isSaving || (isEditMode && (isLoadingUser || !user))}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
+}
+
+export default function UserFormModal({
+  isOpen,
+  ...contentProps
+}: UserFormModalProps) {
+  if (!isOpen) return null;
+
+  const formKey =
+    contentProps.mode === "edit"
+      ? `edit-${contentProps.user?.id ?? "loading"}`
+      : "create";
+
+  return <UserFormModalContent key={formKey} {...contentProps} />;
 }
