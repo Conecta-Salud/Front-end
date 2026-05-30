@@ -16,3 +16,8 @@ export type PeriodCatalogItem = {
   id: number;
   year: number;
 };
+
+export type DepartmentCatalogItem = {
+  id: number;
+  name: string;
+};

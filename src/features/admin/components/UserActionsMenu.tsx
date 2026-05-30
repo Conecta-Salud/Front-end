@@ -6,6 +6,7 @@ import type { AdminUser } from "../types/adminUsers.types";
 
 type UserActionsMenuProps = {
   user: AdminUser;
+  onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
   onChangePassword: (user: AdminUser) => void;
@@ -18,6 +19,7 @@ type MenuPosition = {
 
 export default function UserActionsMenu({
   user,
+  onEdit,
   onDeactivate,
   onReactivate,
   onChangePassword,

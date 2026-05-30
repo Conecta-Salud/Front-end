@@ -59,3 +59,15 @@ export type ChangeAdminUserPasswordPayload = {
 };
 
 export type AdminUserStatusAction = "deactivate" | "reactivate";
+
+export type AdminUserDetail = {
+  id: string;
+  departmentId: number;
+  departmentName: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  role: AdminUserRole;
+  active: boolean;
+};
