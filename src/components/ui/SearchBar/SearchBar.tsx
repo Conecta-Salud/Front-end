@@ -21,7 +21,7 @@ export default function SearchBar({
         className,
       ].join(" ")}
       style={{
-        borderColor: "#14B8A6",
+        borderColor: "var(--color-blue)",
       }}
     >
       {/* ICONO */}

@@ -135,7 +135,7 @@ export default function Filter({
         onClick={() => onOpenChange(isOpen ? null : id)}
         className="flex w-full items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm bg-white"
         style={{
-          borderColor: "#14B8A6",
+          borderColor: "var( --color-blue)",
         }}
       >
         <img

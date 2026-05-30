@@ -8,7 +8,6 @@ import {
   Tooltip,
   ReferenceLine,
   Cell,
-  LabelList,
 } from "recharts";
 
 export interface ChartData {
@@ -152,7 +151,7 @@ export default function CustomBarChart({
             <YAxis domain={yDomain} tick={{ fontSize: 12, fill: "#4B5563" }} />
 
             <Tooltip
-              formatter={(value) => [value, "Value"]}
+              formatter={(value) => [value, "Valor"]}
               labelFormatter={(label) => String(label)}
             />
 
@@ -186,17 +185,7 @@ export default function CustomBarChart({
               />
             )}
 
-            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={28}>
-              <LabelList
-                dataKey="value"
-                position="top"
-                fill="#111827"
-                fontSize={12}
-                fontWeight={600}
-                formatter={(value) =>
-                  typeof value === "number" ? value.toFixed(2) : ""
-                }
-              />
+            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={30}>
 
               {data.map((entry) => (
                 <Cell
