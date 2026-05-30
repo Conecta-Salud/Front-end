@@ -182,7 +182,11 @@ function ModuloComparacionPage() {
             Comparación pendiente
           </h2>
 
-          <p className="text-[16px] text-gray-500">
+          <p className="text-[16px]"
+            style={{
+              color: "var(--color-text-secundary)",
+            }}
+          >
             {!periodId
               ? "No se encontró periodo para el año seleccionado."
               : "Selecciona dos territorios del mismo nivel para visualizar gráficas e índice de prioridad."}

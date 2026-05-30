@@ -18,6 +18,7 @@ type CustomInputFieldProps = {
   autoComplete?: string;
   disabled?: boolean;
   maxLength?: number;
+  showIcon?: boolean;
 };
 
 const CustomInputField: React.FC<CustomInputFieldProps> = ({
@@ -34,6 +35,7 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
   autoComplete,
   disabled = false,
   maxLength,
+  showIcon = true,
 }) => {
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -85,34 +87,36 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
             autoComplete={autoComplete}
             maxLength={maxLength}
             onChange={(event) => onChange?.(event.target.value)}
-            className="w-full border-none bg-transparent pr-10 text-[20px] leading-none outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            className={[
+              "w-full border-none bg-transparent text-[20px] leading-none outline-none disabled:cursor-not-allowed disabled:opacity-60",
+              showIcon ? "pr-10" : "pr-0",
+            ].join(" ")}
           />
 
-          {type === "password" ? (
-            <button
-              type="button"
-              aria-label={
-                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-              }
-              disabled={disabled}
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed disabled:opacity-60"
-            >
+          {showIcon &&
+            (type === "password" ? (
+              <button
+                type="button"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                disabled={disabled}
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <img
+                  src={iconToShow}
+                  alt=""
+                  aria-hidden="true"
+                  className="h-auto max-h-[22px] w-[22px] object-contain"
+                />
+              </button>
+            ) : (
               <img
                 src={iconToShow}
                 alt=""
                 aria-hidden="true"
-                className="h-auto max-h-[22px] w-[22px] object-contain"
+                className="absolute right-3 top-1/2 h-auto max-h-[22px] w-[22px] -translate-y-1/2 object-contain"
               />
-            </button>
-          ) : (
-            <img
-              src={iconToShow}
-              alt=""
-              aria-hidden="true"
-              className="absolute right-3 top-1/2 h-auto max-h-[22px] w-[22px] -translate-y-1/2 object-contain"
-            />
-          )}
+            ))}
         </div>
       </div>
     </div>

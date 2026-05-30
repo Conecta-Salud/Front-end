@@ -135,7 +135,7 @@ export default function Filter({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => onOpenChange(isOpen ? null : id)}
-        className="flex h-11 w-full items-center gap-2 rounded-xl border-2 bg-white px-[10px] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#57D8BE] focus:ring-offset-2"
+        className="flex h-11 w-full items-center gap-2 rounded-xl border-2 bg-white px-[10px] shadow-sm"
         style={{
           borderColor: "var( --color-blue)",
         }}

@@ -104,7 +104,7 @@ export default function UserActionsMenu({
           <div
             ref={menuRef}
             role="menu"
-            className="fixed z-[9999] w-[170px] rounded-[10px] border border-gray-200 bg-white p-2 text-left shadow-lg"
+            className="fixed z-[9999] w-[220px] rounded-[10px] border border-gray-200 bg-white p-2 text-left shadow-lg"
             style={{
               top: menuPosition.top,
               left: menuPosition.left,
@@ -118,8 +118,13 @@ export default function UserActionsMenu({
                 setIsOpen(false);
                 onEdit(user);
               }}
-              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
-            >
+              className="
+                flex w-full items-center justify-start gap-3
+                rounded-[6px] px-3 py-2
+                text-left text-[14px]
+                whitespace-nowrap
+                transition hover:bg-gray-100
+              "            >
               <Pencil size={16} aria-hidden="true" />
               Actualizar
             </button>
@@ -131,10 +136,16 @@ export default function UserActionsMenu({
                 setIsOpen(false);
                 onChangePassword(user);
               }}
-              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
+              className="
+                flex w-full items-center justify-start gap-3
+                rounded-[6px] px-3 py-2
+                text-left text-[14px]
+                whitespace-nowrap
+                transition hover:bg-gray-100
+              "
             >
-              <KeyRound size={16} aria-hidden="true" />
-              Cambiar contraseña
+              <KeyRound size={16} aria-hidden="true" className="shrink-0" />
+              <span className="text-left">Cambiar contraseña</span>
             </button>
 
             <button
@@ -151,10 +162,10 @@ export default function UserActionsMenu({
                 onReactivate(user);
               }}
               className={[
-                "flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition",
+                "flex w-full items-center justify-start gap-3 rounded-[6px] px-3 py-2 text-left text-[14px] whitespace-nowrap transition hover:bg-gray-100",
                 user.active
-                  ? "text-red-500 hover:bg-red-50 focus:ring-red-200"
-                  : "text-[#0F8F78] hover:bg-[#E8F8F4] focus:ring-[#57D8BE]",
+                  ? "text-red-500 hover:bg-red-50"
+                  : "text-[#0F8F78] hover:bg-[#E8F8F4]",
                 "focus:outline-none focus:ring-2",
               ].join(" ")}
             >

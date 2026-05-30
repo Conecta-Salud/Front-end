@@ -32,7 +32,7 @@ export default function AdminActivityToolbar({
   onOpenFilterChange,
 }: AdminActivityToolbarProps) {
   return (
-    <div className="mb-3 flex shrink-0 flex-wrap items-center gap-3">
+    <div className="mb-9 flex shrink-0 flex-wrap items-center gap-3">
       <SearchBar
         searchTerm={searchTerm}
         placeholder="Buscar por correo, usuario o detalle..."

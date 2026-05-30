@@ -36,7 +36,7 @@ export default function AdminUsersToolbar({
   onCreateUser,
 }: AdminUsersToolbarProps) {
   return (
-    <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
+    <div className="mb-9 flex shrink-0 flex-wrap items-center justify-between gap-3">
       <div className="flex flex-1 flex-wrap items-center gap-3">
         <SearchBar
           searchTerm={searchTerm}

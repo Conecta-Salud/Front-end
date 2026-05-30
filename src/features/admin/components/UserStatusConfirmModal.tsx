@@ -81,7 +81,11 @@ export default function UserStatusConfirmModal({
         <h2
           id="user-status-title"
           className="mb-3 text-[24px] font-bold"
-          style={{ color: "var(--color-green-end)" }}
+          style={{
+            backgroundImage: "var(--gradient-primary-green)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
+          }}
         >
           {config.title}
         </h2>
@@ -102,7 +106,7 @@ export default function UserStatusConfirmModal({
         <div className="mt-6 flex justify-end gap-3">
           <Button
             label="Cancelar"
-            tone="blue"
+            tone="green"
             height="40"
             onClick={onClose}
             disabled={isPending}

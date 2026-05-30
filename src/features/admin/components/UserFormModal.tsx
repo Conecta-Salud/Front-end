@@ -81,10 +81,13 @@ function UserFormModalContent({
   onCreate,
   onUpdate,
 }: UserFormModalContentProps) {
+
   const [form, setForm] = useState<FormState>(() =>
     getInitialForm(mode, user)
   );
 
+  const [openSelectId, setOpenSelectId] = useState<string | null>(null);
+  
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const isEditMode = mode === "edit";
@@ -215,16 +218,21 @@ function UserFormModalContent({
       >
         <h2
           id="user-form-modal-title"
-          className="mb-2 text-[24px]"
+          className="text-[24px] font-semibold"
           style={{
-            color: "var(--color-green-end)",
-            fontWeight: "var(--font-weight-bold)",
+            backgroundImage: "var(--gradient-primary-green)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
           }}
         >
           {modalTitle}
         </h2>
 
-        <p className="mb-6 text-[16px] text-gray-500">
+        <p className="mb-6 text-[16px]"
+          style={{
+            color: "var(--color-text-secundary)",
+          }}
+        >
           {isEditMode
             ? "Actualiza la información del usuario seleccionado."
             : "Completa la información para registrar un nuevo usuario."}
@@ -248,6 +256,7 @@ function UserFormModalContent({
               autoComplete="given-name"
               maxLength={80}
               disabled={isSaving}
+              showIcon={false}
               onChange={(value) => handleChange("firstName", value)}
             />
 
@@ -258,6 +267,7 @@ function UserFormModalContent({
               autoComplete="family-name"
               maxLength={120}
               disabled={isSaving}
+              showIcon={false}
               onChange={(value) => handleChange("lastName", value)}
             />
 
@@ -270,6 +280,7 @@ function UserFormModalContent({
                 autoComplete="email"
                 maxLength={180}
                 disabled={isSaving}
+                showIcon={false}
                 onChange={(value) => handleChange("email", value)}
               />
             </div>
@@ -301,6 +312,7 @@ function UserFormModalContent({
             )}
 
             <CustomSelect
+              id="department"
               label="Departamento"
               value={form.departmentId}
               options={departments.map((department) => ({
@@ -309,10 +321,13 @@ function UserFormModalContent({
               }))}
               placeholder="Selecciona un departamento"
               disabled={isSaving}
+              isOpen={openSelectId === "department"}
+              onOpenChange={setOpenSelectId}
               onChange={(value) => handleChange("departmentId", value)}
             />
 
             <CustomSelect
+              id="role"
               label="Rol"
               value={form.role}
               options={ADMIN_ROLE_OPTIONS.map((roleOption) => ({
@@ -320,7 +335,9 @@ function UserFormModalContent({
                 value: roleOption.value,
               }))}
               disabled={isSaving}
-              onChange={(value) => handleChange("role", value as AdminUserRole)}
+              isOpen={openSelectId === "role"}
+              onOpenChange={setOpenSelectId}
+              onChange={(value) => handleChange("role", value)}
             />
           </div>
         )}

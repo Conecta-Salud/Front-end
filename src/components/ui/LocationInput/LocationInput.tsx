@@ -207,21 +207,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
                   onClick={() => handleSelect(option)}
                   className="w-full rounded-[10px] px-4 py-3 text-left hover:bg-gray-100"
                 >
-                  <span className="block text-[16px] font-semibold text-black">
+                  <span className="block text-[16px] text-black">
                     {option.name}
                   </span>
 
-                  {option.level === "municipality" && option.stateName && (
-                    <span className="block text-[14px] text-gray-500">
-                      {option.stateName}
-                    </span>
-                  )}
-
-                  {option.level === "state" && (
-                    <span className="block text-[14px] text-gray-500">
-                      Estado
-                    </span>
-                  )}
                 </button>
               ))
             ) : (

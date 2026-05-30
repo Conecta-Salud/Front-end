@@ -121,20 +121,25 @@ function PasswordFormModalContent({
         className="w-full max-w-[640px] rounded-[10px] bg-white p-6 shadow-lg"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <h2
-          id="password-form-title"
-          className="mb-2 text-[24px]"
-          style={{
-            color: "var(--color-green-end)",
-            fontWeight: "var(--font-weight-bold)",
-          }}
-        >
-          {title}
-        </h2>
+        <div className="mb-7 flex flex-col gap-2">
+          <h2
+            id="password-form-title"
+            className="text-[24px] font-semibold leading-none"
+            style={{
+              backgroundImage: "var(--gradient-primary-green)",
+              WebkitBackgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            {title}
+          </h2>
 
-        {description && (
-          <div className="mb-6 text-[16px] text-gray-500">{description}</div>
-        )}
+          {description && (
+            <div className="text-[16px] leading-snug text-gray-500">
+              {description}
+            </div>
+          )}
+        </div>
 
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           {requireCurrentPassword && (
