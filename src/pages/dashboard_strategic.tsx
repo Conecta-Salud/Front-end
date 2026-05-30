@@ -8,6 +8,8 @@ import { useDashboardScope } from "../features/dashboard/hooks/useDashboardScope
 import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSummary";
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
 
+import { formatLocationDisplayText } from "../features/locations/utils/locationDisplay.utils";
+
 const HealthMap = lazy(() => import("../features/health-map/components/HealthMap"));
 const DashboardChartSection = lazy(
   () => import("../features/dashboard/components/DashboardChartSection")
@@ -158,7 +160,7 @@ function DashboardStrategicPage() {
                       : "cursor-pointer font-normal hover:opacity-70",
                   ].join(" ")}
                 >
-                  {mapNavigation.selectedState.name}
+                  {formatLocationDisplayText(mapNavigation.selectedState.name)}
                 </button>
               </>
             )}
@@ -168,7 +170,7 @@ function DashboardStrategicPage() {
                 <span className="font-normal"> &gt; </span>
 
                 <span className="font-bold text-black">
-                  {mapNavigation.selectedMunicipality.name}
+                  {formatLocationDisplayText(mapNavigation.selectedMunicipality.name)}
                 </span>
               </>
             )}

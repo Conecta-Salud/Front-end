@@ -6,6 +6,7 @@ import type {
 } from "../../../features/locations/types/locationSearch.types";
 import { useLocationSearchQuery } from "../../../features/locations/queries/locationSearch.queries";
 import { useDebouncedValue } from "../../../features/locations/hooks/useDebouncedValue";
+import { formatLocationDisplayText } from "../../../features/locations/utils/locationDisplay.utils";
 
 type LocationAutocompleteProps = {
   value?: LocationSearchResult | null;
@@ -53,7 +54,9 @@ export default function LocationAutocomplete({
     return results.filter((item) => allowedTypes.includes(item.type));
   }, [query.data, allowedTypes]);
 
-  const inputValue = isOpen ? search : value?.displayName ?? "";
+  const inputValue = isOpen
+    ? search
+    : formatLocationDisplayText(value?.displayName);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -75,7 +78,7 @@ export default function LocationAutocomplete({
 
   const handleSelect = (location: LocationSearchResult) => {
     onChange(location);
-    setSearch(location.displayName);
+    setSearch(formatLocationDisplayText(location.displayName));
     setIsOpen(false);
   };
 
@@ -157,7 +160,7 @@ export default function LocationAutocomplete({
                 >
                   <div className="min-w-0">
                     <p className="truncate text-[14px] font-semibold text-black">
-                      {location.displayName}
+                      {formatLocationDisplayText(location.displayName)}
                     </p>
 
                     <p className="mt-1 text-[12px] text-gray-500">
