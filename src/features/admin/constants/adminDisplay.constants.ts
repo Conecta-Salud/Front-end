@@ -22,13 +22,18 @@ export const ADMIN_ACTIVITY_ACTION_LABELS: Record<string, string> = {
   LOGIN: "Inicio de sesión",
   COMPARE_STATES: "Comparación de estados",
   COMPARE_MUNICIPALITIES: "Comparación de municipios",
+  CREATE_USER: "Crear usuario",
+  UPDATE_USER: "Actualizar usuario",
+  DEACTIVATE_USER: "Desactivar usuario",
+  REACTIVATE_USER: "Reactivar usuario",
+  CHANGE_USER_PASSWORD: "Cambiar contraseña",
 };
 
 export const ADMIN_ACTIVITY_MODULE_LABELS: Record<string, string> = {
   auth: "Autenticación",
   comparison: "Comparación",
-  dashboard: "Dashboard",
-  admin: "Administración",
+  users: "Administración",
+  data_uploads: "Cargas de datos",
 };
 
 export const ADMIN_ACTIVITY_RESULT_LABELS: Record<string, string> = {

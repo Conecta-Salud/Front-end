@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
 import DashboardRankingSection from "../features/dashboard/components/DashboardRankingSection";
@@ -37,11 +37,55 @@ function DashboardStrategicPage() {
   const year = useHeaderFilterStore((state) => state.year);
   const indicator = useHeaderFilterStore((state) => state.category);
 
+  const selectedLocation = useHeaderFilterStore((state) => state.selectedLocation);
+  const setSelectedLocation = useHeaderFilterStore(
+    (state) => state.setSelectedLocation
+  );
+
   const [mapNavigation, setMapNavigation] = useState<HealthMapNavigationState>({
     level: "country",
     selectedState: null,
     selectedMunicipality: null,
   });
+
+  useEffect(() => {
+    if (!selectedLocation) return;
+
+    if (selectedLocation.type === "state") {
+      setMapNavigation({
+        level: "state",
+        selectedState: {
+          code: selectedLocation.code,
+          name: selectedLocation.name,
+        },
+        selectedMunicipality: null,
+      });
+
+      return;
+    }
+
+    if (selectedLocation.type === "municipality") {
+      if (!selectedLocation.stateCode || !selectedLocation.stateName) {
+        console.warn(
+          "Municipality result is missing parent state data",
+          selectedLocation
+        );
+        return;
+      }
+
+      setMapNavigation({
+        level: "municipality",
+        selectedState: {
+          code: selectedLocation.stateCode,
+          name: selectedLocation.stateName,
+        },
+        selectedMunicipality: {
+          code: selectedLocation.code,
+          name: selectedLocation.name,
+        },
+      });
+    }
+  }, [selectedLocation]);
 
   const dashboardScope = useDashboardScope({
     navigation: mapNavigation,
@@ -53,7 +97,14 @@ function DashboardStrategicPage() {
     category: indicator,
   });
 
+  const handleMapNavigationChange = (navigation: HealthMapNavigationState) => {
+    setSelectedLocation(null);
+    setMapNavigation(navigation);
+  };
+
   const goToCountry = () => {
+    setSelectedLocation(null);
+
     setMapNavigation({
       level: "country",
       selectedState: null,
@@ -63,6 +114,8 @@ function DashboardStrategicPage() {
 
   const goToState = () => {
     if (!mapNavigation.selectedState) return;
+
+    setSelectedLocation(null);
 
     setMapNavigation({
       level: "state",
@@ -134,7 +187,7 @@ function DashboardStrategicPage() {
               indicator={indicator}
               year={year}
               navigation={mapNavigation}
-              onNavigationChange={setMapNavigation}
+              onNavigationChange={handleMapNavigationChange}
             />
           </Suspense>
         </div>

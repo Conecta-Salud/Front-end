@@ -1,9 +1,9 @@
 import type { RankingColumn } from "../../../components/ui/RankingTable/RankingTable.types";
 import {
-  ADMIN_ACTIVITY_ACTION_LABELS,
-  ADMIN_ACTIVITY_MODULE_LABELS,
-  ADMIN_ACTIVITY_RESULT_LABELS,
-} from "../constants/adminDisplay.constants";
+  translateAdminActivityAction,
+  translateAdminActivityModule,
+  translateAdminActivityResult,
+} from "../utils/adminActivityTranslation";
 import type {
   AdminActivityLog,
   AdminActivityTableRow,
@@ -33,9 +33,9 @@ export function adaptAdminActivityToRows(
     id: log.id,
     createdAt: formatDateTime(log.createdAt),
     userEmail: log.userEmail,
-    action: ADMIN_ACTIVITY_ACTION_LABELS[log.action] ?? log.action,
-    module: ADMIN_ACTIVITY_MODULE_LABELS[log.module] ?? log.module,
-    result: ADMIN_ACTIVITY_RESULT_LABELS[log.result] ?? log.result,
+    action: translateAdminActivityAction(log.action),
+    module: translateAdminActivityModule(log.module),
+    result: translateAdminActivityResult(log.result),
     originalLog: log,
   }));
 }

@@ -28,13 +28,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   const headerConfig = headerConfigByPath[location.pathname] ?? defaultHeaderConfig;
 
-const category = useHeaderFilterStore((state) => state.category);
-const year = useHeaderFilterStore((state) => state.year);
-const search = useHeaderFilterStore((state) => state.search);
+  const category = useHeaderFilterStore((state) => state.category);
+  const year = useHeaderFilterStore((state) => state.year);
+  const selectedLocation = useHeaderFilterStore((state) => state.selectedLocation);
 
-const setCategory = useHeaderFilterStore((state) => state.setCategory);
-const setYear = useHeaderFilterStore((state) => state.setYear);
-const setSearch = useHeaderFilterStore((state) => state.setSearch);
+  const setCategory = useHeaderFilterStore((state) => state.setCategory);
+  const setYear = useHeaderFilterStore((state) => state.setYear);
+  const setSelectedLocation = useHeaderFilterStore((state) => state.setSelectedLocation);
 
   const shouldShowHeaderActions =
     headerConfig.showCategoryFilter ||
@@ -58,10 +58,10 @@ const setSearch = useHeaderFilterStore((state) => state.setSearch);
                 showSearchBar={headerConfig.showSearchBar}
                 category={category}
                 year={year}
-                search={search}
+                selectedLocation={selectedLocation}
                 onCategoryChange={setCategory}
                 onYearChange={setYear}
-                onSearchChange={setSearch}
+                onLocationChange={setSelectedLocation}
               />
             ) : undefined
           }
