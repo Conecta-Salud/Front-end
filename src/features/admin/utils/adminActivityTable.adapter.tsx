@@ -1,27 +1,13 @@
 import type { RankingColumn } from "../../../components/ui/RankingTable/RankingTable.types";
+import {
+  ADMIN_ACTIVITY_ACTION_LABELS,
+  ADMIN_ACTIVITY_MODULE_LABELS,
+  ADMIN_ACTIVITY_RESULT_LABELS,
+} from "../constants/adminDisplay.constants";
 import type {
   AdminActivityLog,
   AdminActivityTableRow,
 } from "../types/adminActivity.types";
-
-const actionLabels: Record<string, string> = {
-  LOGIN: "Inicio de sesión",
-  COMPARE_STATES: "Comparación de estados",
-  COMPARE_MUNICIPALITIES: "Comparación de municipios",
-};
-
-const moduleLabels: Record<string, string> = {
-  auth: "Autenticación",
-  comparison: "Comparación",
-  dashboard: "Dashboard",
-  admin: "Administración",
-};
-
-const resultLabels: Record<string, string> = {
-  success: "Exitoso",
-  error: "Error",
-  failure: "Fallido",
-};
 
 function formatDateTime(value: string) {
   if (!value) return "—";
@@ -43,9 +29,9 @@ export function adaptAdminActivityToRows(
     id: log.id,
     createdAt: formatDateTime(log.createdAt),
     userEmail: log.userEmail,
-    action: actionLabels[log.action] ?? log.action,
-    module: moduleLabels[log.module] ?? log.module,
-    result: resultLabels[log.result] ?? log.result,
+    action: ADMIN_ACTIVITY_ACTION_LABELS[log.action] ?? log.action,
+    module: ADMIN_ACTIVITY_MODULE_LABELS[log.module] ?? log.module,
+    result: ADMIN_ACTIVITY_RESULT_LABELS[log.result] ?? log.result,
     originalLog: log,
   }));
 }

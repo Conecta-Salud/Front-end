@@ -1,4 +1,5 @@
 import React from "react";
+
 import eyeCloseIcon from "../../../assets/icons/eyeCloseIcon.svg";
 import eyeOpenIcon from "../../../assets/icons/eyeOpenIcon.svg";
 import userIcon from "../../../assets/icons/userIcon.svg";
@@ -14,10 +15,13 @@ type CustomInputFieldProps = {
   rightIcon?: string;
   passwordVisibleIcon?: string;
   passwordHiddenIcon?: string;
+  autoComplete?: string;
+  disabled?: boolean;
+  maxLength?: number;
 };
 
 const CustomInputField: React.FC<CustomInputFieldProps> = ({
-  name,       
+  name,
   label,
   placeholder,
   value,
@@ -27,76 +31,78 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
   rightIcon,
   passwordVisibleIcon = eyeCloseIcon,
   passwordHiddenIcon = eyeOpenIcon,
+  autoComplete,
+  disabled = false,
+  maxLength,
 }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
-    const inputType =
+  const inputType =
     type === "password" ? (showPassword ? "text" : "password") : type;
 
-    const iconToShow =
-        type === "password"
-        ? showPassword
-            ? passwordVisibleIcon
-            : passwordHiddenIcon
-        : rightIcon || userIcon;
+  const iconToShow =
+    type === "password"
+      ? showPassword
+        ? passwordVisibleIcon
+        : passwordHiddenIcon
+      : rightIcon || userIcon;
 
   return (
     <div className="flex flex-col gap-1">
-        <div
-            className="w-[578px] w-full h-[61px] rounded-[10px] px-0.75 py-0.75"
-            style={{ background: "var(--gradient-primary-green)" }}
-            >
-                <div className="relative h-full w-full rounded-[7.5px] bg-white px-2.5 py-2.5 flex flex-col justify-center leading-none">
-                    
-                    <label
-                        htmlFor={name} 
-                        className="text-[14px] font-semibold bg-clip-text text-transparent"
-                        style={{ backgroundImage: "var(--gradient-primary-green)" }}
-                    >
-                        {label}
-                        {importance && (
-                    <span
-                        className="text-[14px] font-semibold"
-                        style={{
-                        backgroundImage: "var(--gradient-primary-green)",
-                        WebkitBackgroundClip: "text",
-                        color: "transparent",
-                        }}
-                    >
-                        *
-                    </span>
-                    )}
-                </label>
+      <div
+        className="h-[61px] w-full rounded-[10px] px-0.75 py-0.75"
+        style={{ background: "var(--gradient-primary-green)" }}
+      >
+        <div className="relative flex h-full w-full flex-col justify-center rounded-[7.5px] bg-white px-2.5 py-2.5 leading-none">
+          <label
+            htmlFor={name}
+            className="bg-clip-text text-[14px] font-semibold text-transparent"
+            style={{ backgroundImage: "var(--gradient-primary-green)" }}
+          >
+            {label}
+            {importance && (
+              <span
+                className="text-[14px] font-semibold"
+                style={{
+                  backgroundImage: "var(--gradient-primary-green)",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                *
+              </span>
+            )}
+          </label>
 
-                    <input
-                    id={name}
-                    name={name}
-                    placeholder={placeholder}
-                    type={inputType}
-                    value={value}
-                    required={importance}
-                    onChange={(e) => onChange?.(e.target.value)}
-                    className="
-                        w-full
-                        bg-transparent 
-                        border-none 
-                        outline-none 
-                        text-[20px]
-                        leading-none
-                        pr-10
-                    "
-                    />
+          <input
+            id={name}
+            name={name}
+            placeholder={placeholder}
+            type={inputType}
+            value={value}
+            required={importance}
+            disabled={disabled}
+            autoComplete={autoComplete}
+            maxLength={maxLength}
+            onChange={(event) => onChange?.(event.target.value)}
+            className="w-full border-none bg-transparent pr-10 text-[20px] leading-none outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          />
 
-                    {type === "password" ? (
+          {type === "password" ? (
             <button
               type="button"
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+              }
+              disabled={disabled}
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
+              className="absolute right-3 top-1/2 -translate-y-1/2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <img
                 src={iconToShow}
-                alt="Mostrar u ocultar contraseña"
-                className="w-[22px] h-auto max-h-[22px] object-contain"
+                alt=""
+                aria-hidden="true"
+                className="h-auto max-h-[22px] w-[22px] object-contain"
               />
             </button>
           ) : (
@@ -104,7 +110,7 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
               src={iconToShow}
               alt=""
               aria-hidden="true"
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-[22px] h-auto max-h-[22px] object-contain"
+              className="absolute right-3 top-1/2 h-auto max-h-[22px] w-[22px] -translate-y-1/2 object-contain"
             />
           )}
         </div>

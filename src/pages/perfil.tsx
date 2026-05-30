@@ -7,6 +7,25 @@ import ChangePasswordModal from "../features/profile/components/ChangePasswordMo
 import { useProfileInfo } from "../features/profile/hooks/useProfileInfo";
 import { useLogoutMutation } from "../features/auth/mutations/useLogoutMutation";
 
+const formatDateTimeEs = (value?: string | null) => {
+  if (!value) return "Sin registro";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Fecha inválida";
+  }
+
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+};
+
 function PerfilPage() {
   const navigate = useNavigate();
 
@@ -47,7 +66,7 @@ function PerfilPage() {
       <div className="w-full">
         <ProfileInfoCard
           title={profile.title}
-          lastLoginAt={profile.lastLoginAt}
+          lastLoginAt={formatDateTimeEs(profile.lastLoginAt)}
           email={profile.email}
           dependency={profile.dependency}
           role={profile.role}

@@ -1,5 +1,5 @@
 import { MoreVertical, Pencil, UserCheck, UserX, KeyRound } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import type { AdminUser } from "../types/adminUsers.types";
@@ -30,7 +30,7 @@ export default function UserActionsMenu({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const updateMenuPosition = () => {
+  const updateMenuPosition = useCallback(() => {
     if (!buttonRef.current) return;
 
     const rect = buttonRef.current.getBoundingClientRect();
@@ -39,7 +39,7 @@ export default function UserActionsMenu({
       top: rect.bottom + 8,
       left: rect.right,
     });
-  };
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -65,16 +65,24 @@ export default function UserActionsMenu({
       updateMenuPosition();
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll, true);
     };
-  }, [isOpen]);
+  }, [isOpen, updateMenuPosition]);
 
   return (
     <div className="relative flex justify-center">
@@ -82,10 +90,12 @@ export default function UserActionsMenu({
         ref={buttonRef}
         type="button"
         aria-label="Abrir acciones de usuario"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-gray-200 bg-white shadow-sm transition hover:bg-gray-50"
+        className="flex h-9 w-9 items-center justify-center rounded-[6px] border border-gray-200 bg-white shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#57D8BE] focus:ring-offset-2"
       >
-        <MoreVertical size={18} />
+        <MoreVertical size={18} aria-hidden="true" />
       </button>
 
       {isOpen &&
@@ -93,6 +103,7 @@ export default function UserActionsMenu({
         createPortal(
           <div
             ref={menuRef}
+            role="menu"
             className="fixed z-[9999] w-[170px] rounded-[10px] border border-gray-200 bg-white p-2 text-left shadow-lg"
             style={{
               top: menuPosition.top,
@@ -102,30 +113,33 @@ export default function UserActionsMenu({
           >
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setIsOpen(false);
                 onEdit(user);
               }}
-              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100"
+              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
             >
-              <Pencil size={16} />
+              <Pencil size={16} aria-hidden="true" />
               Actualizar
             </button>
 
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setIsOpen(false);
                 onChangePassword(user);
               }}
-              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100"
+              className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
             >
-              <KeyRound size={16} />
+              <KeyRound size={16} aria-hidden="true" />
               Cambiar contraseña
             </button>
 
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setIsOpen(false);
 
@@ -139,11 +153,16 @@ export default function UserActionsMenu({
               className={[
                 "flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-[14px] transition",
                 user.active
-                  ? "text-red-500 hover:bg-red-50"
-                  : "text-[#0F8F78] hover:bg-[#E8F8F4]",
+                  ? "text-red-500 hover:bg-red-50 focus:ring-red-200"
+                  : "text-[#0F8F78] hover:bg-[#E8F8F4] focus:ring-[#57D8BE]",
+                "focus:outline-none focus:ring-2",
               ].join(" ")}
             >
-              {user.active ? <UserX size={16} /> : <UserCheck size={16} />}
+              {user.active ? (
+                <UserX size={16} aria-hidden="true" />
+              ) : (
+                <UserCheck size={16} aria-hidden="true" />
+              )}
               {user.active ? "Desactivar" : "Reactivar"}
             </button>
           </div>,

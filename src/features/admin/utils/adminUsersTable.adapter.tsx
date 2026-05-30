@@ -1,11 +1,7 @@
 import type { RankingColumn } from "../../../components/ui/RankingTable/RankingTable.types";
 import UserActionsMenu from "../components/UserActionsMenu";
+import { ADMIN_ROLE_LABELS } from "../constants/adminDisplay.constants";
 import type { AdminUser, AdminUserTableRow } from "../types/adminUsers.types";
-
-const roleLabels = {
-  admin: "Administrador",
-  strategic: "Estratégico",
-};
 
 export function adaptAdminUsersToRows(users: AdminUser[]): AdminUserTableRow[] {
   return users.map((user) => ({
@@ -59,7 +55,7 @@ export function getAdminUsersColumns({
       key: "role",
       align: "center",
       width: "12%",
-      render: (row) => roleLabels[row.role],
+      render: (row) => ADMIN_ROLE_LABELS[row.role],
     },
     {
       header: "Estado",

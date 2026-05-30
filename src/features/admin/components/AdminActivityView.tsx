@@ -1,30 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import RankingTable from "../../../components/ui/RankingTable/RankingTable";
-import { useAdminActivityLogsQuery } from "../queries/adminActivity.queries";
+import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
+import { ADMIN_PAGE_SIZE } from "../constants/adminDisplay.constants";
+import { useAdminActivityLogsInfiniteQuery } from "../queries/adminActivity.queries";
+import type { AdminActivityLog } from "../types/adminActivity.types";
+import { flattenAdminPages } from "../utils/adminPagination.utils";
 import {
   adaptAdminActivityToRows,
   getAdminActivityColumns,
 } from "../utils/adminActivityTable.adapter";
+import { useInfiniteScrollLoad } from "../utils/useInfiniteScrollLoad";
 import AdminActivityToolbar from "./AdminActivityToolBar";
+import AdminLoadMoreFooter from "./AdminLoadMoreFooter";
 
 export default function AdminActivityView() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebouncedValue(searchTerm.trim(), 350);
   const [actionFilter, setActionFilter] = useState("");
   const [moduleFilter, setModuleFilter] = useState("");
   const [resultFilter, setResultFilter] = useState("");
   const [openFilterId, setOpenFilterId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 350);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [searchTerm]);
+  const tableScrollRef = useRef<HTMLDivElement | null>(null);
 
   const activityQueryParams = useMemo(
     () => ({
@@ -32,22 +29,54 @@ export default function AdminActivityView() {
       action: actionFilter || undefined,
       module: moduleFilter || undefined,
       result: resultFilter || undefined,
-      page: 0,
-      size: 50,
+      size: ADMIN_PAGE_SIZE,
     }),
     [debouncedSearchTerm, actionFilter, moduleFilter, resultFilter]
   );
 
-  const activityQuery = useAdminActivityLogsQuery(activityQueryParams);
+  const {
+    data: activityData,
+    fetchNextPage: fetchNextActivityPage,
+    hasNextPage: hasNextActivityPage,
+    isError: isActivityError,
+    isFetching: isActivityFetching,
+    isFetchingNextPage: isFetchingNextActivityPage,
+    isLoading: isActivityLoading,
+  } = useAdminActivityLogsInfiniteQuery(activityQueryParams);
+
+  const loadedLogs = useMemo(
+    () => flattenAdminPages<AdminActivityLog>(activityData?.pages),
+    [activityData?.pages]
+  );
 
   const rows = useMemo(
-    () => adaptAdminActivityToRows(activityQuery.data?.items ?? []),
-    [activityQuery.data]
+    () => adaptAdminActivityToRows(loadedLogs),
+    [loadedLogs]
   );
 
   const columns = useMemo(() => getAdminActivityColumns(), []);
 
-  if (activityQuery.isLoading && !activityQuery.data) {
+  const handleLoadMoreActivity = useCallback(() => {
+    if (!hasNextActivityPage || isFetchingNextActivityPage) return;
+
+    void fetchNextActivityPage();
+  }, [
+    fetchNextActivityPage,
+    hasNextActivityPage,
+    isFetchingNextActivityPage,
+  ]);
+
+  const loadMoreSentinelRef = useInfiniteScrollLoad({
+    rootRef: tableScrollRef,
+    enabled: Boolean(hasNextActivityPage),
+    isLoading: isFetchingNextActivityPage,
+    onLoadMore: handleLoadMoreActivity,
+  });
+
+  const isRefreshingActivity =
+    isActivityFetching && !isFetchingNextActivityPage;
+
+  if (isActivityLoading && rows.length === 0) {
     return (
       <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
         <p className="text-[16px] text-gray-500">Cargando actividad...</p>
@@ -55,7 +84,7 @@ export default function AdminActivityView() {
     );
   }
 
-  if (activityQuery.isError) {
+  if (isActivityError && rows.length === 0) {
     return (
       <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
         <p className="text-[16px] text-red-500">
@@ -87,19 +116,33 @@ export default function AdminActivityView() {
         onOpenFilterChange={setOpenFilterId}
       />
 
-      {activityQuery.isFetching && (
+      {isRefreshingActivity && rows.length > 0 && (
         <p className="mb-3 text-[14px] text-gray-500">
           Actualizando actividad...
         </p>
       )}
 
-      <div className="min-h-0 flex-1 overflow-auto pr-2">
+      <div ref={tableScrollRef} className="min-h-0 flex-1 overflow-auto pr-2">
         <RankingTable
           columns={columns}
           data={rows}
           compact
           rowHeight="sm"
           emptyMessage="No hay registros de actividad."
+        />
+        {hasNextActivityPage && (
+          <div ref={loadMoreSentinelRef} className="h-2" aria-hidden="true" />
+        )}
+        <AdminLoadMoreFooter
+          hasNextPage={Boolean(hasNextActivityPage)}
+          isFetchingNextPage={isFetchingNextActivityPage}
+          loadedCount={rows.length}
+          loadingLabel="Cargando mas actividad..."
+          loadMoreLabel="Cargar mas actividad"
+          completedLabel="Toda la actividad visible esta cargada."
+          errorLabel="No se pudo cargar la siguiente pagina de actividad."
+          isError={isActivityError}
+          onLoadMore={handleLoadMoreActivity}
         />
       </div>
     </section>

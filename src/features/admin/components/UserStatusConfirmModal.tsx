@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import Button from "../../../components/ui/Button/Button";
 import type {
   AdminUser,
@@ -43,6 +45,22 @@ export default function UserStatusConfirmModal({
   onClose,
   onConfirm,
 }: UserStatusConfirmModalProps) {
+  useEffect(() => {
+    if (!isOpen || isPending) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, isPending, onClose]);
+
   if (!isOpen || !user || !action) return null;
 
   const config = actionConfig[action];
@@ -53,6 +71,7 @@ export default function UserStatusConfirmModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="user-status-title"
+      aria-describedby="user-status-description"
       onMouseDown={isPending ? undefined : onClose}
     >
       <div
@@ -67,7 +86,7 @@ export default function UserStatusConfirmModal({
           {config.title}
         </h2>
 
-        <p className="text-[16px] text-black">
+        <p id="user-status-description" className="text-[16px] text-black">
           ¿Seguro que deseas{" "}
           {action === "deactivate" ? "desactivar" : "reactivar"} a{" "}
           <span className="font-semibold">{user.fullName || user.email}</span>?{" "}

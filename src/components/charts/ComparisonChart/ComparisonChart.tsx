@@ -202,11 +202,12 @@ export default function ComparisonBarChart({
 
             <Tooltip
               labelFormatter={(label) => String(label)}
-              formatter={(value) =>
+              formatter={(value) => [
                 typeof value === "number"
                   ? valueFormatter?.(value) ?? value.toFixed(2)
-                  : value
-              }
+                  : value,
+                "Valor",
+              ]}
             />
 
             {referenceLine && (

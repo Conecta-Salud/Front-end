@@ -52,7 +52,7 @@ function ChangePasswordModalContent({
 
   return (
     <PasswordFormModal
-      isOpen={isOpen}
+      isOpen
       title="Cambiar contraseña"
       requireCurrentPassword
       isSaving={changePasswordMutation.isPending}

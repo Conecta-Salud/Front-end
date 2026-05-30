@@ -51,6 +51,14 @@ const getBarColor = (item: ChartData, fallbackColor?: string) => {
   }
 };
 
+const translateReferenceLineLabel = (label: string) => {
+  const labels: Record<string, string> = {
+    "Recommended reference": "Referencia recomendada",
+  };
+
+  return labels[label] ?? label;
+};
+
 export default function CustomBarChart({
   data,
   title = "Bar chart",
@@ -162,7 +170,7 @@ export default function CustomBarChart({
                 strokeWidth={2}
                 strokeDasharray="6 6"
                 label={{
-                  value: referenceLine.label,
+                  value: translateReferenceLineLabel(referenceLine.label),
                   position: "insideTopRight",
                   fill: "var(--color-blue)",
                   fontSize: 12,

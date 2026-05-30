@@ -29,6 +29,8 @@ export default function CustomSelect({
   const selectedOption = options.find((option) => option.value === value);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         containerRef.current &&
@@ -38,19 +40,33 @@ export default function CustomSelect({
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscape);
     };
-  }, []);
+  }, [isOpen]);
 
   return (
     <div ref={containerRef} className="relative w-full">
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen((prev) => !prev);
+          }
+        }}
         className={[
           "relative flex h-[72px] w-full items-end justify-between rounded-[16px] bg-white px-5 pb-3 pt-2 text-left transition-all duration-200",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
@@ -109,7 +125,11 @@ export default function CustomSelect({
             border: "1px solid rgba(110, 231, 183, 0.35)",
           }}
         >
-          <div className="max-h-[220px] overflow-y-auto py-1">
+          <div
+            className="max-h-[220px] overflow-y-auto py-1"
+            role="listbox"
+            aria-label={label}
+          >
             {options.map((option) => {
               const isSelected = option.value === value;
 
@@ -117,6 +137,8 @@ export default function CustomSelect({
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
                     onChange(option.value);
                     setIsOpen(false);
