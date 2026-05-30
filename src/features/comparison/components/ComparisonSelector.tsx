@@ -8,8 +8,6 @@ type ComparisonSelectorProps = {
   level: ComparisonLevel;
   firstLocation: LocationOption | null;
   secondLocation: LocationOption | null;
-  options: LocationOption[];
-  isLoadingOptions?: boolean;
   error?: string | null;
   onLevelChange: (level: ComparisonLevel) => void;
   onFirstLocationChange: (location: LocationOption | null) => void;
@@ -34,8 +32,6 @@ export default function ComparisonSelector({
   level,
   firstLocation,
   secondLocation,
-  options,
-  isLoadingOptions = false,
   error,
   onLevelChange,
   onFirstLocationChange,
@@ -50,16 +46,6 @@ export default function ComparisonSelector({
       levelOptions.find((option) => option.value === level)?.label ??
       "Selecciona",
     [level]
-  );
-
-  const firstOptions = useMemo(
-    () => options.filter((option) => option.code !== secondLocation?.code),
-    [options, secondLocation?.code]
-  );
-
-  const secondOptions = useMemo(
-    () => options.filter((option) => option.code !== firstLocation?.code),
-    [options, firstLocation?.code]
   );
 
   useEffect(() => {
@@ -90,16 +76,15 @@ export default function ComparisonSelector({
 
         <LocationInput
           value={firstLocation}
-          options={firstOptions}
           restrictedLevel={level}
+          useRemoteSearch
+          searchLimit={10}
+          excludeCodes={secondLocation?.code ? [secondLocation.code] : []}
           placeholder={
-            isLoadingOptions
-              ? "Cargando ubicaciones..."
-              : level === "state"
+            level === "state"
               ? "Selecciona un estado..."
               : "Selecciona un municipio..."
           }
-          disabled={isLoadingOptions}
           onChange={onFirstLocationChange}
         />
       </div>
@@ -199,16 +184,15 @@ export default function ComparisonSelector({
 
         <LocationInput
           value={secondLocation}
-          options={secondOptions}
           restrictedLevel={level}
+          useRemoteSearch
+          searchLimit={10}
+          excludeCodes={firstLocation?.code ? [firstLocation.code] : []}
           placeholder={
-            isLoadingOptions
-              ? "Cargando ubicaciones..."
-              : level === "state"
+            level === "state"
               ? "Selecciona otro estado..."
               : "Selecciona otro municipio..."
           }
-          disabled={isLoadingOptions}
           error={error ?? undefined}
           onChange={onSecondLocationChange}
         />
