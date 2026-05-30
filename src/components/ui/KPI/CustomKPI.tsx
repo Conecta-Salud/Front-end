@@ -16,6 +16,12 @@ const toneStyles = {
 };
 
 const sizeStyles = {
+  xs: {
+    container: "min-h-[90px] w-full px-3 py-2",
+    title: "text-[14px]",
+    subtitle: "text-[11px]",
+    value: "text-[28px]",
+  },
   sm: {
     container: "min-h-[116px] w-[180px] px-3 py-3",
     title: "text-[16px]",
@@ -42,7 +48,7 @@ interface CustomKPIProps {
   subtitle?: string;
   value: string | number;
   variant?: "default" | "green" | "red";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xs";
   fullWidth?: boolean;
   className?: string;
 }
