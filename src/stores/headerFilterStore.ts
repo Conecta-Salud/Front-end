@@ -1,30 +1,31 @@
 import { create } from "zustand";
 import type { HealthMapIndicator } from "../features/health-map/types/healthMap.types";
+import type { LocationSearchResult } from "../features/locations/types/locationSearch.types";
 
 type HeaderFiltersState = {
   category: HealthMapIndicator;
   year: string;
-  search: string;
+  selectedLocation: LocationSearchResult | null;
 
   setCategory: (category: HealthMapIndicator) => void;
   setYear: (year: string) => void;
-  setSearch: (search: string) => void;
+  setSelectedLocation: (location: LocationSearchResult | null) => void;
   resetFilters: () => void;
 };
 
 export const useHeaderFilterStore = create<HeaderFiltersState>((set) => ({
   category: "medical_coverage",
   year: "2024",
-  search: "",
+  selectedLocation: null,
 
   setCategory: (category) => set({ category }),
   setYear: (year) => set({ year }),
-  setSearch: (search) => set({ search }),
+  setSelectedLocation: (location) => set({ selectedLocation: location }),
 
   resetFilters: () =>
     set({
       category: "medical_coverage",
       year: "2024",
-      search: "",
+      selectedLocation: null,
     }),
 }));

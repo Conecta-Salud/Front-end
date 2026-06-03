@@ -1,6 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import pinIcon from '../../../assets/icons/pinIcon.svg';
-import cancelarIcon from '../../../assets/icons/cancelar.svg';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import pinIcon from "../../../assets/icons/pinIcon.svg";
+import cancelarIcon from "../../../assets/icons/cancelar.svg";
+import { useLocationSearchQuery } from "../../../features/locations/queries/locationSearch.queries";
+import { useDebouncedValue } from "../../../features/locations/hooks/useDebouncedValue";
+import type { LocationSearchResult } from "../../../features/locations/types/locationSearch.types";
+import { formatLocationDisplayText } from "../../../features/locations/utils/locationDisplay.utils";
 
 export type LocationLevel = "state" | "municipality";
 
@@ -15,64 +19,121 @@ export type LocationOption = {
 
 type LocationInputProps = {
   value?: LocationOption | null;
-  options: LocationOption[];
+  options?: LocationOption[];
   placeholder?: string;
   restrictedLevel?: LocationLevel;
   disabled?: boolean;
   error?: string;
   onClear?: () => void;
   onChange: (value: LocationOption | null) => void;
+
+  useRemoteSearch?: boolean;
+  searchLimit?: number;
+  excludeCodes?: string[];
 };
 
 const getDisplayLabel = (option: LocationOption): string => {
-  if (option.level === 'municipality' && option.stateName) {
-    return `${option.name} (${option.stateName})`;
+  if (option.level === "municipality" && option.stateName) {
+    return `${formatLocationDisplayText(option.name)} (${formatLocationDisplayText(
+      option.stateName
+    )})`;
   }
 
-  return option.name;
+  return formatLocationDisplayText(option.name);
 };
 
-const LocationInput: React.FC<LocationInputProps> = ({ 
+const adaptLocationSearchResultToOption = (
+  location: LocationSearchResult
+): LocationOption => ({
+  id: String(location.id),
+  code: location.code,
+  name: location.name,
+  level: location.type,
+  stateCode: location.stateCode ?? undefined,
+  stateName: location.stateName ?? undefined,
+});
+
+const LocationInput: React.FC<LocationInputProps> = ({
   value = null,
-  options,
-  placeholder = 'Selecciona una ubicación',
+  options = [],
+  placeholder = "Selecciona una ubicación",
   restrictedLevel,
   disabled = false,
   error,
   onChange,
   onClear,
+  useRemoteSearch = false,
+  searchLimit = 10,
+  excludeCodes = [],
 }) => {
-
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const normalizedSearch = search.toLowerCase().trim();
 
-  const filteredOptions = options.filter((option) => {
-    const matchesLevel = restrictedLevel
-      ? option.level === restrictedLevel
-      : true;
+  const debouncedSearch = useDebouncedValue(search, 350);
 
-    const matchesSearch = normalizedSearch
-      ? getDisplayLabel(option).toLowerCase().includes(normalizedSearch)
-      : true;
-
-    return matchesLevel && matchesSearch;
+  const remoteQuery = useLocationSearchQuery({
+    query: debouncedSearch,
+    limit: searchLimit,
+    enabled: useRemoteSearch && open && !disabled,
   });
+
+  const normalizedSearch = useMemo(() => search.toLowerCase().trim(), [search]);
+
+  const localOptions = useMemo(() => {
+    return options.filter((option) => {
+      const matchesLevel = restrictedLevel
+        ? option.level === restrictedLevel
+        : true;
+
+      const matchesSearch = normalizedSearch
+        ? getDisplayLabel(option).toLowerCase().includes(normalizedSearch)
+        : true;
+
+      const isExcluded = excludeCodes.includes(option.code);
+
+      return matchesLevel && matchesSearch && !isExcluded;
+    });
+  }, [normalizedSearch, options, restrictedLevel, excludeCodes]);
+
+  const remoteOptions = useMemo(() => {
+    const results = remoteQuery.data ?? [];
+
+    return results
+      .filter((location) => {
+        const matchesLevel = restrictedLevel
+          ? location.type === restrictedLevel
+          : true;
+
+        const isExcluded = excludeCodes.includes(location.code);
+
+        return matchesLevel && !isExcluded;
+      })
+      .map(adaptLocationSearchResultToOption);
+  }, [remoteQuery.data, restrictedLevel, excludeCodes]);
+
+  const filteredOptions = useRemoteSearch ? remoteOptions : localOptions;
 
   const renderSelectedLabel = (option: LocationOption) => {
     if (option.level === "municipality" && option.stateName) {
       return (
         <>
-          <span className="font-medium">{option.name}</span>{" "}
-          <span className="font-normal text-gray-500">({option.stateName})</span>
+          <span className="font-medium">
+            {formatLocationDisplayText(option.name)}
+          </span>{" "}
+          <span className="font-normal text-gray-500">
+            ({formatLocationDisplayText(option.stateName)})
+          </span>
         </>
       );
     }
 
-    return <span className="font-medium">{option.name}</span>;
+    return (
+      <span className="font-medium">
+        {formatLocationDisplayText(option.name)}
+      </span>
+    );
   };
 
   const handleSelect = (option: LocationOption) => {
@@ -91,20 +152,13 @@ const LocationInput: React.FC<LocationInputProps> = ({
   };
 
   useEffect(() => {
-    setSearch(value ? getDisplayLabel(value) : "");
-  }, [value]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
-
-        if (value) {
-          setSearch(getDisplayLabel(value));
-        }
+        setSearch(value ? getDisplayLabel(value) : "");
       }
     };
 
@@ -114,7 +168,6 @@ const LocationInput: React.FC<LocationInputProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [value]);
-
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -139,7 +192,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
           <button
             type="button"
             onClick={() => {
-              if (!disabled) setOpen(true);
+              if (!disabled) {
+                setSearch(value ? getDisplayLabel(value) : "");
+                setOpen(true);
+              }
             }}
             disabled={disabled}
             className="
@@ -153,10 +209,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
         ) : (
           <input
             type="text"
-            value={search}
+            value={open ? search : ""}
             placeholder={placeholder}
-            onChange={(e) => {
-              setSearch(e.target.value);
+            onChange={(event) => {
+              setSearch(event.target.value);
               setOpen(true);
 
               if (value) {
@@ -164,7 +220,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
               }
             }}
             onFocus={() => {
-              if (!disabled) setOpen(true);
+              if (!disabled) {
+                setSearch(value ? getDisplayLabel(value) : "");
+                setOpen(true);
+              }
             }}
             disabled={disabled}
             aria-invalid={Boolean(error)}
@@ -199,7 +258,27 @@ const LocationInput: React.FC<LocationInputProps> = ({
       {open && !disabled && (
         <div className="absolute left-0 right-0 z-50 mt-2 rounded-[15px] border border-gray-200 bg-white shadow-lg">
           <div className="max-h-[260px] overflow-y-auto p-2">
-            {filteredOptions.length > 0 ? (
+            {useRemoteSearch && search.trim().length < 2 && (
+              <div className="px-4 py-3 text-[14px] text-gray-500">
+                Escribe al menos 2 caracteres.
+              </div>
+            )}
+
+            {useRemoteSearch && search.trim().length >= 2 && remoteQuery.isLoading && (
+              <div className="px-4 py-3 text-[14px] text-gray-500">
+                Buscando ubicaciones...
+              </div>
+            )}
+
+            {useRemoteSearch && remoteQuery.isError && (
+              <div className="px-4 py-3 text-[14px] text-red-500">
+                No se pudo buscar la ubicación.
+              </div>
+            )}
+
+            {(!useRemoteSearch || !remoteQuery.isLoading) &&
+            !remoteQuery.isError &&
+            filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <button
                   key={`${option.level}-${option.code}`}
@@ -207,28 +286,27 @@ const LocationInput: React.FC<LocationInputProps> = ({
                   onClick={() => handleSelect(option)}
                   className="w-full rounded-[10px] px-4 py-3 text-left hover:bg-gray-100"
                 >
-                  <span className="block text-[16px] font-semibold text-black">
-                    {option.name}
+                  <span className="block text-[16px] text-black">
+                    {formatLocationDisplayText(option.name)}
                   </span>
 
                   {option.level === "municipality" && option.stateName && (
-                    <span className="block text-[14px] text-gray-500">
-                      {option.stateName}
-                    </span>
-                  )}
-
-                  {option.level === "state" && (
-                    <span className="block text-[14px] text-gray-500">
-                      Estado
+                    <span className="mt-1 block text-[13px] text-gray-500">
+                      {formatLocationDisplayText(option.stateName)}
                     </span>
                   )}
                 </button>
               ))
-            ) : (
-              <div className="px-4 py-3 text-[14px] text-gray-500">
-                No se encontraron resultados.
-              </div>
-            )}
+            ) : null}
+
+            {(!useRemoteSearch || search.trim().length >= 2) &&
+              !remoteQuery.isLoading &&
+              !remoteQuery.isError &&
+              filteredOptions.length === 0 && (
+                <div className="px-4 py-3 text-[14px] text-gray-500">
+                  No se encontraron resultados.
+                </div>
+              )}
           </div>
         </div>
       )}

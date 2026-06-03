@@ -8,7 +8,6 @@ import {
   Tooltip,
   ReferenceLine,
   Cell,
-  LabelList,
 } from "recharts";
 
 export interface ChartData {
@@ -52,6 +51,14 @@ const getBarColor = (item: ChartData, fallbackColor?: string) => {
   }
 };
 
+const translateReferenceLineLabel = (label: string) => {
+  const labels: Record<string, string> = {
+    "Recommended reference": "Referencia recomendada",
+  };
+
+  return labels[label] ?? label;
+};
+
 export default function CustomBarChart({
   data,
   title = "Bar chart",
@@ -61,7 +68,7 @@ export default function CustomBarChart({
   referenceLine,
   showAverageLine = false,
   showTitle = true,
-  emptyMessage = "No chart data available.",
+  emptyMessage = "No hay datos disponibles.",
 }: CustomBarChartProps) {
   const dataLength = data.length;
 
@@ -152,7 +159,7 @@ export default function CustomBarChart({
             <YAxis domain={yDomain} tick={{ fontSize: 12, fill: "#4B5563" }} />
 
             <Tooltip
-              formatter={(value) => [value, "Value"]}
+              formatter={(value) => [value, "Valor"]}
               labelFormatter={(label) => String(label)}
             />
 
@@ -163,7 +170,7 @@ export default function CustomBarChart({
                 strokeWidth={2}
                 strokeDasharray="6 6"
                 label={{
-                  value: referenceLine.label,
+                  value: translateReferenceLineLabel(referenceLine.label),
                   position: "insideTopRight",
                   fill: "var(--color-blue)",
                   fontSize: 12,
@@ -178,7 +185,7 @@ export default function CustomBarChart({
                 strokeWidth={2}
                 strokeDasharray="6 6"
                 label={{
-                  value: `Average: ${average.toFixed(2)}`,
+                  value: `Promedio: ${average.toFixed(2)}`,
                   position: "insideTopRight",
                   fill: "var(--color-blue)",
                   fontSize: 12,
@@ -186,17 +193,7 @@ export default function CustomBarChart({
               />
             )}
 
-            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={28}>
-              <LabelList
-                dataKey="value"
-                position="top"
-                fill="#111827"
-                fontSize={12}
-                fontWeight={600}
-                formatter={(value) =>
-                  typeof value === "number" ? value.toFixed(2) : ""
-                }
-              />
+            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={30}>
 
               {data.map((entry) => (
                 <Cell

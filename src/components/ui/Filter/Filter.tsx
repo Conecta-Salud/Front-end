@@ -132,10 +132,12 @@ export default function Filter({
       <button
         ref={buttonRef}
         type="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
         onClick={() => onOpenChange(isOpen ? null : id)}
-        className="flex w-full items-center gap-2 px-[10px] h-11 rounded-xl border-2 shadow-sm bg-white"
+        className="flex h-11 w-full items-center gap-2 rounded-xl border-2 bg-white px-[10px] shadow-sm"
         style={{
-          borderColor: "#14B8A6",
+          borderColor: "var( --color-blue)",
         }}
       >
         <img
@@ -168,6 +170,8 @@ export default function Filter({
         createPortal(
           <div
             ref={dropdownRef}
+            role="listbox"
+            aria-label={title}
             className="fixed rounded-xl shadow-lg border-2 border-gray-200 bg-white"
             style={{
               top: dropdownPosition.top,
@@ -180,26 +184,30 @@ export default function Filter({
           >
             <div className="p-2 max-h-60 overflow-y-auto">
               {options.map((option) => (
-                <div
+                <button
                   key={option.value}
+                  type="button"
+                  role="option"
+                  aria-selected={option.value === selectedValue}
                   onClick={() => toggleValue(option.value)}
-                  className="whitespace-nowrap px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm"
+                  className="w-full cursor-pointer whitespace-nowrap rounded-md px-3 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
                 >
                   {option.name}
-                </div>
+                </button>
               ))}
 
               {allowClear && selectedValue && (
-                <div
+                <button
+                  type="button"
                   onClick={() => {
                     onChange("");
                     onOpenChange(null);
                   }}
-                  className="mt-2 text-center text-sm cursor-pointer py-2 rounded-md hover:bg-gray-100"
+                  className="mt-2 w-full cursor-pointer rounded-md py-2 text-center text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
                   style={{ color: "#14B8A6" }}
                 >
-                  Clear
-                </div>
+                  Limpiar
+                </button>
               )}
             </div>
           </div>,

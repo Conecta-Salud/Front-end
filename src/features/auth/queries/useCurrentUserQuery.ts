@@ -8,7 +8,7 @@ export function useCurrentUserQuery() {
 
   return useQuery({
     queryKey: queryKeys.auth.currentUser(),
-    queryFn: getCurrentUser,
+    queryFn: ({ signal }) => getCurrentUser(signal),
     enabled: status === "authenticated",
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

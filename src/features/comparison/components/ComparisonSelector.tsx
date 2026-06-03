@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ComparisonLevel } from "../types/comparisonSummary.types";
 import LocationInput, {
   type LocationOption,
@@ -8,8 +8,6 @@ type ComparisonSelectorProps = {
   level: ComparisonLevel;
   firstLocation: LocationOption | null;
   secondLocation: LocationOption | null;
-  options: LocationOption[];
-  isLoadingOptions?: boolean;
   error?: string | null;
   onLevelChange: (level: ComparisonLevel) => void;
   onFirstLocationChange: (location: LocationOption | null) => void;
@@ -34,8 +32,6 @@ export default function ComparisonSelector({
   level,
   firstLocation,
   secondLocation,
-  options,
-  isLoadingOptions = false,
   error,
   onLevelChange,
   onFirstLocationChange,
@@ -45,15 +41,11 @@ export default function ComparisonSelector({
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const levelDropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedLevelLabel =
-  levelOptions.find((option) => option.value === level)?.label ?? "Selecciona";
-
-  const firstOptions = options.filter(
-    (option) => option.code !== secondLocation?.code
-  );
-
-  const secondOptions = options.filter(
-    (option) => option.code !== firstLocation?.code
+  const selectedLevelLabel = useMemo(
+    () =>
+      levelOptions.find((option) => option.value === level)?.label ??
+      "Selecciona",
+    [level]
   );
 
   useEffect(() => {
@@ -84,16 +76,15 @@ export default function ComparisonSelector({
 
         <LocationInput
           value={firstLocation}
-          options={firstOptions}
           restrictedLevel={level}
+          useRemoteSearch
+          searchLimit={10}
+          excludeCodes={secondLocation?.code ? [secondLocation.code] : []}
           placeholder={
-            isLoadingOptions
-              ? "Cargando ubicaciones..."
-              : level === "state"
+            level === "state"
               ? "Selecciona un estado..."
               : "Selecciona un municipio..."
           }
-          disabled={isLoadingOptions}
           onChange={onFirstLocationChange}
         />
       </div>
@@ -193,16 +184,15 @@ export default function ComparisonSelector({
 
         <LocationInput
           value={secondLocation}
-          options={secondOptions}
           restrictedLevel={level}
+          useRemoteSearch
+          searchLimit={10}
+          excludeCodes={firstLocation?.code ? [firstLocation.code] : []}
           placeholder={
-            isLoadingOptions
-              ? "Cargando ubicaciones..."
-              : level === "state"
+            level === "state"
               ? "Selecciona otro estado..."
               : "Selecciona otro municipio..."
           }
-          disabled={isLoadingOptions}
           error={error ?? undefined}
           onChange={onSecondLocationChange}
         />

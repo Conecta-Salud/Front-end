@@ -1,17 +1,13 @@
 import type { RankingColumn } from "../../../components/ui/RankingTable/RankingTable.types";
 import UserActionsMenu from "../components/UserActionsMenu";
+import { ADMIN_ROLE_LABELS } from "../constants/adminDisplay.constants";
 import type { AdminUser, AdminUserTableRow } from "../types/adminUsers.types";
-
-const roleLabels = {
-  admin: "Administrador",
-  strategic: "Estratégico",
-};
 
 export function adaptAdminUsersToRows(users: AdminUser[]): AdminUserTableRow[] {
   return users.map((user) => ({
     id: user.id,
     fullName:
-      user.fullName ||
+      user.fullName?.trim() ||
       [user.firstName, user.lastName].filter(Boolean).join(" ").trim(),
     email: user.email,
     departmentName: user.departmentName,
@@ -22,13 +18,15 @@ export function adaptAdminUsersToRows(users: AdminUser[]): AdminUserTableRow[] {
 }
 
 export function getAdminUsersColumns({
-  onEdit,
   onDeactivate,
   onReactivate,
+  onChangePassword,
+  onEdit,
 }: {
-  onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
+  onChangePassword: (user: AdminUser) => void;
+  onEdit: (user: AdminUser) => void;
 }): RankingColumn<AdminUserTableRow>[] {
   return [
     {
@@ -37,6 +35,7 @@ export function getAdminUsersColumns({
       truncate: true,
       maxWidth: "max-w-[180px]",
       width: "22%",
+      render: (row) => row.fullName,
     },
     {
       header: "Correo",
@@ -57,7 +56,7 @@ export function getAdminUsersColumns({
       key: "role",
       align: "center",
       width: "12%",
-      render: (row) => roleLabels[row.role],
+      render: (row) => ADMIN_ROLE_LABELS[row.role],
     },
     {
       header: "Estado",
@@ -77,6 +76,7 @@ export function getAdminUsersColumns({
           onEdit={onEdit}
           onDeactivate={onDeactivate}
           onReactivate={onReactivate}
+          onChangePassword={onChangePassword}
         />
       ),
     },

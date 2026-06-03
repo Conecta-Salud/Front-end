@@ -1,8 +1,6 @@
 /* Aplicar estilos generales y comportamiento base de la UI. */
 @import "tailwindcss";
 @import './variables.css';
-@import "@heroui/styles";
-@import "leaflet/dist/leaflet.css";
 
 body {
   font-family: var(--font-primary);

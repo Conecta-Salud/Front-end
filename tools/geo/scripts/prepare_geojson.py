@@ -1,4 +1,6 @@
+import json
 from pathlib import Path
+from typing import Any
 
 import geopandas as gpd
 
@@ -12,11 +14,64 @@ OUTPUT_MUNICIPALITIES_DIR = OUTPUT_DIR / "municipalities"
 
 STATE_SIMPLIFY_TOLERANCE = 0.005
 MUNICIPALITY_SIMPLIFY_TOLERANCE = 0.002
+COORDINATE_PRECISION = 5
 
 
 def ensure_output_dirs() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_MUNICIPALITIES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def round_coordinate_value(value: Any) -> Any:
+    if isinstance(value, float):
+        return round(value, COORDINATE_PRECISION)
+
+    return value
+
+
+def round_coordinates(coordinates: Any) -> Any:
+    if isinstance(coordinates, (int, float)):
+        return round_coordinate_value(coordinates)
+
+    if isinstance(coordinates, list):
+        return [round_coordinates(item) for item in coordinates]
+
+    if isinstance(coordinates, tuple):
+        return [round_coordinates(item) for item in coordinates]
+
+    return coordinates
+
+
+def compact_geojson_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    payload.pop("bbox", None)
+    payload.pop("crs", None)
+    payload.pop("name", None)
+
+    for feature in payload.get("features", []):
+        feature.pop("bbox", None)
+        feature.pop("id", None)
+
+        properties = feature.get("properties") or {}
+        feature["properties"] = {
+            key: value
+            for key, value in properties.items()
+            if value is not None and value != ""
+        }
+
+        geometry = feature.get("geometry")
+        if geometry and "coordinates" in geometry:
+            geometry["coordinates"] = round_coordinates(geometry["coordinates"])
+
+    return payload
+
+
+def write_compact_geojson(gdf: gpd.GeoDataFrame, output_file: Path) -> None:
+    payload = json.loads(gdf.to_json(drop_id=True, na="drop"))
+    compact_payload = compact_geojson_payload(payload)
+    output_file.write_text(
+        json.dumps(compact_payload, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
 
 
 def normalize_states(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -73,7 +128,7 @@ def is_municipalities_shapefile(gdf: gpd.GeoDataFrame) -> bool:
 
 def write_states(input_file: Path, gdf: gpd.GeoDataFrame) -> None:
     output_file = OUTPUT_DIR / "mexico-states.geojson"
-    normalize_states(gdf).to_file(output_file, driver="GeoJSON")
+    write_compact_geojson(normalize_states(gdf), output_file)
     print(f"Estados: {input_file} -> {output_file}")
 
 
@@ -82,7 +137,7 @@ def write_municipalities_by_state(input_file: Path, gdf: gpd.GeoDataFrame) -> No
 
     for state_code, state_municipalities in municipalities.groupby("stateCode"):
         output_file = OUTPUT_MUNICIPALITIES_DIR / f"{state_code}.geojson"
-        state_municipalities.to_file(output_file, driver="GeoJSON")
+        write_compact_geojson(state_municipalities, output_file)
         print(f"Municipios: {input_file} -> {output_file}")
 
 

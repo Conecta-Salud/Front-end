@@ -1,18 +1,46 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 
 import ComparisonSelector from "../features/comparison/components/ComparisonSelector";
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
-import ComparisonChartGrid from "../features/comparison/components/ComparisonChartGrid";
-import PriorityIndexCards from "../features/comparison/components/PriorityIndexCards";
 
+import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
-import { usePeriodsCatalogQuery, useStatesCatalogQuery, useMunicipalitiesCatalogQuery } from "../features/catalogs/queries/catalog.queries";
-import {
-  adaptMunicipalitiesToLocationOptions,
-  adaptStatesToLocationOptions,
-} from "../features/comparison/utils/comparisonLocationOptions.adapter";
+
 import type { LocationOption } from "../components/ui/LocationInput/LocationInput";
+
+const ComparisonChartGrid = lazy(
+  () => import("../features/comparison/components/ComparisonChartGrid")
+);
+const PriorityIndexCards = lazy(
+  () => import("../features/comparison/components/PriorityIndexCards")
+);
+
+function ComparisonChartsFallback() {
+  return (
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div
+          key={index}
+          className="h-[260px] rounded-[10px] bg-white shadow-sm animate-pulse"
+        />
+      ))}
+    </section>
+  );
+}
+
+function PriorityFallback() {
+  return (
+    <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {Array.from({ length: 2 }).map((_, index) => (
+        <div
+          key={index}
+          className="h-[280px] rounded-[10px] bg-white shadow-sm animate-pulse"
+        />
+      ))}
+    </section>
+  );
+}
 
 function ModuloComparacionPage() {
   const year = useHeaderFilterStore((state) => state.year);
@@ -26,12 +54,6 @@ function ModuloComparacionPage() {
   );
 
   const periodsQuery = usePeriodsCatalogQuery();
-  const statesQuery = useStatesCatalogQuery({
-    enabled: level === "state" || level === "municipality",
-  });
-  const municipalitiesQuery = useMunicipalitiesCatalogQuery({
-    enabled: level === "municipality",
-  });
 
   const periodId = useMemo(() => {
     const selectedYear = Number(year);
@@ -42,17 +64,6 @@ function ModuloComparacionPage() {
       )?.id ?? null
     );
   }, [periodsQuery.data, year]);
-
-  const locationOptions = useMemo(() => {
-    if (level === "state") {
-      return adaptStatesToLocationOptions(statesQuery.data);
-    }
-
-    return adaptMunicipalitiesToLocationOptions({
-      municipalities: municipalitiesQuery.data,
-      states: statesQuery.data,
-    });
-  }, [level, statesQuery.data, municipalitiesQuery.data]);
 
   const selectedCodes = useMemo(() => {
     if (!firstLocation?.code || !secondLocation?.code) return [];
@@ -102,10 +113,7 @@ function ModuloComparacionPage() {
     setSecondLocation(null);
   };
 
-  const isLoadingOptions =
-    periodsQuery.isLoading ||
-    statesQuery.isLoading ||
-    (level === "municipality" && municipalitiesQuery.isLoading);
+  const isLoadingOptions = periodsQuery.isLoading;
 
   return (
     <main className="min-h-full p-6">
@@ -126,8 +134,6 @@ function ModuloComparacionPage() {
         level={level}
         firstLocation={firstLocation}
         secondLocation={secondLocation}
-        options={locationOptions}
-        isLoadingOptions={isLoadingOptions}
         error={selectionError}
         onLevelChange={handleLevelChange}
         onFirstLocationChange={setFirstLocation}
@@ -147,7 +153,11 @@ function ModuloComparacionPage() {
             Comparación pendiente
           </h2>
 
-          <p className="text-[16px] text-gray-500">
+          <p className="text-[16px]"
+            style={{
+              color: "var(--color-text-secundary)",
+            }}
+          >
             {!periodId
               ? "No se encontró periodo para el año seleccionado."
               : "Selecciona dos territorios del mismo nivel para visualizar gráficas e índice de prioridad."}
@@ -158,11 +168,9 @@ function ModuloComparacionPage() {
       {shouldShowLoadingState && (
         <>
           <section className="mt-6">
-            <ComparisonChartGrid
-              charts={[]}
-              isLoading
-              isError={false}
-            />
+            <Suspense fallback={<ComparisonChartsFallback />}>
+              <ComparisonChartGrid charts={[]} isLoading isError={false} />
+            </Suspense>
           </section>
 
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
@@ -181,11 +189,9 @@ function ModuloComparacionPage() {
               Comparación del nivel de prioridad para atención gubernamental.
             </p>
 
-            <PriorityIndexCards
-              priority={[]}
-              isLoading
-              isError={false}
-            />
+            <Suspense fallback={<PriorityFallback />}>
+              <PriorityIndexCards priority={[]} isLoading isError={false} />
+            </Suspense>
           </section>
         </>
       )}
@@ -212,11 +218,13 @@ function ModuloComparacionPage() {
       {shouldShowComparisonResult && (
         <>
           <section className="mt-6">
-            <ComparisonChartGrid
-              charts={safeCharts}
-              isLoading={false}
-              isError={false}
-            />
+            <Suspense fallback={<ComparisonChartsFallback />}>
+              <ComparisonChartGrid
+                charts={safeCharts}
+                isLoading={false}
+                isError={false}
+              />
+            </Suspense>
           </section>
 
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
@@ -235,11 +243,13 @@ function ModuloComparacionPage() {
               Comparación del nivel de prioridad para atención gubernamental.
             </p>
 
-            <PriorityIndexCards
-              priority={safePriority}
-              isLoading={false}
-              isError={false}
-            />
+            <Suspense fallback={<PriorityFallback />}>
+              <PriorityIndexCards
+                priority={safePriority}
+                isLoading={false}
+                isError={false}
+              />
+            </Suspense>
           </section>
         </>
       )}

@@ -61,7 +61,8 @@ const buildComparisonSummarySearchParams = ({
 };
 
 export async function fetchComparisonSummary(
-  params: GetComparisonSummaryParams
+  params: GetComparisonSummaryParams,
+  signal?: AbortSignal
 ) {
   assertValidComparisonParams(params);
 
@@ -69,7 +70,8 @@ export async function fetchComparisonSummary(
   const searchParams = buildComparisonSummarySearchParams(params);
 
   const response = await api.get<ComparisonSummaryResponse>(
-    `${path}?${searchParams.toString()}`
+    `${path}?${searchParams.toString()}`,
+    { signal }
   );
 
   return response.data;

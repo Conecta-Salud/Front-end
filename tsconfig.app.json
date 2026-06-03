@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  "exclude": ["src/*/.stories.tsx"]
+  "exclude": ["**/*.stories.*", "src/stories"]
 }

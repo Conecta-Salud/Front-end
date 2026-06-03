@@ -18,7 +18,7 @@ const centerKeys = new Set([
   "population",
   "hospitalBeds",
   "consultingRooms",
-  "coverageIndex"
+  "coverageIndex",
 ]);
 
 const truncateKeys = new Set([
@@ -29,10 +29,7 @@ const truncateKeys = new Set([
   "careLevel",
 ]);
 
-const translatableValueKeys = new Set([
-  "careLevel",
-  "unitType",
-]);
+const translatableValueKeys = new Set(["careLevel", "unitType"]);
 
 export function adaptSummaryRankingTitle(ranking?: DashboardRanking) {
   if (!ranking?.title) return "";
@@ -60,7 +57,7 @@ export function adaptSummaryRankingColumns(
 
           return typeof translatedValue === "string"
             ? translatedValue
-            : String(translatedValue ?? "—");
+            : String(translatedValue ?? "Sin dato");
         }
       : undefined,
   }));
@@ -71,8 +68,15 @@ export function adaptSummaryRankingRows(
 ): DashboardRankingRow[] {
   if (!ranking?.rows?.length) return [];
 
-  return ranking.rows.map((row, index) => ({
-    ...row,
-    id: row.id ?? row.code ?? String(index),
-  }));
+  return [...ranking.rows]
+    .sort((a, b) => {
+      const rankA = typeof a.rank === "number" ? a.rank : Number.MAX_SAFE_INTEGER;
+      const rankB = typeof b.rank === "number" ? b.rank : Number.MAX_SAFE_INTEGER;
+
+      return rankA - rankB;
+    })
+    .map((row, index) => ({
+      ...row,
+      id: row.id ?? row.code ?? String(index),
+    }));
 }
