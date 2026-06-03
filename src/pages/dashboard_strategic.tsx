@@ -1,6 +1,8 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 
-import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
+import type {
+  HealthMapNavigationState,
+} from "../features/health-map/types/healthMap.types";
 import DashboardRankingSection from "../features/dashboard/components/DashboardRankingSection";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
@@ -53,6 +55,13 @@ function DataUnavailableNotice({ note }: { note: string }) {
       </p>
     </section>
   );
+}
+
+type TerritoryLevel = "country" | "state" | "municipality";
+
+function getEffectiveMapTerritoryLevel(level: TerritoryLevel): TerritoryLevel {
+  if (level === "country") return "state";
+  return "municipality";
 }
 
 function DashboardStrategicPage() {
@@ -109,46 +118,80 @@ function DashboardStrategicPage() {
     }
   }, [selectedLocation]);
 
-  const dashboardScope = useDashboardScope({
-    navigation: mapNavigation,
-    year,
-  });
-
   const selectedYear = Number(year);
+  const hasValidYear = Number.isFinite(selectedYear);
   const categoryCode = getCategoryCodeFromHeaderIndicator(indicator);
 
-  const dataAvailabilityQuery = useDataAvailabilityQuery({
+  const effectiveMapTerritoryLevel = useMemo(
+    () => getEffectiveMapTerritoryLevel(mapNavigation.level),
+    [mapNavigation.level]
+  );
+
+  const dashboardAvailabilityQuery = useDataAvailabilityQuery({
     territoryLevel: mapNavigation.level,
     analysisYear: selectedYear,
     categoryCode,
-    enabled: Number.isFinite(selectedYear),
+    enabled: hasValidYear,
   });
 
-  const categoryAvailabilityParams = {
-    items: dataAvailabilityQuery.data?.items,
+  const mapAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: effectiveMapTerritoryLevel,
+    analysisYear: selectedYear,
+    categoryCode,
+    enabled: hasValidYear,
+  });
+
+  const dashboardAvailabilityParams = {
+    items: dashboardAvailabilityQuery.data?.items ?? [],
     territoryLevel: mapNavigation.level,
     analysisYear: selectedYear,
     headerIndicator: indicator,
   };
 
-  const isCurrentCategoryAvailable =
-    dataAvailabilityQuery.isSuccess &&
-    isCategoryAvailable(categoryAvailabilityParams);
+  const mapAvailabilityParams = {
+    items: mapAvailabilityQuery.data?.items ?? [],
+    territoryLevel: effectiveMapTerritoryLevel,
+    analysisYear: selectedYear,
+    headerIndicator: indicator,
+  };
 
-  const isCurrentCategoryUnavailable =
-    dataAvailabilityQuery.isSuccess && !isCurrentCategoryAvailable;
+  const isDashboardCategoryAvailable =
+    dashboardAvailabilityQuery.isSuccess &&
+    isCategoryAvailable(dashboardAvailabilityParams);
 
-  const availabilityNote = getCategoryAvailabilityNote(
-    categoryAvailabilityParams
-  );
+  const isDashboardCategoryUnavailable =
+    dashboardAvailabilityQuery.isSuccess && !isDashboardCategoryAvailable;
+
+  const dashboardAvailabilityNote =
+    getCategoryAvailabilityNote(dashboardAvailabilityParams) ??
+    "No hay datos disponibles para la categoría, nivel territorial y año seleccionados.";
+
+  const isMapCategoryAvailable =
+    mapAvailabilityQuery.isSuccess &&
+    isCategoryAvailable(mapAvailabilityParams);
+
+  const isMapCategoryUnavailable =
+    mapAvailabilityQuery.isSuccess && !isMapCategoryAvailable;
+
+  const mapAvailabilityNote =
+    getCategoryAvailabilityNote(mapAvailabilityParams) ??
+    "No hay datos disponibles para la categoría, nivel territorial y año seleccionados.";
+
+  const dashboardScope = useDashboardScope({
+    navigation: mapNavigation,
+    year,
+  });
 
   const dashboardSummary = useDashboardSummary({
     scope: dashboardScope,
     category: indicator,
     enabled:
-      dataAvailabilityQuery.isError ||
-      (dataAvailabilityQuery.isSuccess && isCurrentCategoryAvailable),
+      dashboardAvailabilityQuery.isError ||
+      (dashboardAvailabilityQuery.isSuccess && isDashboardCategoryAvailable),
   });
+
+  const isAvailabilityLoading =
+    dashboardAvailabilityQuery.isLoading || mapAvailabilityQuery.isLoading;
 
   const handleMapNavigationChange = (navigation: HealthMapNavigationState) => {
     setSelectedLocation(null);
@@ -241,22 +284,22 @@ function DashboardStrategicPage() {
               year={year}
               navigation={mapNavigation}
               onNavigationChange={handleMapNavigationChange}
-              isDataAvailable={!isCurrentCategoryUnavailable}
-              availabilityMessage={availabilityNote}
+              isDataAvailable={!isMapCategoryUnavailable}
+              availabilityMessage={mapAvailabilityNote}
             />
           </Suspense>
         </div>
 
         <aside className="col-span-12 flex min-h-0 flex-col gap-6 xl:col-span-5 xl:h-full">
-          {isCurrentCategoryUnavailable ? (
-            <DataUnavailableNotice note={availabilityNote} />
+          {isDashboardCategoryUnavailable ? (
+            <DataUnavailableNotice note={dashboardAvailabilityNote} />
           ) : (
             <>
               <div className="shrink-0">
                 <DashboardKpiGrid
                   kpis={dashboardSummary.summary?.kpis}
                   isLoading={
-                    dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                    isAvailabilityLoading || dashboardSummary.isLoading
                   }
                   isError={dashboardSummary.isError}
                 />
@@ -265,7 +308,7 @@ function DashboardStrategicPage() {
               <DashboardRankingSection
                 ranking={dashboardSummary.summary?.ranking}
                 isLoading={
-                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                  isAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 className="min-h-0 flex-1"
@@ -275,14 +318,14 @@ function DashboardStrategicPage() {
         </aside>
       </section>
 
-      {!isCurrentCategoryUnavailable && (
+      {!isDashboardCategoryUnavailable && (
         <section className="mt-6 grid grid-cols-12 gap-6">
           <div className="col-span-12 xl:col-span-7">
             <Suspense fallback={<ChartFallback />}>
               <DashboardChartSection
                 chart={dashboardSummary.summary?.mainChart}
                 isLoading={
-                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                  isAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 height={340}
@@ -295,7 +338,7 @@ function DashboardStrategicPage() {
               <DashboardChartSection
                 chart={dashboardSummary.summary?.secondaryChart}
                 isLoading={
-                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                  isAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 height={340}
