@@ -30,6 +30,7 @@ type HealthMapProps = {
   navigation: HealthMapNavigationState;
   onNavigationChange: (navigation: HealthMapNavigationState) => void;
   isDataAvailable?: boolean;
+  isAvailabilityLoading?: boolean;
   availabilityMessage?: string;
   className?: string;
 };
@@ -40,6 +41,7 @@ export default function HealthMap({
   navigation,
   onNavigationChange,
   isDataAvailable = true,
+  isAvailabilityLoading = false,
   availabilityMessage,
   className = "",
 }: HealthMapProps) {
@@ -187,7 +189,15 @@ export default function HealthMap({
           </div>
         )}
 
-        {!isDataAvailable && availabilityMessage && (
+        {isAvailabilityLoading && (
+          <div className="absolute inset-0 z-[500] flex items-center justify-center bg-white/50">
+            <p className="text-[16px] text-gray-500">
+              Validando disponibilidad del mapa...
+            </p>
+          </div>
+        )}
+
+        {!isAvailabilityLoading && !isDataAvailable && availabilityMessage && (
           <div className="absolute left-4 top-4 z-[500] max-w-[360px] rounded-[10px] border border-[#F8D7A4] bg-[#FFF8EC] p-4 shadow-sm">
             <p className="text-[14px] font-medium text-[#7A4A00]">
               {availabilityMessage}

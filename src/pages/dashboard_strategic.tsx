@@ -159,6 +159,10 @@ function DashboardStrategicPage() {
     dashboardAvailabilityQuery.isSuccess &&
     isCategoryAvailable(dashboardAvailabilityParams);
 
+  const shouldEnableDashboardSummary =
+    dashboardAvailabilityQuery.isError ||
+    (dashboardAvailabilityQuery.isSuccess && isDashboardCategoryAvailable);
+
   const isDashboardCategoryUnavailable =
     dashboardAvailabilityQuery.isSuccess && !isDashboardCategoryAvailable;
 
@@ -169,6 +173,10 @@ function DashboardStrategicPage() {
   const isMapCategoryAvailable =
     mapAvailabilityQuery.isSuccess &&
     isCategoryAvailable(mapAvailabilityParams);
+
+  const shouldEnableMapData =
+    mapAvailabilityQuery.isError ||
+    (mapAvailabilityQuery.isSuccess && isMapCategoryAvailable);
 
   const isMapCategoryUnavailable =
     mapAvailabilityQuery.isSuccess && !isMapCategoryAvailable;
@@ -185,13 +193,11 @@ function DashboardStrategicPage() {
   const dashboardSummary = useDashboardSummary({
     scope: dashboardScope,
     category: indicator,
-    enabled:
-      dashboardAvailabilityQuery.isError ||
-      (dashboardAvailabilityQuery.isSuccess && isDashboardCategoryAvailable),
+    enabled: shouldEnableDashboardSummary,
   });
 
-  const isAvailabilityLoading =
-    dashboardAvailabilityQuery.isLoading || mapAvailabilityQuery.isLoading;
+  const isDashboardAvailabilityLoading = dashboardAvailabilityQuery.isLoading;
+  const isMapAvailabilityLoading = mapAvailabilityQuery.isLoading;
 
   const handleMapNavigationChange = (navigation: HealthMapNavigationState) => {
     setSelectedLocation(null);
@@ -284,8 +290,11 @@ function DashboardStrategicPage() {
               year={year}
               navigation={mapNavigation}
               onNavigationChange={handleMapNavigationChange}
-              isDataAvailable={!isMapCategoryUnavailable}
-              availabilityMessage={mapAvailabilityNote}
+              isDataAvailable={shouldEnableMapData}
+              isAvailabilityLoading={isMapAvailabilityLoading}
+              availabilityMessage={
+                isMapCategoryUnavailable ? mapAvailabilityNote : undefined
+              }
             />
           </Suspense>
         </div>
@@ -299,7 +308,7 @@ function DashboardStrategicPage() {
                 <DashboardKpiGrid
                   kpis={dashboardSummary.summary?.kpis}
                   isLoading={
-                    isAvailabilityLoading || dashboardSummary.isLoading
+                    isDashboardAvailabilityLoading || dashboardSummary.isLoading
                   }
                   isError={dashboardSummary.isError}
                 />
@@ -308,7 +317,7 @@ function DashboardStrategicPage() {
               <DashboardRankingSection
                 ranking={dashboardSummary.summary?.ranking}
                 isLoading={
-                  isAvailabilityLoading || dashboardSummary.isLoading
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 className="min-h-0 flex-1"
@@ -325,7 +334,7 @@ function DashboardStrategicPage() {
               <DashboardChartSection
                 chart={dashboardSummary.summary?.mainChart}
                 isLoading={
-                  isAvailabilityLoading || dashboardSummary.isLoading
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 height={340}
@@ -338,7 +347,7 @@ function DashboardStrategicPage() {
               <DashboardChartSection
                 chart={dashboardSummary.summary?.secondaryChart}
                 isLoading={
-                  isAvailabilityLoading || dashboardSummary.isLoading
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
                 }
                 isError={dashboardSummary.isError}
                 height={340}
