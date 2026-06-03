@@ -12,18 +12,22 @@ function PanelAdminPage() {
   const { data: overview } = useAdminOverviewQuery();
   return (
     <main className="flex h-[calc(100vh-168px)] min-h-0 flex-col gap-3 overflow-hidden p-6">
-      <section className="shrink-0 flex items-start justify-between gap-6">
-        <div>
-          <h1 className="text-[28px] font-bold leading-tight text-black">
-            Panel de Administración
-          </h1>
+      <section className="grid shrink-0 grid-cols-[minmax(0,1fr)_minmax(520px,1fr)] items-start gap-6">
+        <div className="flex flex-col gap-3">
+          <div>
+            <h1 className="text-[28px] font-bold leading-tight text-black">
+              Panel de Administración
+            </h1>
 
-          <p className="text-[16px] text-black">
-            Gestiona usuarios, actividad y fuentes de datos del sistema.
-          </p>
+            <p className="text-[16px] text-black">
+              Gestiona usuarios, actividad y fuentes de datos del sistema.
+            </p>
+          </div>
+
+          <AdminViewTabs activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
-        <div className="flex gap-3">
+        <div className="grid w-full grid-cols-4 gap-3">
           <CustomKPI
             size="xs"
             variant="green"
@@ -55,7 +59,7 @@ function PanelAdminPage() {
           />
         </div>
       </section>
-      <AdminViewTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
       {activeTab === "users" && <AdminUsersView />}
       {activeTab === "activity" && <AdminActivityView />}
       {activeTab === "data" && (
