@@ -39,6 +39,9 @@ export type DashboardKpi = {
   unit: string;
   variant: DashboardKpiVariant;
   order: number;
+  sourceYear?: number | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
 };
 
 export type DashboardRankingColumn = {
@@ -88,6 +91,9 @@ export type DashboardChartDataPoint = {
 
   level?: DashboardStatusLevel;
   colorToken?: DashboardColorToken;
+  sourceYear?: number | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
 
   extra?: Record<string, unknown>;
 };

@@ -25,6 +25,11 @@ export type HealthMapIndicatorResponse = {
   value: number | null;
   level: HealthMapStatusLevel;
   colorToken: HealthMapColorToken;
+  sourceYear?: number | null;
+  unit?: string | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
+  dataSourceName?: string | null;
 };
 
 export type HealthMapFeatureProperties = {

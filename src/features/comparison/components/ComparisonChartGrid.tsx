@@ -13,12 +13,14 @@ type ComparisonChartGridProps = {
   charts?: ComparisonChart[];
   isLoading?: boolean;
   isError?: boolean;
+  emptyMessage?: string;
 };
 
 export default function ComparisonChartGrid({
   charts = [],
   isLoading = false,
   isError = false,
+  emptyMessage = "Selecciona dos territorios para visualizar las graficas.",
 }: ComparisonChartGridProps) {
   const chartCards = useMemo(
     () =>
@@ -48,7 +50,7 @@ export default function ComparisonChartGrid({
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          No se pudieron cargar las gráficas de comparación.
+          No se pudieron cargar las graficas de comparacion.
         </p>
       </section>
     );
@@ -57,9 +59,7 @@ export default function ComparisonChartGrid({
   if (!charts.length) {
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
-        <p className="text-[16px] text-gray-500">
-          Selecciona dos territorios para visualizar las gráficas.
-        </p>
+        <p className="text-[16px] text-gray-500">{emptyMessage}</p>
       </section>
     );
   }

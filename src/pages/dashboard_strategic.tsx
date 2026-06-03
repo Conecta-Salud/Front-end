@@ -9,6 +9,12 @@ import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSum
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
 
 import { formatLocationDisplayText } from "../features/locations/utils/locationDisplay.utils";
+import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
+import {
+  getCategoryAvailabilityNote,
+  getCategoryCodeFromHeaderIndicator,
+  isCategoryAvailable,
+} from "../features/data-availability/utils/dataAvailability.utils";
 
 const HealthMap = lazy(() => import("../features/health-map/components/HealthMap"));
 const DashboardChartSection = lazy(
@@ -32,6 +38,20 @@ function MapFallback() {
 function ChartFallback() {
   return (
     <div className="h-[380px] rounded-[10px] bg-white shadow-sm animate-pulse" />
+  );
+}
+
+function DataUnavailableNotice({ note }: { note: string }) {
+  return (
+    <section className="rounded-[10px] border border-[#F8D7A4] bg-[#FFF8EC] p-5 shadow-sm">
+      <h2 className="text-[18px] font-semibold text-[#7A4A00]">
+        Datos no disponibles
+      </h2>
+
+      <p className="mt-2 text-[15px] leading-6 text-[#7A4A00]">
+        {note}
+      </p>
+    </section>
   );
 }
 
@@ -94,9 +114,40 @@ function DashboardStrategicPage() {
     year,
   });
 
+  const selectedYear = Number(year);
+  const categoryCode = getCategoryCodeFromHeaderIndicator(indicator);
+
+  const dataAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: mapNavigation.level,
+    analysisYear: selectedYear,
+    categoryCode,
+    enabled: Number.isFinite(selectedYear),
+  });
+
+  const categoryAvailabilityParams = {
+    items: dataAvailabilityQuery.data?.items,
+    territoryLevel: mapNavigation.level,
+    analysisYear: selectedYear,
+    headerIndicator: indicator,
+  };
+
+  const isCurrentCategoryAvailable =
+    dataAvailabilityQuery.isSuccess &&
+    isCategoryAvailable(categoryAvailabilityParams);
+
+  const isCurrentCategoryUnavailable =
+    dataAvailabilityQuery.isSuccess && !isCurrentCategoryAvailable;
+
+  const availabilityNote = getCategoryAvailabilityNote(
+    categoryAvailabilityParams
+  );
+
   const dashboardSummary = useDashboardSummary({
     scope: dashboardScope,
     category: indicator,
+    enabled:
+      dataAvailabilityQuery.isError ||
+      (dataAvailabilityQuery.isSuccess && isCurrentCategoryAvailable),
   });
 
   const handleMapNavigationChange = (navigation: HealthMapNavigationState) => {
@@ -190,51 +241,69 @@ function DashboardStrategicPage() {
               year={year}
               navigation={mapNavigation}
               onNavigationChange={handleMapNavigationChange}
+              isDataAvailable={!isCurrentCategoryUnavailable}
+              availabilityMessage={availabilityNote}
             />
           </Suspense>
         </div>
 
         <aside className="col-span-12 flex min-h-0 flex-col gap-6 xl:col-span-5 xl:h-full">
-          <div className="shrink-0">
-            <DashboardKpiGrid
-              kpis={dashboardSummary.summary?.kpis}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-            />
-          </div>
+          {isCurrentCategoryUnavailable ? (
+            <DataUnavailableNotice note={availabilityNote} />
+          ) : (
+            <>
+              <div className="shrink-0">
+                <DashboardKpiGrid
+                  kpis={dashboardSummary.summary?.kpis}
+                  isLoading={
+                    dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                  }
+                  isError={dashboardSummary.isError}
+                />
+              </div>
 
-          <DashboardRankingSection
-            ranking={dashboardSummary.summary?.ranking}
-            isLoading={dashboardSummary.isLoading}
-            isError={dashboardSummary.isError}
-            className="min-h-0 flex-1"
-          />
+              <DashboardRankingSection
+                ranking={dashboardSummary.summary?.ranking}
+                isLoading={
+                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                className="min-h-0 flex-1"
+              />
+            </>
+          )}
         </aside>
       </section>
 
-      <section className="mt-6 grid grid-cols-12 gap-6">
-        <div className="col-span-12 xl:col-span-7">
-          <Suspense fallback={<ChartFallback />}>
-            <DashboardChartSection
-              chart={dashboardSummary.summary?.mainChart}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-              height={340}
-            />
-          </Suspense>
-        </div>
+      {!isCurrentCategoryUnavailable && (
+        <section className="mt-6 grid grid-cols-12 gap-6">
+          <div className="col-span-12 xl:col-span-7">
+            <Suspense fallback={<ChartFallback />}>
+              <DashboardChartSection
+                chart={dashboardSummary.summary?.mainChart}
+                isLoading={
+                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                height={340}
+              />
+            </Suspense>
+          </div>
 
-        <div className="col-span-12 xl:col-span-5">
-          <Suspense fallback={<ChartFallback />}>
-            <DashboardChartSection
-              chart={dashboardSummary.summary?.secondaryChart}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-              height={340}
-            />
-          </Suspense>
-        </div>
-      </section>
+          <div className="col-span-12 xl:col-span-5">
+            <Suspense fallback={<ChartFallback />}>
+              <DashboardChartSection
+                chart={dashboardSummary.summary?.secondaryChart}
+                isLoading={
+                  dataAvailabilityQuery.isLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                height={340}
+              />
+            </Suspense>
+          </div>
+        </section>
+      )}
 
       {dashboardSummary.isFetching && (
         <div className="fixed bottom-4 right-4 z-50 rounded-[10px] bg-white px-4 py-2 shadow-md">

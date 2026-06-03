@@ -4,6 +4,11 @@ import type { HealthMapIndicator } from "../../../features/health-map/types/heal
 import type { LocationSearchResult } from "../../../features/locations/types/locationSearch.types";
 import LocationAutocomplete from "../../ui/LocationAutocomplete/LocationAutocomplete";
 
+type HeaderOption<TValue extends string = string> = {
+  name: string;
+  value: TValue;
+};
+
 type HeaderActionsProps = {
   showCategoryFilter?: boolean;
   showYearFilter?: boolean;
@@ -12,6 +17,8 @@ type HeaderActionsProps = {
   category?: HealthMapIndicator;
   year?: string;
   selectedLocation?: LocationSearchResult | null;
+  yearOptions?: HeaderOption[];
+  categoryOptions?: HeaderOption<HealthMapIndicator>[];
 
   onCategoryChange?: (value: HealthMapIndicator) => void;
   onYearChange?: (value: string) => void;
@@ -20,7 +27,7 @@ type HeaderActionsProps = {
 
 type HeaderDropdownId = "category" | "year";
 
-const indicatorOptions: { name: string; value: HealthMapIndicator }[] = [
+const defaultCategoryOptions: HeaderOption<HealthMapIndicator>[] = [
   { name: "Cobertura Médica", value: "medical_coverage" },
   { name: "Infraestructura Hospitalaria", value: "hospital_beds" },
   {
@@ -29,14 +36,8 @@ const indicatorOptions: { name: string; value: HealthMapIndicator }[] = [
   },
 ];
 
-const yearOptions = [
-  { name: "2024", value: "2024" },
-  { name: "2025", value: "2025" },
-  { name: "2026", value: "2026" },
-];
-
 const isHealthMapIndicator = (value: string): value is HealthMapIndicator => {
-  return indicatorOptions.some((option) => option.value === value);
+  return defaultCategoryOptions.some((option) => option.value === value);
 };
 
 
@@ -46,8 +47,10 @@ export default function HeaderActions({
   showSearchBar = false,
 
   category = "medical_coverage",
-  year = "2024",
+  year = "",
   selectedLocation = null,
+  yearOptions,
+  categoryOptions,
 
   onCategoryChange,
   onYearChange,
@@ -61,6 +64,14 @@ export default function HeaderActions({
     if (!isHealthMapIndicator(value)) return;
     onCategoryChange?.(value);
   };
+
+  const safeCategoryOptions =
+    categoryOptions?.length ? categoryOptions : defaultCategoryOptions;
+
+  const safeYearOptions =
+    yearOptions?.length || !year
+      ? yearOptions ?? []
+      : [{ name: year, value: year }];
   
   return (
     <div className="flex w-full flex-wrap items-center justify-end gap-3">
@@ -74,7 +85,7 @@ export default function HeaderActions({
           onChange={handleCategoryChange}
           allowClear={false}
           className="w-fit max-sm:w-full"
-          options={indicatorOptions}
+          options={safeCategoryOptions}
         />
       )}
 
@@ -88,7 +99,7 @@ export default function HeaderActions({
           onChange={(value) => onYearChange?.(value)}
           allowClear={false}
           className="w-fit max-sm:w-full"
-          options={yearOptions}
+          options={safeYearOptions}
         />
       )}
 

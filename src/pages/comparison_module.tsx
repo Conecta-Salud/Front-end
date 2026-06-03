@@ -106,14 +106,15 @@ function ModuloComparacionPage() {
   const shouldShowErrorState =
     hasCompleteSelection && comparisonSummary.isError;
 
+  const comparisonUnavailableMessage =
+    "No hay datos disponibles o suficientes para construir esta comparacion con el ano y territorios seleccionados.";
+
 
   const handleLevelChange = (nextLevel: ComparisonLevel) => {
     setLevel(nextLevel);
     setFirstLocation(null);
     setSecondLocation(null);
   };
-
-  const isLoadingOptions = periodsQuery.isLoading;
 
   return (
     <main className="min-h-full p-6">
@@ -223,6 +224,7 @@ function ModuloComparacionPage() {
                 charts={safeCharts}
                 isLoading={false}
                 isError={false}
+                emptyMessage={comparisonUnavailableMessage}
               />
             </Suspense>
           </section>
@@ -248,6 +250,7 @@ function ModuloComparacionPage() {
                 priority={safePriority}
                 isLoading={false}
                 isError={false}
+                emptyMessage={comparisonUnavailableMessage}
               />
             </Suspense>
           </section>

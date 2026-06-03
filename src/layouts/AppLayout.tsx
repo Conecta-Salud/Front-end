@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 import Header from "../components/layout/Header/Header";
@@ -11,6 +11,8 @@ import {
   headerConfigByPath,
   defaultHeaderConfig,
 } from "../config/header.config";
+import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
+import { getAvailableYears } from "../features/data-availability/utils/dataAvailability.utils";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -41,6 +43,42 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     headerConfig.showYearFilter ||
     headerConfig.showSearchBar;
 
+  const dataAvailabilityQuery = useDataAvailabilityQuery({
+    enabled: headerConfig.showYearFilter,
+  });
+
+  const availableYears = useMemo(() => {
+    const responseYears = dataAvailabilityQuery.data?.years ?? [];
+    const years = responseYears.length
+      ? responseYears
+      : getAvailableYears(dataAvailabilityQuery.data?.items);
+
+    return Array.from(
+      new Set(years.filter((item) => Number.isFinite(Number(item))))
+    )
+      .map(Number)
+      .sort((a, b) => b - a);
+  }, [dataAvailabilityQuery.data]);
+
+  const yearOptions = useMemo(
+    () =>
+      availableYears.map((availableYear) => ({
+        name: String(availableYear),
+        value: String(availableYear),
+      })),
+    [availableYears]
+  );
+
+  useEffect(() => {
+    if (!availableYears.length) return;
+
+    const selectedYear = Number(year);
+
+    if (availableYears.includes(selectedYear)) return;
+
+    setYear(String(availableYears[0]));
+  }, [availableYears, setYear, year]);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#F5F7F8]">
       {/* Header fijo */}
@@ -58,6 +96,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 showSearchBar={headerConfig.showSearchBar}
                 category={category}
                 year={year}
+                yearOptions={yearOptions}
                 selectedLocation={selectedLocation}
                 onCategoryChange={setCategory}
                 onYearChange={setYear}
