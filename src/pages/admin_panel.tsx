@@ -10,8 +10,9 @@ import type { AdminTab } from "../features/admin/types/admin.types";
 function PanelAdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("users");
   const { data: overview } = useAdminOverviewQuery();
+
   return (
-    <main className="flex h-[calc(100vh-168px)] min-h-0 flex-col gap-3 overflow-hidden p-6">
+    <main className="flex min-h-[calc(100vh-168px)] flex-col gap-3 overflow-y-auto p-6">
       <section className="grid shrink-0 grid-cols-[minmax(0,1fr)_minmax(520px,1fr)] items-start gap-6">
         <div className="flex flex-col gap-3">
           <div>
