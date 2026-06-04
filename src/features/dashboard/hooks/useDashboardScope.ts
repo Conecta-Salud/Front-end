@@ -29,13 +29,22 @@ export function useDashboardScope({
     navigation.level === "state" || navigation.level === "municipality";
 
   const needsMunicipalityCatalog = navigation.level === "municipality";
+  const selectedStateCode = navigation.selectedState?.code ?? null;
 
   const statesQuery = useStatesCatalogQuery({
     enabled: needsStateCatalog,
   });
 
+  const selectedState = useMemo(
+    () => statesQuery.data?.find((item) => item.code === selectedStateCode),
+    [selectedStateCode, statesQuery.data]
+  );
+
+  const stateId = selectedState?.id ?? null;
+
   const municipalitiesQuery = useMunicipalitiesCatalogQuery({
-    enabled: needsMunicipalityCatalog,
+    stateId: stateId ?? undefined,
+    enabled: needsMunicipalityCatalog && Boolean(stateId),
   });
 
   const periodsQuery = usePeriodsCatalogQuery();
@@ -59,14 +68,6 @@ export function useDashboardScope({
         isLoading: periodsQuery.isLoading,
       };
     }
-
-    const selectedStateCode = navigation.selectedState?.code ?? null;
-
-    const selectedState = statesQuery.data?.find(
-      (item) => item.code === selectedStateCode
-    );
-
-    const stateId = selectedState?.id ?? null;
 
     if (navigation.level === "state") {
       return {
@@ -102,11 +103,11 @@ export function useDashboardScope({
   }, [
     navigation,
     year,
-    statesQuery.data,
     statesQuery.isLoading,
     municipalitiesQuery.data,
     municipalitiesQuery.isLoading,
     periodsQuery.data,
     periodsQuery.isLoading,
+    stateId,
   ]);
 }

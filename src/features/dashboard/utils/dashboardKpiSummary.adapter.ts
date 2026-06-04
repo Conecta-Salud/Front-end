@@ -13,6 +13,14 @@ export type DashboardKpiCardItem = {
   variant: "default" | "green" | "red";
 };
 
+function toSupportedKpiVariant(variant?: DashboardKpi["variant"]) {
+  if (variant === "green" || variant === "red") {
+    return variant;
+  }
+
+  return "default";
+}
+
 function splitKpiLabelFallback(label: string) {
   const cleanLabel = label.trim();
 
@@ -45,7 +53,7 @@ export function adaptSummaryKpisToCards(kpis: DashboardKpi[] = []) {
         titleSecondLine:
           displayConfig?.titleSecondLine ?? fallbackLabel.titleSecondLine,
         value: formatDashboardKpiValue(kpi),
-        variant: displayConfig?.variant ?? kpi.variant ?? "default",
+        variant: toSupportedKpiVariant(displayConfig?.variant ?? kpi.variant),
       };
     });
 }

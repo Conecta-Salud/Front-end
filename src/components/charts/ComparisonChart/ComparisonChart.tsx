@@ -48,6 +48,7 @@ interface ComparisonBarChartProps {
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
   emptyMessage?: string;
+  footerNote?: string;
   valueFormatter?: (value: number) => string;
 }
 
@@ -92,6 +93,7 @@ export default function ComparisonBarChart({
   yDomain = [0, "auto"],
   chartHeight = 320,
   emptyMessage = "No hay datos disponibles.",
+  footerNote,
   valueFormatter,
 }: ComparisonBarChartProps) {
   const chartId = useId();
@@ -113,6 +115,10 @@ export default function ComparisonBarChart({
         <div className="h-[220px] flex items-center justify-center text-gray-500 text-[16px]">
           {emptyMessage}
         </div>
+
+        {footerNote && (
+          <p className="mt-4 text-[14px] text-gray-500">{footerNote}</p>
+        )}
       </div>
     );
   }
@@ -253,6 +259,10 @@ export default function ComparisonBarChart({
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      {footerNote && (
+        <p className="mt-4 text-[14px] text-gray-500">{footerNote}</p>
+      )}
     </div>
   );
 }

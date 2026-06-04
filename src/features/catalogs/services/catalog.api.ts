@@ -27,6 +27,8 @@ type RawMunicipalityResponse = {
   stateId?: number;
   idEstado?: number;
   stateCode?: string;
+  stateName?: string;
+  estado?: string;
 };
 
 type RawPeriodResponse = {
@@ -39,6 +41,20 @@ type RawPeriodResponse = {
 
 type DepartmentOptionsResponse = {
   items: DepartmentCatalogItem[];
+};
+
+type FetchMunicipalitiesCatalogParams = {
+  stateId?: number;
+  signal?: AbortSignal;
+};
+
+const isAbortSignal = (value: unknown): value is AbortSignal => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "aborted" in value &&
+    "addEventListener" in value
+  );
 };
 
 const normalizeState = (state: RawStateResponse): StateCatalogItem => ({
@@ -65,11 +81,13 @@ const normalizeMunicipality = (
     "",
   stateId: municipality.stateId ?? municipality.idEstado ?? 0,
   stateCode: municipality.stateCode,
+  stateName: municipality.stateName ?? municipality.estado,
 });
 
 const normalizePeriod = (period: RawPeriodResponse): PeriodCatalogItem => ({
   id: period.id,
   year: period.year ?? period.anio ?? period.periodYear ?? 0,
+  status: period.status,
 });
 
 export async function fetchStatesCatalog(signal?: AbortSignal) {
@@ -77,10 +95,20 @@ export async function fetchStatesCatalog(signal?: AbortSignal) {
   return response.data.map(normalizeState);
 }
 
-export async function fetchMunicipalitiesCatalog(signal?: AbortSignal) {
+export async function fetchMunicipalitiesCatalog(
+  paramsOrSignal?: FetchMunicipalitiesCatalogParams | AbortSignal
+) {
+  const params = isAbortSignal(paramsOrSignal)
+    ? { signal: paramsOrSignal }
+    : paramsOrSignal ?? {};
+
   const response = await api.get<RawMunicipalityResponse[]>("/municipalities", {
-    signal,
+    signal: params.signal,
+    params: {
+      stateId: params.stateId,
+    },
   });
+
   return response.data.map(normalizeMunicipality);
 }
 

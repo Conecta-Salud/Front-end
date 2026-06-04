@@ -5,11 +5,13 @@ import { useDashboardSummaryQuery } from "../queries/dashboardSummary.queries";
 type UseDashboardSummaryParams = {
   scope: DashboardScope;
   category: HealthMapIndicator;
+  enabled?: boolean;
 };
 
 export function useDashboardSummary({
   scope,
   category,
+  enabled = true,
 }: UseDashboardSummaryParams) {
   const query = useDashboardSummaryQuery({
     level: scope.level,
@@ -17,7 +19,7 @@ export function useDashboardSummary({
     municipalityId: scope.municipalityId,
     periodId: scope.periodId,
     category,
-    enabled: scope.isReady,
+    enabled: scope.isReady && enabled,
   });
 
   return {
