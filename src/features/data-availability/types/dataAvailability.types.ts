@@ -1,11 +1,12 @@
-export type TerritoryLevel = "country" | "state" | "municipality";
+import type {
+  AvailabilityStatus,
+  TerritoryLevel,
+} from "../../shared/types/apiContracts.types";
 
-export type AvailabilityStatus =
-  | "available"
-  | "partial"
-  | "not_available"
-  | "not_applicable"
-  | "estimated";
+export type {
+  AvailabilityStatus,
+  TerritoryLevel,
+} from "../../shared/types/apiContracts.types";
 
 export type DataAvailabilityItem = {
   categoryCode: string;
