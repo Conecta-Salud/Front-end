@@ -50,6 +50,7 @@ export default function HealthMap({
   const isCountryView = navigation.level === "country";
   const isTerritoryView =
     navigation.level === "state" || navigation.level === "municipality";
+  const hasValidYear = Number.isFinite(Number(year));
 
   const statesGeoJsonQuery = useStatesGeoJsonQuery();
 
@@ -59,14 +60,14 @@ export default function HealthMap({
   const stateIndicatorsQuery = useStateMapIndicatorsQuery({
     indicator,
     year,
-    enabled: isCountryView && isDataAvailable,
+    enabled: isCountryView && isDataAvailable && hasValidYear,
   });
 
   const municipalityIndicatorsQuery = useMunicipalityMapIndicatorsQuery({
     stateCode: selectedStateCode,
     indicator,
     year,
-    enabled: isTerritoryView && isDataAvailable,
+    enabled: isTerritoryView && isDataAvailable && hasValidYear,
   });
 
   const activeGeoJson = useMemo<HealthMapFeatureCollection | undefined>(() => {

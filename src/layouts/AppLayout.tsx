@@ -11,8 +11,8 @@ import {
   headerConfigByPath,
   defaultHeaderConfig,
 } from "../config/header.config";
-import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
-import { getAvailableYears } from "../features/data-availability/utils/dataAvailability.utils";
+import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
+import type { PeriodCatalogItem } from "../features/catalogs/types/catalog.types";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -21,6 +21,14 @@ type AppLayoutProps = {
 
 const HEADER_HEIGHT = 120;
 const SIDEBAR_WIDTH = 100;
+
+const knownPeriodStatuses = new Set(["open", "closed", "published"]);
+
+const canUsePeriodAsYearOption = (period: PeriodCatalogItem) => {
+  if (!period.status) return true;
+  if (!knownPeriodStatuses.has(period.status)) return true;
+  return period.status === "published";
+};
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
@@ -43,22 +51,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     headerConfig.showYearFilter ||
     headerConfig.showSearchBar;
 
-  const dataAvailabilityQuery = useDataAvailabilityQuery({
+  const periodsQuery = usePeriodsCatalogQuery({
     enabled: headerConfig.showYearFilter,
   });
 
   const availableYears = useMemo(() => {
-    const responseYears = dataAvailabilityQuery.data?.years ?? [];
-    const years = responseYears.length
-      ? responseYears
-      : getAvailableYears(dataAvailabilityQuery.data?.items);
-
     return Array.from(
-      new Set(years.filter((item) => Number.isFinite(Number(item))))
+      new Set(
+        (periodsQuery.data ?? [])
+          .filter(canUsePeriodAsYearOption)
+          .map((period) => period.year)
+          .filter((item) => Number.isFinite(Number(item)))
+      )
     )
       .map(Number)
       .sort((a, b) => b - a);
-  }, [dataAvailabilityQuery.data]);
+  }, [periodsQuery.data]);
 
   const yearOptions = useMemo(
     () =>

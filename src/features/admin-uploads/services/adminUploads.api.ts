@@ -2,7 +2,6 @@ import api from "../../../services/api";
 import type {
   CreateUploadBatchRequest,
   CsvFileRole,
-  DataUploadFile,
   PaginatedResponse,
   ProcessBatchRequest,
   ProcessBatchResponse,
@@ -11,6 +10,7 @@ import type {
   UploadBatchSummary,
   UploadErrorItem,
   UploadErrorsFilters,
+  UploadFileResponse,
   ValidateUploadResponse,
 } from "../types/adminUploads.types";
 
@@ -46,7 +46,7 @@ export async function uploadBatchFile(
   formData.append("fileRole", fileRole);
   formData.append("file", file);
 
-  const response = await api.post<DataUploadFile>(
+  const response = await api.post<UploadFileResponse>(
     `/api/v1/admin/uploads/batches/${batchId}/files`,
     formData,
     {
@@ -55,7 +55,7 @@ export async function uploadBatchFile(
     }
   );
 
-  return response.data;
+  return response.data.file;
 }
 
 export async function validateUpload(

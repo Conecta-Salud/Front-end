@@ -79,7 +79,10 @@ export function isCategoryAvailable(params: CategoryAvailabilityParams) {
   return matchingItems.some(isAvailabilityItemAvailable);
 }
 
-export function getCategoryAvailabilityNote(params: CategoryAvailabilityParams) {
+export function getCategoryAvailabilityNote(
+  params: CategoryAvailabilityParams,
+  fallbackMessage = "No hay datos disponibles para la categoría, nivel territorial y año seleccionados."
+) {
   const matchingItems = getMatchingAvailabilityItems(params);
   const unavailableItem =
     matchingItems.find(
@@ -90,5 +93,5 @@ export function getCategoryAvailabilityNote(params: CategoryAvailabilityParams) 
     return unavailableItem.note;
   }
 
-  return "No hay datos disponibles para la categoria, nivel territorial y ano seleccionados.";
+  return fallbackMessage;
 }

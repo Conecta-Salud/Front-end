@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 
 import type {
   HealthMapNavigationState,
@@ -11,12 +11,14 @@ import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSum
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
 
 import { formatLocationDisplayText } from "../features/locations/utils/locationDisplay.utils";
+import type { LocationSearchResult } from "../features/locations/types/locationSearch.types";
 import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
 import {
   getCategoryAvailabilityNote,
   getCategoryCodeFromHeaderIndicator,
   isCategoryAvailable,
 } from "../features/data-availability/utils/dataAvailability.utils";
+import type { TerritoryLevel } from "../features/shared/types/apiContracts.types";
 
 const HealthMap = lazy(() => import("../features/health-map/components/HealthMap"));
 const DashboardChartSection = lazy(
@@ -57,11 +59,42 @@ function DataUnavailableNotice({ note }: { note: string }) {
   );
 }
 
-type TerritoryLevel = "country" | "state" | "municipality";
-
 function getEffectiveMapTerritoryLevel(level: TerritoryLevel): TerritoryLevel {
   if (level === "country") return "state";
   return "municipality";
+}
+
+function getNavigationFromSelectedLocation(
+  selectedLocation: LocationSearchResult | null
+): HealthMapNavigationState | null {
+  if (!selectedLocation) return null;
+
+  if (selectedLocation.type === "state") {
+    return {
+      level: "state",
+      selectedState: {
+        code: selectedLocation.code,
+        name: selectedLocation.name,
+      },
+      selectedMunicipality: null,
+    };
+  }
+
+  if (!selectedLocation.stateCode || !selectedLocation.stateName) {
+    return null;
+  }
+
+  return {
+    level: "municipality",
+    selectedState: {
+      code: selectedLocation.stateCode,
+      name: selectedLocation.stateName,
+    },
+    selectedMunicipality: {
+      code: selectedLocation.code,
+      name: selectedLocation.name,
+    },
+  };
 }
 
 function DashboardStrategicPage() {
@@ -79,56 +112,24 @@ function DashboardStrategicPage() {
     selectedMunicipality: null,
   });
 
-  useEffect(() => {
-    if (!selectedLocation) return;
+  const selectedLocationNavigation = useMemo(
+    () => getNavigationFromSelectedLocation(selectedLocation),
+    [selectedLocation]
+  );
 
-    if (selectedLocation.type === "state") {
-      setMapNavigation({
-        level: "state",
-        selectedState: {
-          code: selectedLocation.code,
-          name: selectedLocation.name,
-        },
-        selectedMunicipality: null,
-      });
-
-      return;
-    }
-
-    if (selectedLocation.type === "municipality") {
-      if (!selectedLocation.stateCode || !selectedLocation.stateName) {
-        console.warn(
-          "Municipality result is missing parent state data",
-          selectedLocation
-        );
-        return;
-      }
-
-      setMapNavigation({
-        level: "municipality",
-        selectedState: {
-          code: selectedLocation.stateCode,
-          name: selectedLocation.stateName,
-        },
-        selectedMunicipality: {
-          code: selectedLocation.code,
-          name: selectedLocation.name,
-        },
-      });
-    }
-  }, [selectedLocation]);
+  const activeNavigation = selectedLocationNavigation ?? mapNavigation;
 
   const selectedYear = Number(year);
   const hasValidYear = Number.isFinite(selectedYear);
   const categoryCode = getCategoryCodeFromHeaderIndicator(indicator);
 
   const effectiveMapTerritoryLevel = useMemo(
-    () => getEffectiveMapTerritoryLevel(mapNavigation.level),
-    [mapNavigation.level]
+    () => getEffectiveMapTerritoryLevel(activeNavigation.level),
+    [activeNavigation.level]
   );
 
   const dashboardAvailabilityQuery = useDataAvailabilityQuery({
-    territoryLevel: mapNavigation.level,
+    territoryLevel: activeNavigation.level,
     analysisYear: selectedYear,
     categoryCode,
     enabled: hasValidYear,
@@ -143,7 +144,7 @@ function DashboardStrategicPage() {
 
   const dashboardAvailabilityParams = {
     items: dashboardAvailabilityQuery.data?.items ?? [],
-    territoryLevel: mapNavigation.level,
+    territoryLevel: activeNavigation.level,
     analysisYear: selectedYear,
     headerIndicator: indicator,
   };
@@ -166,9 +167,9 @@ function DashboardStrategicPage() {
   const isDashboardCategoryUnavailable =
     dashboardAvailabilityQuery.isSuccess && !isDashboardCategoryAvailable;
 
-  const dashboardAvailabilityNote =
-    getCategoryAvailabilityNote(dashboardAvailabilityParams) ??
-    "No hay datos disponibles para la categoría, nivel territorial y año seleccionados.";
+  const dashboardAvailabilityNote = getCategoryAvailabilityNote(
+    dashboardAvailabilityParams
+  );
 
   const isMapCategoryAvailable =
     mapAvailabilityQuery.isSuccess &&
@@ -181,12 +182,13 @@ function DashboardStrategicPage() {
   const isMapCategoryUnavailable =
     mapAvailabilityQuery.isSuccess && !isMapCategoryAvailable;
 
-  const mapAvailabilityNote =
-    getCategoryAvailabilityNote(mapAvailabilityParams) ??
-    "No hay datos disponibles para la categoría, nivel territorial y año seleccionados.";
+  const mapAvailabilityNote = getCategoryAvailabilityNote(
+    mapAvailabilityParams,
+    "No hay datos disponibles para pintar el mapa con la categoría y año seleccionados."
+  );
 
   const dashboardScope = useDashboardScope({
-    navigation: mapNavigation,
+    navigation: activeNavigation,
     year,
   });
 
@@ -215,13 +217,13 @@ function DashboardStrategicPage() {
   };
 
   const goToState = () => {
-    if (!mapNavigation.selectedState) return;
+    if (!activeNavigation.selectedState) return;
 
     setSelectedLocation(null);
 
     setMapNavigation({
       level: "state",
-      selectedState: mapNavigation.selectedState,
+      selectedState: activeNavigation.selectedState,
       selectedMunicipality: null,
     });
   };
@@ -234,10 +236,10 @@ function DashboardStrategicPage() {
             <button
               type="button"
               onClick={goToCountry}
-              disabled={mapNavigation.level === "country"}
+              disabled={activeNavigation.level === "country"}
               className={[
                 "transition-opacity",
-                mapNavigation.level === "country"
+                activeNavigation.level === "country"
                   ? "cursor-default font-bold text-black"
                   : "cursor-pointer font-normal hover:opacity-70",
               ].join(" ")}
@@ -245,32 +247,32 @@ function DashboardStrategicPage() {
               México
             </button>
 
-            {mapNavigation.selectedState && (
+            {activeNavigation.selectedState && (
               <>
                 <span className="font-normal"> &gt; </span>
 
                 <button
                   type="button"
                   onClick={goToState}
-                  disabled={mapNavigation.level === "state"}
+                  disabled={activeNavigation.level === "state"}
                   className={[
                     "transition-opacity",
-                    mapNavigation.level === "state"
+                    activeNavigation.level === "state"
                       ? "cursor-default font-bold text-black"
                       : "cursor-pointer font-normal hover:opacity-70",
                   ].join(" ")}
                 >
-                  {formatLocationDisplayText(mapNavigation.selectedState.name)}
+                  {formatLocationDisplayText(activeNavigation.selectedState.name)}
                 </button>
               </>
             )}
 
-            {mapNavigation.selectedMunicipality && (
+            {activeNavigation.selectedMunicipality && (
               <>
                 <span className="font-normal"> &gt; </span>
 
                 <span className="font-bold text-black">
-                  {formatLocationDisplayText(mapNavigation.selectedMunicipality.name)}
+                  {formatLocationDisplayText(activeNavigation.selectedMunicipality.name)}
                 </span>
               </>
             )}
@@ -288,7 +290,7 @@ function DashboardStrategicPage() {
             <HealthMap
               indicator={indicator}
               year={year}
-              navigation={mapNavigation}
+              navigation={activeNavigation}
               onNavigationChange={handleMapNavigationChange}
               isDataAvailable={shouldEnableMapData}
               isAvailabilityLoading={isMapAvailabilityLoading}

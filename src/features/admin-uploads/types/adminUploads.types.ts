@@ -57,6 +57,10 @@ export type DataUploadFile = {
   processedAt?: string | null;
 };
 
+export type UploadFileResponse = {
+  file: DataUploadFile;
+};
+
 export type UploadBatchDetail = {
   batch: UploadBatchSummary;
   files: DataUploadFile[];
