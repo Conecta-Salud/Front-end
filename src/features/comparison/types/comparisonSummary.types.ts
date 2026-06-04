@@ -6,7 +6,12 @@ export type ComparisonChartId =
   | "medical_coverage"
   | "doctor_deficit"
   | "hospital_beds_per_1000"
-  | "poverty_rate";
+  | "hospital_beds_coverage"
+  | "healthcare_access_deficiency"
+  | "poverty_rate"
+  | "poverty_population"
+  | "total_poverty_population"
+  | (string & {});
 
 export type ComparisonVariant =
   | "green"
@@ -17,7 +22,7 @@ export type ComparisonVariant =
 
 export type ComparisonPriorityLevel = "high" | "medium" | "low";
 
-export type ComparisonColorToken = "red" | "yellow" | "green";
+export type ComparisonColorToken = "red" | "yellow" | "green" | "neutral";
 
 export type ComparisonPeriod = {
   id: number;
@@ -63,30 +68,32 @@ export type ComparisonChart = {
 export type ComparisonPriorityFactorId =
   | "hospitals_per_100k"
   | "medical_coverage"
-  | "older_adults";
+  | "older_adults"
+  | (string & {});
 
 export type ComparisonPriorityFactorUnit =
   | "hospitals_per_100k"
   | "doctors_per_1000"
-  | "percentage";
+  | "percentage"
+  | (string & {});
 
 export type ComparisonPriorityFactor = {
   id: ComparisonPriorityFactorId;
   label: string;
-  value: number;
-  unit: ComparisonPriorityFactorUnit;
-  variant: ComparisonVariant;
+  value?: number | null;
+  unit?: ComparisonPriorityFactorUnit | null;
+  variant?: ComparisonVariant | null;
 };
 
 export type ComparisonPriorityResult = {
   territoryCode: string;
   name: string;
   parentName?: string;
-  score: number;
-  level: ComparisonPriorityLevel;
+  score?: number | null;
+  level?: ComparisonPriorityLevel | null;
   label: string;
-  colorToken: ComparisonColorToken;
-  factors: ComparisonPriorityFactor[];
+  colorToken?: ComparisonColorToken | null;
+  factors?: ComparisonPriorityFactor[];
 };
 
 export type ComparisonSummaryResponse = {

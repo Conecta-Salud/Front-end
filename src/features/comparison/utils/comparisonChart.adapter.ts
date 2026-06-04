@@ -11,7 +11,13 @@ export type ComparisonChartViewData = {
   tone?: ComparisonVariant;
 };
 
-const isFiniteNumber = (value: unknown): value is number => {
+export type ComparisonChartAvailabilityState =
+  | "available"
+  | "partial"
+  | "unavailable"
+  | "empty";
+
+export const isFiniteNumber = (value: unknown): value is number => {
   return typeof value === "number" && Number.isFinite(value);
 };
 
@@ -19,8 +25,11 @@ const titleTranslations: Record<string, string> = {
   "Medical coverage": "Cobertura médica",
   "Estimated doctor deficit": "Déficit estimado de médicos",
   "Hospital beds per 1,000 inhabitants":
-    "Camas hospitalarias por 1000 habitantes",
+    "Camas hospitalarias por 1,000 habitantes",
   "Population in poverty": "Población en pobreza",
+  "Healthcare access deficiency": "Carencia por acceso a servicios de salud",
+  "Poverty population": "Población en situación de pobreza",
+  "Hospital beds coverage": "Cobertura de camas hospitalarias",
 };
 
 const referenceTranslations: Record<string, string> = {
@@ -49,6 +58,38 @@ export function adaptComparisonChartData(
 
     return acc;
   }, []);
+}
+
+export function getComparisonChartAvailabilityState(
+  chart: ComparisonChart
+): ComparisonChartAvailabilityState {
+  const data = chart.data ?? [];
+
+  if (!data.length) {
+    return "empty";
+  }
+
+  const validPoints = data.filter((point) => isFiniteNumber(point.value));
+
+  if (!validPoints.length) {
+    return "unavailable";
+  }
+
+  if (validPoints.length < data.length) {
+    return "partial";
+  }
+
+  return "available";
+}
+
+export function hasUnavailableComparisonChartData(chart: ComparisonChart) {
+  return getComparisonChartAvailabilityState(chart) !== "available";
+}
+
+export function hasUnavailableComparisonCharts(
+  charts: ComparisonChart[] = []
+) {
+  return charts.some(hasUnavailableComparisonChartData);
 }
 
 export function adaptComparisonReferenceLine(chart: ComparisonChart) {

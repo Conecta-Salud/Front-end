@@ -14,7 +14,7 @@ export default function PriorityIndexCards({
   priority = [],
   isLoading = false,
   isError = false,
-  emptyMessage = "Selecciona dos territorios para visualizar el indice de prioridad.",
+  emptyMessage = "No hay índice de prioridad disponible para esta comparación.",
 }: PriorityIndexCardsProps) {
   const cards = useMemo(() => adaptPriorityResultsToCards(priority), [priority]);
 
@@ -35,7 +35,7 @@ export default function PriorityIndexCards({
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          No se pudo cargar el indice de prioridad.
+          No se pudo cargar el índice de prioridad.
         </p>
       </section>
     );

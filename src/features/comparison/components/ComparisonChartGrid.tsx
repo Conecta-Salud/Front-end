@@ -5,6 +5,7 @@ import type { ComparisonChart } from "../types/comparisonSummary.types";
 import {
   adaptComparisonChartData,
   adaptComparisonReferenceLine,
+  getComparisonChartAvailabilityState,
   translateComparisonChartTitle,
 } from "../utils/comparisonChart.adapter";
 import { formatComparisonChartValue } from "../utils/comparisonFormatters";
@@ -16,20 +17,47 @@ type ComparisonChartGridProps = {
   emptyMessage?: string;
 };
 
+const getEmptyMessageForChart = (
+  availabilityState: ReturnType<typeof getComparisonChartAvailabilityState>
+) => {
+  if (availabilityState === "empty" || availabilityState === "unavailable") {
+    return "Dato no disponible para este nivel territorial.";
+  }
+
+  return "No hay datos disponibles.";
+};
+
+const getFooterNoteForChart = (
+  availabilityState: ReturnType<typeof getComparisonChartAvailabilityState>
+) => {
+  if (availabilityState === "partial") {
+    return "Algunos datos no están disponibles.";
+  }
+
+  return undefined;
+};
+
 export default function ComparisonChartGrid({
   charts = [],
   isLoading = false,
   isError = false,
-  emptyMessage = "Selecciona dos territorios para visualizar las graficas.",
+  emptyMessage = "Selecciona dos territorios para visualizar las gráficas.",
 }: ComparisonChartGridProps) {
   const chartCards = useMemo(
     () =>
-      charts.map((chart) => ({
-        id: chart.id,
-        title: translateComparisonChartTitle(chart.title),
-        data: adaptComparisonChartData(chart.data),
-        referenceLine: adaptComparisonReferenceLine(chart),
-      })),
+      charts.map((chart) => {
+        const availabilityState = getComparisonChartAvailabilityState(chart);
+
+        return {
+          id: chart.id,
+          title: translateComparisonChartTitle(chart.title),
+          data: adaptComparisonChartData(chart.data),
+          referenceLine: adaptComparisonReferenceLine(chart),
+          availabilityState,
+          emptyMessage: getEmptyMessageForChart(availabilityState),
+          footerNote: getFooterNoteForChart(availabilityState),
+        };
+      }),
     [charts]
   );
 
@@ -50,7 +78,7 @@ export default function ComparisonChartGrid({
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
         <p className="text-[16px] text-red-500">
-          No se pudieron cargar las graficas de comparacion.
+          No se pudieron cargar las gráficas de comparación.
         </p>
       </section>
     );
@@ -77,7 +105,8 @@ export default function ComparisonChartGrid({
           valueFormatter={(value) =>
             formatComparisonChartValue(chart.id, value)
           }
-          emptyMessage="No hay datos disponibles."
+          emptyMessage={chart.emptyMessage}
+          footerNote={chart.footerNote}
         />
       ))}
     </section>
