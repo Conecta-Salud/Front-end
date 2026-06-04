@@ -5,6 +5,7 @@ import type {
   ProcessingMode,
   UploadBatchDetail,
 } from "../types/adminUploads.types";
+import { translateUploadMessage } from "../utils/uploadMessageTranslation";
 import {
   getUploadError,
   processingModeLabels,
@@ -63,7 +64,7 @@ export default function UploadProcessStep({ detail }: UploadProcessStepProps) {
           failOnErrors,
         },
       });
-      setProcessMessage(response.message);
+      setProcessMessage(translateUploadMessage(response.message));
     } catch {
       // El mensaje controlado se muestra debajo del formulario.
     }

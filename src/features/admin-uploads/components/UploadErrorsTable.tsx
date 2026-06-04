@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useUploadBatchErrorsQuery } from "../queries/adminUploads.queries";
+import { translateUploadMessage } from "../utils/uploadMessageTranslation";
 
 type UploadErrorsTableProps = {
   batchId?: number | null;
@@ -104,7 +105,7 @@ export default function UploadErrorsTable({ batchId }: UploadErrorsTableProps) {
                         {error.errorCode}
                       </td>
                       <td className="px-3 py-2 text-gray-600">
-                        {error.errorMessage}
+                        {translateUploadMessage(error.errorMessage)}
                       </td>
                     </tr>
                   ))}

@@ -6,6 +6,7 @@ import type {
   UploadSourceType,
   UploadStatus,
 } from "../types/adminUploads.types";
+import { translateUploadMessage } from "../utils/uploadMessageTranslation";
 
 export type UploadPreset = {
   id: string;
@@ -189,16 +190,23 @@ export function getUploadError(error: unknown): UploadRequestError {
       const detail =
         typeof data.detail === "string" ? data.detail : undefined;
 
-      return { message, detail };
+      return {
+        message: translateUploadMessage(message) ?? message,
+        detail: translateUploadMessage(detail) ?? undefined,
+      };
     }
 
     if (error.message) {
-      return { message: error.message };
+      return {
+        message: translateUploadMessage(error.message) ?? error.message,
+      };
     }
   }
 
   if (error instanceof Error) {
-    return { message: error.message };
+    return {
+      message: translateUploadMessage(error.message) ?? error.message,
+    };
   }
 
   return { message: "No se pudo completar la solicitud." };
