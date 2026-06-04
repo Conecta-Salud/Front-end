@@ -5,6 +5,7 @@ import { useAdminOverviewQuery } from "../features/admin/queries/adminOverview.q
 import AdminUsersView from "../features/admin/components/AdminUsersView";
 import AdminActivityView from "../features/admin/components/AdminActivityView";
 import AdminViewTabs from "../features/admin/components/AdminViewTabs";
+import AdminDataUploadsView from "../features/admin/components/AdminDataUploadsView";
 import type { AdminTab } from "../features/admin/types/admin.types";
 
 function PanelAdminPage() {
@@ -63,14 +64,7 @@ function PanelAdminPage() {
 
       {activeTab === "users" && <AdminUsersView />}
       {activeTab === "activity" && <AdminActivityView />}
-      {activeTab === "data" && (
-        <section className="rounded-[10px] bg-white p-6 shadow-sm">
-          <h2 className="text-[22px] font-semibold text-black">Datos</h2>
-          <p className="text-[16px] text-gray-500">
-            Aquí conectaremos el estado de las fuentes de datos.
-          </p>
-        </section>
-      )}
+      {activeTab === "data" && <AdminDataUploadsView />}
     </main>
   );
 }
