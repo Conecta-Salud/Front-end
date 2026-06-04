@@ -55,9 +55,12 @@ function PanelAdminPage() {
 
           <CustomKPI
             size="xs"
-            title="Reportes"
-            titleSecondLine="exportados"
-            value={overview?.exportedReports ?? 0}
+            title="Cargas"
+            titleSecondLine="completadas"
+            value={
+              overview?.completedUploadBatches ??
+              0
+            }
           />
         </div>
       </section>
