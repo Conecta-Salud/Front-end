@@ -17,6 +17,13 @@ export type DashboardScatterChartData = {
   colorToken?: "green" | "yellow" | "red" | "neutral";
 };
 
+const MAX_PIE_CATEGORIES = 6;
+const OTHER_PIE_LABEL = "Otros";
+
+const isFiniteNumber = (value: unknown): value is number => {
+  return typeof value === "number" && Number.isFinite(value);
+};
+
 export function adaptSummaryChartTitle(chart?: DashboardChart) {
   if (!chart?.title) return "";
   return translateDashboardChartTitle(chart.title);
@@ -28,7 +35,7 @@ export function adaptSummaryChartToBarData(
   if (!chart?.data?.length) return [];
 
   return chart.data
-    .filter((point) => typeof point.value === "number")
+    .filter((point) => isFiniteNumber(point.value))
     .map((point) => {
       const rawPoint = point as DashboardChartDataPoint & {
         name?: string;
@@ -49,8 +56,8 @@ export function adaptSummaryChartToPieData(
 ): PieChartDataItem[] {
   if (!chart?.data?.length) return [];
 
-  return chart.data
-    .filter((point) => typeof point.value === "number")
+  const data = chart.data
+    .filter((point) => isFiniteNumber(point.value) && point.value > 0)
     .map((point) => {
       const rawPoint = point as DashboardChartDataPoint & {
         name?: string;
@@ -64,6 +71,30 @@ export function adaptSummaryChartToPieData(
         colorToken: rawPoint.colorToken,
       };
     });
+
+  if (data.length <= MAX_PIE_CATEGORIES) {
+    return data;
+  }
+
+  const visibleCount = MAX_PIE_CATEGORIES - 1;
+  const sortedData = [...data].sort((a, b) => b.value - a.value);
+  const visibleData = sortedData.slice(0, visibleCount);
+  const otherValue = sortedData
+    .slice(visibleCount)
+    .reduce((sum, item) => sum + item.value, 0);
+
+  if (otherValue <= 0) {
+    return visibleData;
+  }
+
+  return [
+    ...visibleData,
+    {
+      label: OTHER_PIE_LABEL,
+      value: otherValue,
+      colorToken: "neutral",
+    },
+  ];
 }
 
 export function adaptSummaryChartToScatterData(
@@ -75,7 +106,7 @@ export function adaptSummaryChartToScatterData(
     const x = point[chart.xKey as keyof DashboardChartDataPoint];
     const y = point[chart.yKey as keyof DashboardChartDataPoint];
 
-    if (typeof x !== "number" || typeof y !== "number") {
+    if (!isFiniteNumber(x) || !isFiniteNumber(y)) {
       return acc;
     }
 

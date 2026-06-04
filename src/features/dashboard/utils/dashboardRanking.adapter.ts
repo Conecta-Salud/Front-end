@@ -31,6 +31,18 @@ const truncateKeys = new Set([
 
 const translatableValueKeys = new Set(["careLevel", "unitType"]);
 
+const essentialColumnKeys = new Set(["rank", "name", "value"]);
+
+function hasValueForColumn(rows: DashboardRankingRow[], key: string) {
+  return rows.some((row) => {
+    const value =
+      row[key as keyof DashboardRankingRow] ??
+      row.extra?.[key];
+
+    return value !== null && value !== undefined && value !== "";
+  });
+}
+
 export function adaptSummaryRankingTitle(ranking?: DashboardRanking) {
   if (!ranking?.title) return "";
   return translateDashboardRankingTitle(ranking.title);
@@ -41,26 +53,33 @@ export function adaptSummaryRankingColumns(
 ): RankingColumn<DashboardRankingRow>[] {
   if (!ranking?.columns?.length) return [];
 
-  return ranking.columns.map((column) => ({
-    header: translateDashboardColumnLabel(column.key, column.label),
-    key: column.key,
-    align: centerKeys.has(column.key) ? "center" : "left",
-    truncate: truncateKeys.has(column.key),
-    maxWidth: truncateKeys.has(column.key) ? "max-w-[180px]" : undefined,
-    render: translatableValueKeys.has(column.key)
-      ? (row) => {
-          const value =
-            row[column.key as keyof DashboardRankingRow] ??
-            row.extra?.[column.key];
+  const rows = ranking.rows ?? [];
 
-          const translatedValue = translateDashboardValue(value);
+  return ranking.columns
+    .filter((column) => {
+      if (essentialColumnKeys.has(column.key)) return true;
+      return hasValueForColumn(rows, column.key);
+    })
+    .map((column) => ({
+      header: translateDashboardColumnLabel(column.key, column.label),
+      key: column.key,
+      align: centerKeys.has(column.key) ? "center" : "left",
+      truncate: truncateKeys.has(column.key),
+      maxWidth: truncateKeys.has(column.key) ? "max-w-[180px]" : undefined,
+      render: translatableValueKeys.has(column.key)
+        ? (row) => {
+            const value =
+              row[column.key as keyof DashboardRankingRow] ??
+              row.extra?.[column.key];
 
-          return typeof translatedValue === "string"
-            ? translatedValue
-            : String(translatedValue ?? "Sin dato");
-        }
-      : undefined,
-  }));
+            const translatedValue = translateDashboardValue(value);
+
+            return typeof translatedValue === "string"
+              ? translatedValue
+              : String(translatedValue ?? "Sin dato");
+          }
+        : undefined,
+    }));
 }
 
 export function adaptSummaryRankingRows(

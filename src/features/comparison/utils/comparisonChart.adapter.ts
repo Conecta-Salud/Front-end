@@ -11,6 +11,10 @@ export type ComparisonChartViewData = {
   tone?: ComparisonVariant;
 };
 
+const isFiniteNumber = (value: unknown): value is number => {
+  return typeof value === "number" && Number.isFinite(value);
+};
+
 const titleTranslations: Record<string, string> = {
   "Medical coverage": "Cobertura médica",
   "Estimated doctor deficit": "Déficit estimado de médicos",
@@ -31,16 +35,26 @@ export function translateComparisonChartTitle(title: string) {
 export function adaptComparisonChartData(
   data: ComparisonChartDataPoint[] = []
 ): ComparisonChartViewData[] {
-  return data.map((point) => ({
-    label: point.label,
-    subtitle: point.subtitle,
-    value: point.value,
-    tone: point.variant,
-  }));
+  return data.reduce<ComparisonChartViewData[]>((acc, point) => {
+    if (!isFiniteNumber(point.value)) {
+      return acc;
+    }
+
+    acc.push({
+      label: point.label,
+      subtitle: point.subtitle,
+      value: point.value,
+      tone: point.variant,
+    });
+
+    return acc;
+  }, []);
 }
 
 export function adaptComparisonReferenceLine(chart: ComparisonChart) {
-  if (!chart.referenceLine) return undefined;
+  if (!chart.referenceLine || !isFiniteNumber(chart.referenceLine.value)) {
+    return undefined;
+  }
 
   return {
     value: chart.referenceLine.value,

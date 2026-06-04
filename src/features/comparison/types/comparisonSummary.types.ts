@@ -31,7 +31,7 @@ export type ComparisonTerritory = {
 };
 
 export type ComparisonReferenceLine = {
-  value: number;
+  value: number | null;
   label: string;
 };
 
@@ -39,7 +39,7 @@ export type ComparisonChartDataPoint = {
   territoryCode: string;
   label: string;
   subtitle?: string;
-  value: number;
+  value?: number | null;
   variant: ComparisonVariant;
   extra?: Record<string, unknown>;
 };
@@ -49,7 +49,7 @@ export type ComparisonChart = {
   title: string;
   type: "bar";
   referenceLine?: ComparisonReferenceLine | null;
-  data: ComparisonChartDataPoint[];
+  data?: ComparisonChartDataPoint[];
 };
 
 export type ComparisonPriorityFactorId =
