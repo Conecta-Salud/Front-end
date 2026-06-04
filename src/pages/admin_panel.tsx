@@ -7,6 +7,7 @@ import AdminActivityView from "../features/admin/components/AdminActivityView";
 import AdminViewTabs from "../features/admin/components/AdminViewTabs";
 import AdminDataUploadsView from "../features/admin/components/AdminDataUploadsView";
 import type { AdminTab } from "../features/admin/types/admin.types";
+import AdminUploadsPanel from "../features/admin-uploads/components/AdminUploadsPanel";
 
 function PanelAdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("users");
@@ -55,16 +56,19 @@ function PanelAdminPage() {
 
           <CustomKPI
             size="xs"
-            title="Reportes"
-            titleSecondLine="exportados"
-            value={overview?.exportedReports ?? 0}
+            title="Cargas"
+            titleSecondLine="completadas"
+            value={
+              overview?.completedUploadBatches ??
+              0
+            }
           />
         </div>
       </section>
 
       {activeTab === "users" && <AdminUsersView />}
       {activeTab === "activity" && <AdminActivityView />}
-      {activeTab === "data" && <AdminDataUploadsView />}
+      {activeTab === "data" && <AdminUploadsPanel />}
     </main>
   );
 }

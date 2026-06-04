@@ -3,8 +3,16 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import ComparisonSelector from "../features/comparison/components/ComparisonSelector";
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
+import {
+  COMPARISON_SECTORIAL_CATEGORY_CODE,
+  COMPARISON_SECTORIAL_UNAVAILABLE_MESSAGE,
+  getComparisonAvailabilityState,
+  getComparisonTerritoryLevel,
+} from "../features/comparison/utils/comparisonAvailability.utils";
+import { hasUnavailableComparisonCharts } from "../features/comparison/utils/comparisonChart.adapter";
 
 import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
+import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 
 import type { LocationOption } from "../components/ui/LocationInput/LocationInput";
@@ -54,66 +62,148 @@ function ModuloComparacionPage() {
   );
 
   const periodsQuery = usePeriodsCatalogQuery();
+  const selectedYear = Number(year);
 
   const periodId = useMemo(() => {
-    const selectedYear = Number(year);
+    if (!Number.isFinite(selectedYear)) {
+      return null;
+    }
 
     return (
       periodsQuery.data?.find(
         (period) => Number(period.year) === selectedYear
       )?.id ?? null
     );
-  }, [periodsQuery.data, year]);
+  }, [periodsQuery.data, selectedYear]);
+
+  const firstCode = firstLocation?.code ?? null;
+  const secondCode = secondLocation?.code ?? null;
+  const hasFirstLocation = Boolean(firstCode);
+  const hasSecondLocation = Boolean(secondCode);
+  const hasAnyLocation = hasFirstLocation || hasSecondLocation;
+  const hasBothLocations = hasFirstLocation && hasSecondLocation;
+  const hasDuplicateTerritories =
+    Boolean(firstCode) && Boolean(secondCode) && firstCode === secondCode;
+  const hasValidLevel = level === "state" || level === "municipality";
+  const comparisonTerritoryLevel = getComparisonTerritoryLevel(level);
 
   const selectedCodes = useMemo(() => {
-    if (!firstLocation?.code || !secondLocation?.code) return [];
+    if (!firstCode || !secondCode) return [];
 
-    return [firstLocation.code, secondLocation.code];
-  }, [firstLocation, secondLocation]);
+    return [firstCode, secondCode];
+  }, [firstCode, secondCode]);
 
-  const selectionError =
-    firstLocation?.code &&
-    secondLocation?.code &&
-    firstLocation.code === secondLocation.code
-      ? "No puedes comparar el mismo territorio."
-      : null;
+  const selectionError = hasDuplicateTerritories
+    ? "Selecciona dos territorios diferentes."
+    : null;
+
+  const isPeriodLoading =
+    periodsQuery.isLoading || (periodsQuery.isFetching && !periodsQuery.data);
+
+  const comparisonAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: comparisonTerritoryLevel,
+    analysisYear: Number.isFinite(selectedYear) ? selectedYear : undefined,
+    categoryCode: COMPARISON_SECTORIAL_CATEGORY_CODE,
+    enabled: hasValidLevel && Number.isFinite(selectedYear),
+  });
+
+  const comparisonAvailability = useMemo(
+    () => getComparisonAvailabilityState(comparisonAvailabilityQuery.data?.items),
+    [comparisonAvailabilityQuery.data?.items]
+  );
+
+  const isComparisonAvailabilityLoading =
+    comparisonAvailabilityQuery.isLoading ||
+    (comparisonAvailabilityQuery.isFetching && !comparisonAvailabilityQuery.data);
+
+  const isSectorialDataAvailable = comparisonAvailability.isAvailable;
+
+  const canFetchComparison =
+    Boolean(periodId) &&
+    hasBothLocations &&
+    !hasDuplicateTerritories &&
+    hasValidLevel &&
+    !isComparisonAvailabilityLoading &&
+    isSectorialDataAvailable;
 
   const comparisonSummary = useComparisonSummary({
     level,
     periodId,
     codes: selectedCodes,
-    enabled: Boolean(periodId) && selectedCodes.length === 2 && !selectionError,
+    enabled: canFetchComparison,
   });
 
-  const hasCompleteSelection =
-    Boolean(periodId) &&
-    selectedCodes.length === 2 &&
-    !selectionError;
+  const safeCharts = canFetchComparison ? comparisonSummary.charts : [];
+  const safePriority = canFetchComparison ? comparisonSummary.priority : [];
 
-  const safeCharts = hasCompleteSelection ? comparisonSummary.charts : [];
-  const safePriority = hasCompleteSelection ? comparisonSummary.priority : [];
+  const shouldShowLoadingState =
+    canFetchComparison && comparisonSummary.isLoading;
+
+  const shouldShowErrorState = canFetchComparison && comparisonSummary.isError;
 
   const shouldShowComparisonResult =
-    hasCompleteSelection &&
+    canFetchComparison &&
     !comparisonSummary.isLoading &&
     !comparisonSummary.isError;
 
-  const shouldShowEmptyState = !periodId || !hasCompleteSelection;
+  const emptyStateMessage = useMemo(() => {
+    if (selectionError) {
+      return selectionError;
+    }
 
-  const shouldShowLoadingState =
-    hasCompleteSelection && comparisonSummary.isLoading;
+    if (!hasAnyLocation) {
+      return "Selecciona dos territorios para iniciar la comparación.";
+    }
 
-  const shouldShowErrorState =
-    hasCompleteSelection && comparisonSummary.isError;
+    if (!hasBothLocations) {
+      return "Selecciona un segundo territorio para comparar.";
+    }
 
+    if (isPeriodLoading) {
+      return "Cargando periodo disponible para el año seleccionado.";
+    }
+
+    if (!periodId) {
+      return "No hay periodo disponible para el año seleccionado.";
+    }
+
+    if (isComparisonAvailabilityLoading) {
+      return "Verificando disponibilidad de datos sectoriales para el año seleccionado.";
+    }
+
+    if (!isSectorialDataAvailable) {
+      return COMPARISON_SECTORIAL_UNAVAILABLE_MESSAGE;
+    }
+
+    return null;
+  }, [
+    hasAnyLocation,
+    hasBothLocations,
+    isComparisonAvailabilityLoading,
+    isPeriodLoading,
+    isSectorialDataAvailable,
+    periodId,
+    selectionError,
+  ]);
+
+  const shouldShowEmptyState =
+    Boolean(emptyStateMessage) &&
+    !shouldShowLoadingState &&
+    !shouldShowErrorState;
+
+  const shouldShowPartialDataMessage =
+    shouldShowComparisonResult &&
+    safeCharts.length > 0 &&
+    hasUnavailableComparisonCharts(safeCharts);
+
+  const comparisonUnavailableMessage =
+    "No hay datos disponibles o suficientes para construir esta comparación con el año y territorios seleccionados.";
 
   const handleLevelChange = (nextLevel: ComparisonLevel) => {
     setLevel(nextLevel);
     setFirstLocation(null);
     setSecondLocation(null);
   };
-
-  const isLoadingOptions = periodsQuery.isLoading;
 
   return (
     <main className="min-h-full p-6">
@@ -153,14 +243,13 @@ function ModuloComparacionPage() {
             Comparación pendiente
           </h2>
 
-          <p className="text-[16px]"
+          <p
+            className="text-[16px]"
             style={{
               color: "var(--color-text-secundary)",
             }}
           >
-            {!periodId
-              ? "No se encontró periodo para el año seleccionado."
-              : "Selecciona dos territorios del mismo nivel para visualizar gráficas e índice de prioridad."}
+            {emptyStateMessage}
           </p>
         </section>
       )}
@@ -210,19 +299,29 @@ function ModuloComparacionPage() {
           </h2>
 
           <p className="text-[16px] text-red-500">
-            Intenta cambiar los territorios seleccionados o verifica que existan datos para el año seleccionado.
+            No se pudo cargar la comparación. Intenta nuevamente.
           </p>
         </section>
       )}
 
       {shouldShowComparisonResult && (
         <>
+          {shouldShowPartialDataMessage && (
+            <section className="mt-6 rounded-[10px] bg-white p-4 shadow-sm">
+              <p className="text-[15px] text-gray-500">
+                Algunos indicadores no están disponibles para el nivel
+                territorial seleccionado.
+              </p>
+            </section>
+          )}
+
           <section className="mt-6">
             <Suspense fallback={<ComparisonChartsFallback />}>
               <ComparisonChartGrid
                 charts={safeCharts}
                 isLoading={false}
                 isError={false}
+                emptyMessage={comparisonUnavailableMessage}
               />
             </Suspense>
           </section>
@@ -248,6 +347,7 @@ function ModuloComparacionPage() {
                 priority={safePriority}
                 isLoading={false}
                 isError={false}
+                emptyMessage="No hay índice de prioridad disponible para esta comparación."
               />
             </Suspense>
           </section>

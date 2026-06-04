@@ -37,7 +37,6 @@ export default function ComparisonSelector({
   onFirstLocationChange,
   onSecondLocationChange,
 }: ComparisonSelectorProps) {
-
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const levelDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -66,31 +65,24 @@ export default function ComparisonSelector({
   }, []);
 
   return (
-  <section className="rounded-[10px] bg-white p-5 shadow-sm">
-    <div className="grid grid-cols-12 items-center gap-4">
-      {/* Primer territorio */}
-      <div className="col-span-12 md:col-span-5">
-        {/*<label className="mb-2 block text-[14px] font-semibold text-black">
-          Primer territorio
-        </label>*/}
+    <section className="rounded-[10px] bg-white p-5 shadow-sm">
+      <div className="grid grid-cols-12 items-center gap-4">
+        <div className="col-span-12 md:col-span-5">
+          <LocationInput
+            value={firstLocation}
+            restrictedLevel={level}
+            useRemoteSearch
+            searchLimit={10}
+            placeholder={
+              level === "state"
+                ? "Selecciona un estado..."
+                : "Selecciona un municipio..."
+            }
+            onChange={onFirstLocationChange}
+          />
+        </div>
 
-        <LocationInput
-          value={firstLocation}
-          restrictedLevel={level}
-          useRemoteSearch
-          searchLimit={10}
-          excludeCodes={secondLocation?.code ? [secondLocation.code] : []}
-          placeholder={
-            level === "state"
-              ? "Selecciona un estado..."
-              : "Selecciona un municipio..."
-          }
-          onChange={onFirstLocationChange}
-        />
-      </div>
-
-      {/* Nivel territorial */}
-      <div className="col-span-12 md:col-span-2">
+        <div className="col-span-12 md:col-span-2">
           <div ref={levelDropdownRef} className="relative w-full">
             <button
               type="button"
@@ -150,7 +142,10 @@ export default function ComparisonSelector({
                         key={option.value}
                         type="button"
                         onClick={() => {
-                          onLevelChange(option.value);
+                          if (!isSelected) {
+                            onLevelChange(option.value);
+                          }
+
                           setLevelDropdownOpen(false);
                         }}
                         className={[
@@ -174,30 +169,24 @@ export default function ComparisonSelector({
               </div>
             )}
           </div>
-      </div>
+        </div>
 
-      {/* Segundo territorio */}
-      <div className="col-span-12 md:col-span-5">
-        {/* <label className="mb-2 flex justify-end text-[14px] font-semibold text-black">          
-        Segundo territorio
-        </label>*/}
-
-        <LocationInput
-          value={secondLocation}
-          restrictedLevel={level}
-          useRemoteSearch
-          searchLimit={10}
-          excludeCodes={firstLocation?.code ? [firstLocation.code] : []}
-          placeholder={
-            level === "state"
-              ? "Selecciona otro estado..."
-              : "Selecciona otro municipio..."
-          }
-          error={error ?? undefined}
-          onChange={onSecondLocationChange}
-        />
+        <div className="col-span-12 md:col-span-5">
+          <LocationInput
+            value={secondLocation}
+            restrictedLevel={level}
+            useRemoteSearch
+            searchLimit={10}
+            placeholder={
+              level === "state"
+                ? "Selecciona otro estado..."
+                : "Selecciona otro municipio..."
+            }
+            error={error ?? undefined}
+            onChange={onSecondLocationChange}
+          />
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 }

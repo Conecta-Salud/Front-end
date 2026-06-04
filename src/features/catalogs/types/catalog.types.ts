@@ -10,11 +10,13 @@ export type MunicipalityCatalogItem = {
   code: string;
   stateId: number;
   stateCode?: string;
+  stateName?: string;
 };
 
 export type PeriodCatalogItem = {
   id: number;
   year: number;
+  status?: "open" | "closed" | "published" | string;
 };
 
 export type DepartmentCatalogItem = {
