@@ -3,9 +3,16 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import ComparisonSelector from "../features/comparison/components/ComparisonSelector";
 import { useComparisonSummary } from "../features/comparison/hooks/useComparisonSummary";
 import type { ComparisonLevel } from "../features/comparison/types/comparisonSummary.types";
+import {
+  COMPARISON_SECTORIAL_CATEGORY_CODE,
+  COMPARISON_SECTORIAL_UNAVAILABLE_MESSAGE,
+  getComparisonAvailabilityState,
+  getComparisonTerritoryLevel,
+} from "../features/comparison/utils/comparisonAvailability.utils";
 import { hasUnavailableComparisonCharts } from "../features/comparison/utils/comparisonChart.adapter";
 
 import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
+import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
 
 import type { LocationOption } from "../components/ui/LocationInput/LocationInput";
@@ -78,6 +85,7 @@ function ModuloComparacionPage() {
   const hasDuplicateTerritories =
     Boolean(firstCode) && Boolean(secondCode) && firstCode === secondCode;
   const hasValidLevel = level === "state" || level === "municipality";
+  const comparisonTerritoryLevel = getComparisonTerritoryLevel(level);
 
   const selectedCodes = useMemo(() => {
     if (!firstCode || !secondCode) return [];
@@ -92,11 +100,31 @@ function ModuloComparacionPage() {
   const isPeriodLoading =
     periodsQuery.isLoading || (periodsQuery.isFetching && !periodsQuery.data);
 
+  const comparisonAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: comparisonTerritoryLevel,
+    analysisYear: Number.isFinite(selectedYear) ? selectedYear : undefined,
+    categoryCode: COMPARISON_SECTORIAL_CATEGORY_CODE,
+    enabled: hasValidLevel && Number.isFinite(selectedYear),
+  });
+
+  const comparisonAvailability = useMemo(
+    () => getComparisonAvailabilityState(comparisonAvailabilityQuery.data?.items),
+    [comparisonAvailabilityQuery.data?.items]
+  );
+
+  const isComparisonAvailabilityLoading =
+    comparisonAvailabilityQuery.isLoading ||
+    (comparisonAvailabilityQuery.isFetching && !comparisonAvailabilityQuery.data);
+
+  const isSectorialDataAvailable = comparisonAvailability.isAvailable;
+
   const canFetchComparison =
     Boolean(periodId) &&
     hasBothLocations &&
     !hasDuplicateTerritories &&
-    hasValidLevel;
+    hasValidLevel &&
+    !isComparisonAvailabilityLoading &&
+    isSectorialDataAvailable;
 
   const comparisonSummary = useComparisonSummary({
     level,
@@ -139,11 +167,21 @@ function ModuloComparacionPage() {
       return "No hay periodo disponible para el año seleccionado.";
     }
 
+    if (isComparisonAvailabilityLoading) {
+      return "Verificando disponibilidad de datos sectoriales para el año seleccionado.";
+    }
+
+    if (!isSectorialDataAvailable) {
+      return COMPARISON_SECTORIAL_UNAVAILABLE_MESSAGE;
+    }
+
     return null;
   }, [
     hasAnyLocation,
     hasBothLocations,
+    isComparisonAvailabilityLoading,
     isPeriodLoading,
+    isSectorialDataAvailable,
     periodId,
     selectionError,
   ]);
