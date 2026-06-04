@@ -12,6 +12,24 @@ import type {
   ProcessBatchRequest,
 } from "../types/adminUploads.types";
 
+type ValidateUploadMutationParams =
+  | number
+  | {
+      uploadId: number;
+      batchId?: number;
+    };
+
+const getValidateUploadParams = (params: ValidateUploadMutationParams) => {
+  if (typeof params === "number") {
+    return {
+      uploadId: params,
+      batchId: undefined,
+    };
+  }
+
+  return params;
+};
+
 export function useCreateUploadBatchMutation() {
   const queryClient = useQueryClient();
 
@@ -54,8 +72,23 @@ export function useValidateUploadMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (uploadId: number) => validateUpload(uploadId),
-    onSuccess: () => {
+    mutationFn: (params: ValidateUploadMutationParams) =>
+      validateUpload(getValidateUploadParams(params).uploadId),
+    onSuccess: (_data, variables) => {
+      const { batchId, uploadId } = getValidateUploadParams(variables);
+
+      if (batchId) {
+        queryClient.invalidateQueries({
+          queryKey: adminUploadsQueryKeys.batchDetail(batchId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: adminUploadsQueryKeys.batchErrors(batchId),
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: adminUploadsQueryKeys.uploadErrors(uploadId),
+      });
       queryClient.invalidateQueries({
         queryKey: adminUploadsQueryKeys.all,
       });
@@ -77,6 +110,9 @@ export function useProcessUploadBatchMutation() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: adminUploadsQueryKeys.batchDetail(variables.batchId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: adminUploadsQueryKeys.batchErrors(variables.batchId),
       });
       queryClient.invalidateQueries({
         queryKey: adminUploadsQueryKeys.all,
