@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import RankingTable from "../../../components/ui/RankingTable/RankingTable";
 import PasswordFormModal from "../../../components/ui/PasswordFormModal/PasswordFormModal";
@@ -6,7 +6,7 @@ import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useDepartmentsCatalogQuery } from "../../catalogs/queries/catalog.queries";
 import { ADMIN_PAGE_SIZE } from "../constants/adminDisplay.constants";
 import {
-  useAdminUsersInfiniteQuery,
+  useAdminUsersQuery,
   useDeactivateAdminUserMutation,
   useReactivateAdminUserMutation,
   useChangeAdminUserPasswordMutation,
@@ -19,13 +19,11 @@ import type {
   AdminUserRole,
   AdminUserStatusAction,
 } from "../types/adminUsers.types";
-import { flattenAdminPages } from "../utils/adminPagination.utils";
 import {
   adaptAdminUsersToRows,
   getAdminUsersColumns,
 } from "../utils/adminUsersTable.adapter";
-import { useInfiniteScrollLoad } from "../utils/useInfiniteScrollLoad";
-import AdminLoadMoreFooter from "./AdminLoadMoreFooter";
+import AdminPagination from "./AdminPagination";
 import AdminUsersToolbar from "./AdminUsersToolBar";
 import UserFormModal from "./UserFormModal";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
@@ -41,7 +39,7 @@ export default function AdminUsersView() {
     useState<AdminUser | null>(null);
   const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const tableScrollRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(0);
   const usersQueryParams = useMemo(
     () => ({
       search: debouncedSearchTerm || undefined,
@@ -53,19 +51,17 @@ export default function AdminUsersView() {
           ? false
           : undefined,
       departmentId: departmentFilter ? Number(departmentFilter) : undefined,
+      page,
       size: ADMIN_PAGE_SIZE,
     }),
-    [debouncedSearchTerm, roleFilter, activeFilter, departmentFilter]
+    [debouncedSearchTerm, roleFilter, activeFilter, departmentFilter, page]
   );
   const {
     data: usersData,
-    fetchNextPage: fetchNextUsersPage,
-    hasNextPage: hasNextUsersPage,
     isError: isUsersError,
     isFetching: isUsersFetching,
-    isFetchingNextPage: isFetchingNextUsersPage,
     isLoading: isUsersLoading,
-  } = useAdminUsersInfiniteQuery(usersQueryParams);
+  } = useAdminUsersQuery(usersQueryParams);
   const deactivateUserMutation = useDeactivateAdminUserMutation();
   const reactivateUserMutation = useReactivateAdminUserMutation();
   const changePasswordMutation = useChangeAdminUserPasswordMutation();
@@ -81,14 +77,9 @@ export default function AdminUsersView() {
   const [statusAction, setStatusAction] =
     useState<AdminUserStatusAction | null>(null);
 
-  const loadedUsers = useMemo(
-    () => flattenAdminPages<AdminUser>(usersData?.pages),
-    [usersData?.pages]
-  );
-
   const rows = useMemo(
-    () => adaptAdminUsersToRows(loadedUsers),
-    [loadedUsers]
+    () => adaptAdminUsersToRows(usersData?.items ?? []),
+    [usersData?.items]
   );
 
   const departmentOptions = useMemo(() => {
@@ -170,20 +161,41 @@ export default function AdminUsersView() {
   const isStatusActionError =
     deactivateUserMutation.isError || reactivateUserMutation.isError;
 
-  const handleLoadMoreUsers = useCallback(() => {
-    if (!hasNextUsersPage || isFetchingNextUsersPage) return;
+  const hasPreviousUsersPage = page > 0;
+  const hasNextUsersPage =
+    typeof usersData?.totalPages === "number"
+      ? page + 1 < usersData.totalPages
+      : rows.length >= ADMIN_PAGE_SIZE;
 
-    void fetchNextUsersPage();
-  }, [fetchNextUsersPage, hasNextUsersPage, isFetchingNextUsersPage]);
+  const handlePreviousUsersPage = useCallback(() => {
+    setPage((currentPage) => Math.max(currentPage - 1, 0));
+  }, []);
 
-  const loadMoreSentinelRef = useInfiniteScrollLoad({
-    rootRef: tableScrollRef,
-    enabled: Boolean(hasNextUsersPage),
-    isLoading: isFetchingNextUsersPage,
-    onLoadMore: handleLoadMoreUsers,
-  });
+  const handleNextUsersPage = useCallback(() => {
+    if (!hasNextUsersPage) return;
 
-  const isRefreshingUsers = isUsersFetching && !isFetchingNextUsersPage;
+    setPage((currentPage) => currentPage + 1);
+  }, [hasNextUsersPage]);
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchTerm(value);
+    setPage(0);
+  }, []);
+
+  const handleRoleChange = useCallback((value: string) => {
+    setRoleFilter(value);
+    setPage(0);
+  }, []);
+
+  const handleActiveChange = useCallback((value: string) => {
+    setActiveFilter(value);
+    setPage(0);
+  }, []);
+
+  const handleDepartmentChange = useCallback((value: string) => {
+    setDepartmentFilter(value);
+    setPage(0);
+  }, []);
 
   if (isUsersLoading && rows.length === 0) {
     return (
@@ -223,14 +235,14 @@ export default function AdminUsersView() {
         departmentFilter={departmentFilter}
         departmentOptions={departmentOptions}
         openFilterId={openFilterId}
-        onSearchChange={setSearchTerm}
-        onRoleChange={setRoleFilter}
-        onActiveChange={setActiveFilter}
-        onDepartmentChange={setDepartmentFilter}
+        onSearchChange={handleSearchChange}
+        onRoleChange={handleRoleChange}
+        onActiveChange={handleActiveChange}
+        onDepartmentChange={handleDepartmentChange}
         onOpenFilterChange={setOpenFilterId}
         onCreateUser={() => setIsCreateModalOpen(true)}
       />
-      {isRefreshingUsers && rows.length > 0 && (
+      {isUsersFetching && rows.length > 0 && (
         <p className="mb-3 text-[14px]"
           style={{
             color: "var(--color-text-secundary)",
@@ -240,7 +252,7 @@ export default function AdminUsersView() {
         </p>
       )}
       
-      <div ref={tableScrollRef} className="min-h-0 flex-1 overflow-auto pr-2">
+      <div className="min-h-0 flex-1 overflow-auto pr-2">
         <RankingTable
           columns={columns}
           data={rows}
@@ -248,19 +260,12 @@ export default function AdminUsersView() {
           rowHeight="sm"
           emptyMessage="No hay usuarios registrados."
         />
-        {hasNextUsersPage && (
-          <div ref={loadMoreSentinelRef} className="h-2" aria-hidden="true" />
-        )}
-        <AdminLoadMoreFooter
+        <AdminPagination
           hasNextPage={Boolean(hasNextUsersPage)}
-          isFetchingNextPage={isFetchingNextUsersPage}
-          loadedCount={rows.length}
-          loadingLabel="Cargando mas usuarios..."
-          loadMoreLabel="Cargar mas usuarios"
-          completedLabel="Todos los usuarios visibles estan cargados."
-          errorLabel="No se pudo cargar la siguiente pagina de usuarios."
-          isError={isUsersError}
-          onLoadMore={handleLoadMoreUsers}
+          hasPreviousPage={hasPreviousUsersPage}
+          isLoading={isUsersFetching}
+          onNextPage={handleNextUsersPage}
+          onPreviousPage={handlePreviousUsersPage}
         />
       </div>
       <UserStatusConfirmModal

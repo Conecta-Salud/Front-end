@@ -5,6 +5,7 @@ import { useAdminOverviewQuery } from "../features/admin/queries/adminOverview.q
 import AdminUsersView from "../features/admin/components/AdminUsersView";
 import AdminActivityView from "../features/admin/components/AdminActivityView";
 import AdminViewTabs from "../features/admin/components/AdminViewTabs";
+import AdminDataUploadsView from "../features/admin/components/AdminDataUploadsView";
 import type { AdminTab } from "../features/admin/types/admin.types";
 import AdminUploadsPanel from "../features/admin-uploads/components/AdminUploadsPanel";
 
