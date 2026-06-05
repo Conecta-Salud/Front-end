@@ -29,11 +29,7 @@ export const RankingTableModal = <T extends RankingTableBaseRow>({
           <div className="flex items-start justify-between gap-4 mb-8">
             <h2
               className="text-[24px] leading-tight font-semibold"
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "var(--color-blue)" }}
             >
               {title}
             </h2>

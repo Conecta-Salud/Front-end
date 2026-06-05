@@ -56,11 +56,7 @@ export default function ConfirmModal({
         <h2
           id="confirm-modal-title"
           className="mb-3 text-[24px] font-bold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={{ color: "var(--color-blue)" }}
         >
           {title}
         </h2>

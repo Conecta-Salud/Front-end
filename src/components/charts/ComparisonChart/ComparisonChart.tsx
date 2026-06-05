@@ -101,11 +101,7 @@ export default function ComparisonBarChart({
       <div className="w-full bg-white p-6 rounded-[10px] shadow-sm">
         <h2
           className="text-[20px] font-semibold mb-4"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={{ color: "var(--color-blue)" }}
         >
           {title}
         </h2>
@@ -148,11 +144,7 @@ export default function ComparisonBarChart({
     <div className="w-full bg-white p-6 rounded-[10px] shadow-sm">
       <h2
         className="text-[20px] font-semibold mb-4"
-        style={{
-          backgroundImage: "var(--gradient-primary-green)",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
-        }}
+        style={{ color: "var(--color-blue)" }}
       >
         {title}
       </h2>

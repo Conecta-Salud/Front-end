@@ -52,10 +52,16 @@ export default function AdminUploadModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <section className="w-full max-w-[520px] rounded-[10px] bg-white p-6 shadow-lg">
         <div className="mb-5">
-          <h2 className="text-[22px] font-semibold text-black">
+          <h2
+            className="text-[22px] font-semibold"
+            style={{ color: "var(--color-blue)" }}
+          >
             Cargar archivo CSV
           </h2>
-          <p className="text-[15px] text-gray-500">
+          <p
+            className="text-[15px]"
+            style={{ color: "var(--color-gray)" }}
+          >
             Selecciona el tipo de datos y sube el archivo correspondiente.
           </p>
         </div>
@@ -100,7 +106,10 @@ export default function AdminUploadModal({
           />
 
           {selectedFile && (
-            <p className="mt-3 text-[14px] text-gray-500">
+            <p
+              className="mt-3 text-[14px]"
+              style={{ color: "var(--color-gray)" }}
+            >
               Archivo seleccionado: {selectedFile.name}
             </p>
           )}

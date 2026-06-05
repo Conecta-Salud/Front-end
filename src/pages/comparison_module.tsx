@@ -113,8 +113,6 @@ function ModuloComparacionPage() {
     setSecondLocation(null);
   };
 
-  const isLoadingOptions = periodsQuery.isLoading;
-
   return (
     <main className="min-h-full p-6">
       <section className="mb-6 flex items-start justify-between gap-4">
@@ -144,19 +142,14 @@ function ModuloComparacionPage() {
         <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
           <h2
             className="mb-2 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={{ color: "var(--color-blue)" }}
           >
             Comparación pendiente
           </h2>
 
-          <p className="text-[16px]"
-            style={{
-              color: "var(--color-text-secundary)",
-            }}
+          <p
+            className="text-[16px]"
+            style={{ color: "var(--color-gray)" }}
           >
             {!periodId
               ? "No se encontró periodo para el año seleccionado."
@@ -176,16 +169,15 @@ function ModuloComparacionPage() {
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
             <h2
               className="mb-2 text-[20px] font-semibold"
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "var(--color-blue)" }}
             >
               Índice de prioridad
             </h2>
 
-            <p className="mb-5 text-[16px] text-gray-500">
+            <p
+              className="mb-5 text-[16px]"
+              style={{ color: "var(--color-gray)" }}
+            >
               Comparación del nivel de prioridad para atención gubernamental.
             </p>
 
@@ -200,11 +192,7 @@ function ModuloComparacionPage() {
         <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
           <h2
             className="mb-2 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={{ color: "var(--color-blue)" }}
           >
             No se pudo cargar la comparación
           </h2>
@@ -230,16 +218,15 @@ function ModuloComparacionPage() {
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
             <h2
               className="mb-2 text-[20px] font-semibold"
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "var(--color-blue)" }}
             >
               Índice de prioridad
             </h2>
 
-            <p className="mb-5 text-[16px] text-gray-500">
+            <p
+              className="mb-5 text-[16px]"
+              style={{ color: "var(--color-gray)" }}
+            >
               Comparación del nivel de prioridad para atención gubernamental.
             </p>
 

@@ -81,11 +81,7 @@ export default function UserStatusConfirmModal({
         <h2
           id="user-status-title"
           className="mb-3 text-[24px] font-bold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={{ color: "var(--color-blue)" }}
         >
           {config.title}
         </h2>

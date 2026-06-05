@@ -219,18 +219,14 @@ function UserFormModalContent({
         <h2
           id="user-form-modal-title"
           className="text-[24px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={{ color: "var(--color-blue)" }}
         >
           {modalTitle}
         </h2>
 
         <p className="mb-6 text-[16px]"
           style={{
-            color: "var(--color-text-secundary)",
+            color: "var(--color-gray)",
           }}
         >
           {isEditMode
