@@ -125,11 +125,7 @@ function PasswordFormModalContent({
           <h2
             id="password-form-title"
             className="text-[24px] font-semibold leading-none"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={{ color: "var(--color-blue)" }}
           >
             {title}
           </h2>

@@ -91,11 +91,7 @@ export default function CustomBarChart({
         {showTitle && (
           <h2
             className="mb-4 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            style={{ color: "var(--color-blue)" }}
           >
             {title}
           </h2>
@@ -113,11 +109,7 @@ export default function CustomBarChart({
       {showTitle && (
         <h2
           className="mb-4 text-[20px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          style={{ color: "var(--color-blue)" }}
         >
           {title}
         </h2>

@@ -1,5 +1,3 @@
-// ICONOS
-import MedicalIcon from "../../../assets/icons/MedicalBriefcase.svg";
 import PencilIcon from "../../../assets/icons/Pencil.svg";
 
 interface ProfileInfoCardProps {
@@ -95,14 +93,10 @@ function ProfileInfoCard({
     >
       {/* HEADER */}
       <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl">
-          <img src={MedicalIcon} alt="medical-icon" className="h-7 w-7" />
-        </div>
-
         <h2
           className="text-[24px]"
           style={{
-            color: "var(--color-green-end)",
+            color: "var(--color-blue)",
             fontWeight: "var(--font-weight-bold)",
           }}
         >
@@ -123,9 +117,7 @@ function ProfileInfoCard({
 
         <p
           className="text-[16px]"
-          style={{
-            color: "var(--color-text-secundary)",
-          }}
+          style={{ color: "var(--color-gray)" }}
         >
           {lastLoginAt}
         </p>

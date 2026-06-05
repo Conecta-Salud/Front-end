@@ -39,20 +39,12 @@ const Header: React.FC<HeaderProps> = ({ subtitle, logo = true, actions}) => {
             }}
           >
             <span
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "var(--color-blue)" }}
             >
               {firstPart}
             </span>
             <span
-              style={{
-                backgroundImage: "var(--gradient-primary-blue)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "var(--color-blue)" }}
             >
               {secondPart}
             </span>

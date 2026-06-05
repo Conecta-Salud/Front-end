@@ -95,7 +95,7 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
           {subtitle && (
             <p
               className="text-[16px] font-normal leading-tight"
-              style={{ color: "var(--color-text-secundary)" }}
+              style={{ color: "var(--color-gray)" }}
             >
               {subtitle}
             </p>
@@ -131,8 +131,8 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
                 </div>
 
                 <span
-                  className="text-gradient font-semibold whitespace-nowrap"
-                  style={{ backgroundImage: styles.gradient }}
+                  className="font-semibold whitespace-nowrap"
+                  style={{ color: "var(--color-blue)" }}
                 >
                   {metric.value}
                 </span>
