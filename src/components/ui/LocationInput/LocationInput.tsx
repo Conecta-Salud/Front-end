@@ -15,7 +15,6 @@ export type LocationOption = {
   level: LocationLevel;
   stateName?: string;
   stateCode?: string;
-  parentName?: string;
 };
 
 type LocationInputProps = {
@@ -34,11 +33,9 @@ type LocationInputProps = {
 };
 
 const getDisplayLabel = (option: LocationOption): string => {
-  const parentName = option.stateName ?? option.parentName;
-
-  if (option.level === "municipality" && parentName) {
+  if (option.level === "municipality" && option.stateName) {
     return `${formatLocationDisplayText(option.name)} (${formatLocationDisplayText(
-      parentName
+      option.stateName
     )})`;
   }
 
@@ -54,7 +51,6 @@ const adaptLocationSearchResultToOption = (
   level: location.type,
   stateCode: location.stateCode ?? undefined,
   stateName: location.stateName ?? undefined,
-  parentName: location.stateName ?? undefined,
 });
 
 const LocationInput: React.FC<LocationInputProps> = ({
@@ -120,16 +116,14 @@ const LocationInput: React.FC<LocationInputProps> = ({
   const filteredOptions = useRemoteSearch ? remoteOptions : localOptions;
 
   const renderSelectedLabel = (option: LocationOption) => {
-    const parentName = option.stateName ?? option.parentName;
-
-    if (option.level === "municipality" && parentName) {
+    if (option.level === "municipality" && option.stateName) {
       return (
         <>
           <span className="font-medium">
             {formatLocationDisplayText(option.name)}
           </span>{" "}
           <span className="font-normal text-gray-500">
-            ({formatLocationDisplayText(parentName)})
+            ({formatLocationDisplayText(option.stateName)})
           </span>
         </>
       );
@@ -296,12 +290,9 @@ const LocationInput: React.FC<LocationInputProps> = ({
                     {formatLocationDisplayText(option.name)}
                   </span>
 
-                  {option.level === "municipality" &&
-                    (option.stateName || option.parentName) && (
+                  {option.level === "municipality" && option.stateName && (
                     <span className="mt-1 block text-[13px] text-gray-500">
-                      {formatLocationDisplayText(
-                        option.stateName ?? option.parentName
-                      )}
+                      {formatLocationDisplayText(option.stateName)}
                     </span>
                   )}
                 </button>

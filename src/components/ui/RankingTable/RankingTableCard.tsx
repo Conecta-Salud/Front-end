@@ -22,12 +22,7 @@ export const RankingTableCard = <T extends RankingTableBaseRow>({
       ].join(" ")}
     >
       <h2
-        className="mb-4 shrink-0 text-[20px] font-semibold"
-        style={{
-          backgroundImage: "var(--gradient-primary-green)",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
-        }}
+        className="text-brand-blue mb-4 shrink-0 text-[20px] font-semibold"
       >
         {title}
       </h2>
@@ -47,12 +42,7 @@ export const RankingTableCard = <T extends RankingTableBaseRow>({
           <button
             type="button"
             onClick={onFooterClick}
-            className="flex items-center gap-2 text-[16px] font-semibold transition-opacity hover:opacity-80"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue flex items-center gap-2 text-[16px] font-semibold transition-opacity hover:opacity-80"
           >
             <span>{footerText}</span>
             <span className="text-[22px] leading-none">&gt;</span>
