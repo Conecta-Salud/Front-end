@@ -1,7 +1,32 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
+/**
+ * @vitest-environment jsdom
+ */
 
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('../services/auth/firebase', () => ({
+  auth: {
+    currentUser: null,
+    onAuthStateChanged: vi.fn(),
+  },
+}));
+
+vi.mock('../config/env', () => ({
+  env: {
+    apiUrl: 'http://localhost:8080/api',
+    firebase: {
+      apiKey: 'mock-key',
+      authDomain: 'mock-auth',
+      projectId: 'mock-project',
+      storageBucket: 'mock-bucket',
+      messagingSenderId: 'mock-sender',
+      appId: 'mock-app',
+    },
+  },
+}));
+
+import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
 import DashboardStrategicPage from '../pages/dashboard_strategic';
 import { useHeaderFilterStore } from '../stores/headerFilterStore';
 
@@ -61,19 +86,14 @@ describe('Pruebas de Integración - Flujo de Filtros y KPIs', () => {
     expect(screen.getByText('Exportar')).toBeInTheDocument();
   });
 
-  // 🚀 ESTE ES EL COMPLEMENTO DE INTEGRACIÓN REAL: Interacción de usuario
   test('Debe simular la interacción con los controles integrados de la interfaz', async () => {
     render(<DashboardStrategicPage />);
 
-    // 1. Localizar el botón de "Exportar" que renderiza tu componente real
     const botonExportar = screen.getByText('Exportar');
     expect(botonExportar).toBeInTheDocument();
 
-    // 2. Simular un clic real del usuario en la interfaz integrada
     fireEvent.click(botonExportar);
 
-    // 3. Verificar que el componente responde al evento de forma interactiva
-    // (Por ejemplo, asegurando que no se deshabilite o que el estado se mantenga estable)
     expect(botonExportar).not.toBeDisabled();
   });
 });
