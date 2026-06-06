@@ -125,12 +125,7 @@ export default function CustomPieChart({
       <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
         {showTitle && (
           <h2
-            className="mb-4 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-4 text-[20px] font-semibold"
           >
             {title}
           </h2>
@@ -147,12 +142,7 @@ export default function CustomPieChart({
     <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
       {showTitle && (
         <h2
-          className="mb-4 text-[20px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          className="text-brand-blue mb-4 text-[20px] font-semibold"
         >
           {title}
         </h2>

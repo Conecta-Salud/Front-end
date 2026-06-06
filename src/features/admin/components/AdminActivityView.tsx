@@ -103,8 +103,15 @@ export default function AdminActivityView() {
   return (
     <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
       <div className="mb-3 shrink-0">
-        <h2 className="text-[22px] font-semibold text-black">Actividad</h2>
-        <p className="text-[16px] text-gray-500">
+        <h2
+          className="text-brand-blue text-[22px] font-semibold"
+        >
+          Actividad
+        </h2>
+        <p
+          className="text-[16px]"
+          style={{ color: "var(--color-gray)" }}
+        >
           Consulta los eventos realizados dentro del sistema.
         </p>
       </div>
@@ -123,7 +130,10 @@ export default function AdminActivityView() {
       />
 
       {isActivityFetching && rows.length > 0 && (
-        <p className="mb-3 text-[14px] text-gray-500">
+        <p
+          className="mb-3 text-[14px]"
+          style={{ color: "var(--color-gray)" }}
+        >
           Actualizando actividad...
         </p>
       )}
@@ -136,6 +146,8 @@ export default function AdminActivityView() {
           rowHeight="sm"
           emptyMessage="No hay registros de actividad."
         />
+      </div>
+      <div className="mt-auto shrink-0">
         <AdminPagination
           hasNextPage={Boolean(hasNextActivityPage)}
           hasPreviousPage={hasPreviousActivityPage}

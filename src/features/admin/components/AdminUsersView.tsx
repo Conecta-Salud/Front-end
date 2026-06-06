@@ -218,11 +218,14 @@ export default function AdminUsersView() {
   return (
     <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
       <div className="mb-3 shrink-0">
-        <h2 className="text-[22px] font-semibold">Usuarios</h2>
-        <p className="text-[16px]"
-          style={{
-            color: "var(--color-text-secundary)",
-          }}
+        <h2
+          className="text-brand-blue text-[22px] font-semibold"
+        >
+          Usuarios
+        </h2>
+        <p
+          className="text-[16px]"
+          style={{ color: "var(--color-gray)" }}
         >
           Consulta y administra los usuarios registrados.
         </p>
@@ -245,7 +248,7 @@ export default function AdminUsersView() {
       {isUsersFetching && rows.length > 0 && (
         <p className="mb-3 text-[14px]"
           style={{
-            color: "var(--color-text-secundary)",
+            color: "var(--color-gray)",
           }}
         >
           Actualizando usuarios...
@@ -260,6 +263,8 @@ export default function AdminUsersView() {
           rowHeight="sm"
           emptyMessage="No hay usuarios registrados."
         />
+      </div>
+      <div className="mt-auto shrink-0">
         <AdminPagination
           hasNextPage={Boolean(hasNextUsersPage)}
           hasPreviousPage={hasPreviousUsersPage}

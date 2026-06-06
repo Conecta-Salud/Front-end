@@ -58,18 +58,12 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
         <div className="relative flex h-full w-full flex-col justify-center rounded-[7.5px] bg-white px-2.5 py-2.5 leading-none">
           <label
             htmlFor={name}
-            className="bg-clip-text text-[14px] font-semibold text-transparent"
-            style={{ backgroundImage: "var(--gradient-primary-green)" }}
+            className="text-brand-blue text-[14px] font-semibold"
           >
             {label}
             {importance && (
               <span
-                className="text-[14px] font-semibold"
-                style={{
-                  backgroundImage: "var(--gradient-primary-green)",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                }}
+                className="text-brand-blue text-[14px] font-semibold"
               >
                 *
               </span>

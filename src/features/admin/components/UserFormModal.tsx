@@ -218,12 +218,7 @@ function UserFormModalContent({
       >
         <h2
           id="user-form-modal-title"
-          className="text-[24px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          className="text-brand-blue text-[24px] font-semibold"
         >
           {modalTitle}
         </h2>

@@ -116,8 +116,7 @@ export default function LocationAutocomplete({
             <button
               type="button"
               onClick={handleClearSelection}
-              className="text-[25px] font-bold"
-              style={{ color: "var(--color-blue)" }}
+              className="text-brand-blue text-[25px] font-bold"
               aria-label="Limpiar ubicación"
             >
               ×

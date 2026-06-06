@@ -87,8 +87,7 @@ export default function CustomSelect({
           ].join(" ")}
         >
           <span
-            className="bg-clip-text text-[14px] font-semibold text-transparent"
-            style={{ backgroundImage: "var(--gradient-primary-green)" }}
+            className="text-brand-blue text-[14px] font-semibold"
           >
             {label}
           </span>
