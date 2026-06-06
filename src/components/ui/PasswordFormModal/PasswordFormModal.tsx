@@ -124,8 +124,7 @@ function PasswordFormModalContent({
         <div className="mb-7 flex flex-col gap-2">
           <h2
             id="password-form-title"
-            className="text-[24px] font-semibold leading-none"
-            style={{ color: "var(--color-blue)" }}
+            className="text-brand-blue text-[24px] font-semibold leading-none"
           >
             {title}
           </h2>

@@ -100,8 +100,7 @@ export default function ComparisonBarChart({
     return (
       <div className="w-full bg-white p-6 rounded-[10px] shadow-sm">
         <h2
-          className="text-[20px] font-semibold mb-4"
-          style={{ color: "var(--color-blue)" }}
+          className="text-brand-blue text-[20px] font-semibold mb-4"
         >
           {title}
         </h2>
@@ -143,8 +142,7 @@ export default function ComparisonBarChart({
   return (
     <div className="w-full bg-white p-6 rounded-[10px] shadow-sm">
       <h2
-        className="text-[20px] font-semibold mb-4"
-        style={{ color: "var(--color-blue)" }}
+        className="text-brand-blue text-[20px] font-semibold mb-4"
       >
         {title}
       </h2>

@@ -219,8 +219,7 @@ export default function AdminUsersView() {
     <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
       <div className="mb-3 shrink-0">
         <h2
-          className="text-[22px] font-semibold"
-          style={{ color: "var(--color-blue)" }}
+          className="text-brand-blue text-[22px] font-semibold"
         >
           Usuarios
         </h2>
@@ -264,6 +263,8 @@ export default function AdminUsersView() {
           rowHeight="sm"
           emptyMessage="No hay usuarios registrados."
         />
+      </div>
+      <div className="mt-auto shrink-0">
         <AdminPagination
           hasNextPage={Boolean(hasNextUsersPage)}
           hasPreviousPage={hasPreviousUsersPage}

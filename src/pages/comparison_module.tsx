@@ -233,12 +233,7 @@ function ModuloComparacionPage() {
       {shouldShowEmptyState && (
         <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
           <h2
-            className="mb-2 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-2 text-[20px] font-semibold"
           >
             Comparación pendiente
           </h2>
@@ -264,12 +259,7 @@ function ModuloComparacionPage() {
 
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
             <h2
-              className="mb-2 text-[20px] font-semibold"
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              className="text-brand-blue mb-2 text-[20px] font-semibold"
             >
               Índice de prioridad
             </h2>
@@ -288,12 +278,7 @@ function ModuloComparacionPage() {
       {shouldShowErrorState && (
         <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
           <h2
-            className="mb-2 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-2 text-[20px] font-semibold"
           >
             No se pudo cargar la comparación
           </h2>
@@ -328,12 +313,7 @@ function ModuloComparacionPage() {
 
           <section className="mt-6 rounded-[10px] bg-white p-6 shadow-sm">
             <h2
-              className="mb-2 text-[20px] font-semibold"
-              style={{
-                backgroundImage: "var(--gradient-primary-green)",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-              }}
+              className="text-brand-blue mb-2 text-[20px] font-semibold"
             >
               Índice de prioridad
             </h2>

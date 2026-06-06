@@ -104,8 +104,7 @@ export default function AdminActivityView() {
     <section className="flex min-h-0 flex-1 flex-col rounded-[10px] bg-white p-4 shadow-sm">
       <div className="mb-3 shrink-0">
         <h2
-          className="text-[22px] font-semibold"
-          style={{ color: "var(--color-blue)" }}
+          className="text-brand-blue text-[22px] font-semibold"
         >
           Actividad
         </h2>
@@ -147,6 +146,8 @@ export default function AdminActivityView() {
           rowHeight="sm"
           emptyMessage="No hay registros de actividad."
         />
+      </div>
+      <div className="mt-auto shrink-0">
         <AdminPagination
           hasNextPage={Boolean(hasNextActivityPage)}
           hasPreviousPage={hasPreviousActivityPage}

@@ -139,8 +139,7 @@ export default function DashboardChartSection({
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
         <h2
-          className="mb-4 text-[20px] font-semibold"
-          style={{ color: "var(--color-blue)" }}
+          className="text-brand-blue mb-4 text-[20px] font-semibold"
         >
           {chartView.title}
         </h2>

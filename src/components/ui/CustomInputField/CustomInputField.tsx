@@ -58,14 +58,12 @@ const CustomInputField: React.FC<CustomInputFieldProps> = ({
         <div className="relative flex h-full w-full flex-col justify-center rounded-[7.5px] bg-white px-2.5 py-2.5 leading-none">
           <label
             htmlFor={name}
-            className="text-[14px] font-semibold"
-            style={{ color: "var(--color-blue)" }}
+            className="text-brand-blue text-[14px] font-semibold"
           >
             {label}
             {importance && (
               <span
-                className="text-[14px] font-semibold"
-                style={{ color: "var(--color-blue)" }}
+                className="text-brand-blue text-[14px] font-semibold"
               >
                 *
               </span>

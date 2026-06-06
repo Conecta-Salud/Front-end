@@ -87,8 +87,7 @@ export default function CustomSelect({
           ].join(" ")}
         >
           <span
-            className="text-[14px] font-semibold"
-            style={{ color: "var(--color-blue)" }}
+            className="text-brand-blue text-[14px] font-semibold"
           >
             {label}
           </span>

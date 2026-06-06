@@ -38,14 +38,10 @@ const Header: React.FC<HeaderProps> = ({ subtitle, logo = true, actions}) => {
               lineHeight: "1.1",
             }}
           >
-            <span
-              style={{ color: "var(--color-blue)" }}
-            >
+            <span className="text-gradient-green">
               {firstPart}
             </span>
-            <span
-              style={{ color: "var(--color-blue)" }}
-            >
+            <span className="text-brand-blue">
               {secondPart}
             </span>
           </span>

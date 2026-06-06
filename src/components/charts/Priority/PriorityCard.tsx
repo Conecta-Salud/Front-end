@@ -131,8 +131,7 @@ const PriorityCard: React.FC<PriorityCardProps> = ({
                 </div>
 
                 <span
-                  className="font-semibold whitespace-nowrap"
-                  style={{ color: "var(--color-blue)" }}
+                  className="text-brand-blue font-semibold whitespace-nowrap"
                 >
                   {metric.value}
                 </span>

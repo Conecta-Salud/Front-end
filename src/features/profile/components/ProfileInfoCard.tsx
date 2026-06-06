@@ -94,9 +94,8 @@ function ProfileInfoCard({
       {/* HEADER */}
       <div className="mb-5 flex items-center gap-3">
         <h2
-          className="text-[24px]"
+          className="text-brand-blue text-[24px]"
           style={{
-            color: "var(--color-blue)",
             fontWeight: "var(--font-weight-bold)",
           }}
         >
