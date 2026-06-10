@@ -88,7 +88,7 @@ function UserFormModalContent({
 
   const [openSelectId, setOpenSelectId] = useState<string | null>(null);
   
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const isEditMode = mode === "edit";
 
@@ -111,7 +111,7 @@ function UserFormModalContent({
   }, [isSaving, onClose]);
 
   const handleChange = (field: keyof FormState, value: string) => {
-    setValidationError(null);
+    setValidationErrors([]);
 
     setForm((prev) => ({
       ...prev,
@@ -120,59 +120,62 @@ function UserFormModalContent({
   };
 
   const validateForm = () => {
+    const errors: string[] = [];
     const normalizedEmail = form.email.trim().toLowerCase();
     const departmentId = Number(form.departmentId);
 
     if (!form.firstName.trim()) {
-      return "Ingresa el nombre del usuario.";
+      errors.push("Ingresa el nombre del usuario.");
     }
 
     if (!form.lastName.trim()) {
-      return "Ingresa el apellido del usuario.";
+      errors.push("Ingresa el apellido del usuario.");
     }
 
     if (!normalizedEmail) {
-      return "Ingresa el correo electrónico.";
-    }
+      errors.push("Ingresa el correo electrónico.");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(normalizedEmail)) {
-      return "Ingresa un correo electrónico válido.";
+      if (!emailRegex.test(normalizedEmail)) {
+        errors.push("Ingresa un correo electrónico válido.");
+      }
     }
 
     if (!Number.isInteger(departmentId) || departmentId <= 0) {
-      return "Selecciona un departamento.";
+      errors.push("Selecciona un departamento.");
     }
 
     if (!isEditMode) {
       if (!form.password) {
-        return "Ingresa una contraseña.";
+        errors.push("Ingresa una contraseña.");
+      } else {
+        const passwordError = validateStrongPassword(form.password);
+
+        if (passwordError) {
+          errors.push(passwordError);
+        }
       }
 
-      const passwordError = validateStrongPassword(form.password);
-
-      if (passwordError) {
-        return passwordError;
-      }
-
-      if (form.password !== form.confirmPassword) {
-        return "Las contraseñas no coinciden.";
+      if (!form.confirmPassword) {
+        errors.push("Confirma la contraseña.");
+      } else if (form.password && form.password !== form.confirmPassword) {
+        errors.push("Las contraseñas no coinciden.");
       }
     }
 
-    return null;
+    return errors;
   };
 
   const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
-    const error = validateForm();
+    const errors = validateForm();
     const normalizedEmail = form.email.trim().toLowerCase();
     const departmentId = Number(form.departmentId);
 
-    if (error) {
-      setValidationError(error);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
       return;
     }
 
@@ -337,10 +340,15 @@ function UserFormModalContent({
           </div>
         )}
 
-        {validationError && (
-          <p className="mt-5 text-[14px] font-medium text-red-500">
-            {validationError}
-          </p>
+        {validationErrors.length > 0 && (
+          <div className="mt-5 text-[14px] font-medium text-red-500">
+            <p>Corrige los siguientes campos:</p>
+            <ul className="mt-2 list-disc pl-5">
+              {validationErrors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {isError && (
