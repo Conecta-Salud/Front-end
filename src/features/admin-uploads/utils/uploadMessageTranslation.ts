@@ -40,7 +40,7 @@ const PARTIAL_MESSAGE_TRANSLATIONS: Array<[RegExp, string]> = [
 ];
 
 export function translateUploadMessage(message?: string | null) {
-  if (!message) return message ?? null;
+  if (!message) return null;
 
   const normalized = message.trim();
   const exact = EXACT_MESSAGE_TRANSLATIONS[normalized];
