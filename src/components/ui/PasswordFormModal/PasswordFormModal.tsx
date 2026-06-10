@@ -7,7 +7,7 @@ import {
 import Button from "../Button/Button";
 import CustomInputField from "../CustomInputField/CustomInputField";
 
-type PasswordFormModalProps = {
+type PasswordFormModalProps = Readonly<{
   isOpen: boolean;
   title: string;
   description?: ReactNode;
@@ -20,7 +20,7 @@ type PasswordFormModalProps = {
     currentPassword?: string;
     newPassword: string;
   }) => void;
-};
+}>;
 
 type PasswordFormModalContentProps = Omit<PasswordFormModalProps, "isOpen">;
 

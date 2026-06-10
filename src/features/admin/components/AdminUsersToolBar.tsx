@@ -6,7 +6,7 @@ import {
   ADMIN_ROLE_OPTIONS,
 } from "../constants/adminDisplay.constants";
 
-type AdminUsersToolbarProps = {
+type AdminUsersToolbarProps = Readonly<{
   searchTerm: string;
   roleFilter: string;
   activeFilter: string;
@@ -19,7 +19,7 @@ type AdminUsersToolbarProps = {
   onDepartmentChange: (value: string) => void;
   onOpenFilterChange: (id: string | null) => void;
   onCreateUser: () => void;
-};
+}>;
 
 export default function AdminUsersToolbar({
   searchTerm,

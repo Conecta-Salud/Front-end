@@ -16,7 +16,7 @@ export type MunicipalityCatalogItem = {
 export type PeriodCatalogItem = {
   id: number;
   year: number;
-  status?: "open" | "closed" | "published" | string;
+  status?: string;
 };
 
 export type DepartmentCatalogItem = {

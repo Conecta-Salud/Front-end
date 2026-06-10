@@ -1,6 +1,6 @@
-interface SelectedLabelProps {
+type SelectedLabelProps = Readonly<{
   label: string;
-}
+}>;
 
 export default function SelectedLabel({
   label,

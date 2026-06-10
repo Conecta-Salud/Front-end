@@ -5,7 +5,7 @@ type Option = {
   value: string;
 };
 
-type CustomSelectProps = {
+type CustomSelectProps = Readonly<{
   id: string;
   label: string;
   value: string;
@@ -15,7 +15,7 @@ type CustomSelectProps = {
   isOpen: boolean;
   onOpenChange: (id: string | null) => void;
   onChange: (value: string) => void;
-};
+}>;
 
 export default function CustomSelect({
   id,
@@ -38,13 +38,13 @@ export default function CustomSelect({
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+      const target = event.target;
 
-      const clickedInsideButton =
-        containerRef.current && containerRef.current.contains(target);
+      if (!(target instanceof Node)) return;
 
-      const clickedInsideDropdown =
-        dropdownRef.current && dropdownRef.current.contains(target);
+      const clickedInsideButton = containerRef.current?.contains(target);
+
+      const clickedInsideDropdown = dropdownRef.current?.contains(target);
 
       if (!clickedInsideButton && !clickedInsideDropdown) {
         onOpenChange(null);
@@ -165,7 +165,7 @@ export default function CustomSelect({
             })}
           </div>
         </div>
-)}
+      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@ interface Option {
   value: string;
 }
 
-interface FilterProps {
+type FilterProps = Readonly<{
   id: string;
   title: string;
   options: Option[];
@@ -20,7 +20,7 @@ interface FilterProps {
   onChange: (value: string) => void;
   className?: string;
   allowClear?: boolean;
-}
+}>;
 
 type DropdownPosition = {
   top: number;
@@ -99,13 +99,12 @@ export default function Filter({
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+      const target = event.target;
 
-      const clickedInsideButton =
-        containerRef.current && containerRef.current.contains(target);
+      if (!(target instanceof Node)) return;
 
-      const clickedInsideDropdown =
-        dropdownRef.current && dropdownRef.current.contains(target);
+      const clickedInsideButton = containerRef.current?.contains(target);
+      const clickedInsideDropdown = dropdownRef.current?.contains(target);
 
       if (!clickedInsideButton && !clickedInsideDropdown) {
         onOpenChange(null);

@@ -13,14 +13,13 @@ import {
 
 type ChartTone = "green" | "yellow" | "red" | "neutral" | "default";
 
-type CustomXAxisTickProps = {
+type CustomXAxisTickProps = Readonly<{
   x?: string | number;
   y?: string | number;
   payload?: {
     value?: string;
   };
-  data: ChartData[];
-};
+}>;
 
 interface ChartData {
   label: string;
@@ -40,7 +39,7 @@ interface ReferenceConfig {
   label: string;
 }
 
-interface ComparisonBarChartProps {
+type ComparisonBarChartProps = Readonly<{
   data: ChartData[];
   title?: string;
   rules?: StatusRule[];
@@ -50,7 +49,7 @@ interface ComparisonBarChartProps {
   emptyMessage?: string;
   footerNote?: string;
   valueFormatter?: (value: number) => string;
-}
+}>;
 
 const getShortLabel = (label: string, maxLength = 10) => {
   const cleanLabel = label.trim();
@@ -185,7 +184,7 @@ export default function ComparisonBarChart({
               tickLine={false}
               interval={0}
               height={35}
-              tick={(props) => <CustomXAxisTick {...props} data={data} />}
+              tick={CustomXAxisTick}
             />
 
             <YAxis
@@ -196,7 +195,7 @@ export default function ComparisonBarChart({
             />
 
             <Tooltip
-              labelFormatter={(label) => String(label)}
+              labelFormatter={String}
               formatter={(value) => [
                 typeof value === "number"
                   ? valueFormatter?.(value) ?? value.toFixed(2)
@@ -234,12 +233,12 @@ export default function ComparisonBarChart({
                 }
               />
 
-              {data.map((entry, index) => {
+              {data.map((entry) => {
                 const tone = getToneForEntry(entry);
 
                 return (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`${entry.label}-${entry.value}`}
                     fill={`url(#${gradientIds[tone]})`}
                   />
                 );

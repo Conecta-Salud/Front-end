@@ -6,7 +6,7 @@ import type {
   AdminUserStatusAction,
 } from "../types/adminUsers.types";
 
-type UserStatusConfirmModalProps = {
+type UserStatusConfirmModalProps = Readonly<{
   user: AdminUser | null;
   action: AdminUserStatusAction | null;
   isOpen: boolean;
@@ -14,7 +14,7 @@ type UserStatusConfirmModalProps = {
   isError?: boolean;
   onClose: () => void;
   onConfirm: (user: AdminUser, action: AdminUserStatusAction) => void;
-};
+}>;
 
 const actionConfig = {
   deactivate: {

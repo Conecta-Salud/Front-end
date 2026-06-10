@@ -8,7 +8,7 @@ export interface RankingTableBaseRow {
   [key: string]: unknown;
 }
 
-export interface RankingColumn<T extends RankingTableBaseRow> {
+export type RankingColumn<T extends RankingTableBaseRow> = Readonly<{
   header: string;
   key: keyof T | string;
   align?: TableAlign;
@@ -16,18 +16,18 @@ export interface RankingColumn<T extends RankingTableBaseRow> {
   maxWidth?: string;
   width?: string;
   render?: (row: T) => React.ReactNode;
-}
+}>;
 
-export interface RankingTableProps<T extends RankingTableBaseRow> {
+export type RankingTableProps<T extends RankingTableBaseRow> = Readonly<{
   columns: RankingColumn<T>[];
   data: T[];
   compact?: boolean;
   rowHeight?: "sm" | "md" | "lg";
   emptyMessage?: string;
   className?: string;
-}
+}>;
 
-export interface RankingTableCardProps<T extends RankingTableBaseRow> {
+export type RankingTableCardProps<T extends RankingTableBaseRow> = Readonly<{
   title: string;
   columns: RankingColumn<T>[];
   data: T[];
@@ -35,9 +35,9 @@ export interface RankingTableCardProps<T extends RankingTableBaseRow> {
   onFooterClick?: () => void;
   className?: string;
   emptyMessage?: string;
-}
+}>;
 
-export interface RankingTableModalProps<T extends RankingTableBaseRow> {
+export type RankingTableModalProps<T extends RankingTableBaseRow> = Readonly<{
   isOpen: boolean;
   title: string;
   columns: RankingColumn<T>[];
@@ -45,4 +45,4 @@ export interface RankingTableModalProps<T extends RankingTableBaseRow> {
   onClose: () => void;
   emptyMessage?: string;
   className?: string;
-}
+}>;

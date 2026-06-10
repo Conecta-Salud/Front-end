@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Button from "../Button/Button";
 
-type ConfirmModalProps = {
+type ConfirmModalProps = Readonly<{
   isOpen: boolean;
   title: string;
   description: string;
@@ -11,7 +11,7 @@ type ConfirmModalProps = {
   isPending?: boolean;
   onClose: () => void;
   onConfirm: () => void;
-};
+}>;
 
 export default function ConfirmModal({
   isOpen,

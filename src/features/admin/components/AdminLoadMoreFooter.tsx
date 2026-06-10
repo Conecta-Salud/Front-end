@@ -1,4 +1,4 @@
-type AdminLoadMoreFooterProps = {
+type AdminLoadMoreFooterProps = Readonly<{
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   loadedCount: number;
@@ -8,6 +8,38 @@ type AdminLoadMoreFooterProps = {
   errorLabel?: string;
   isError?: boolean;
   onLoadMore: () => void;
+}>;
+
+const getFooterContent = ({
+  hasNextPage,
+  isFetchingNextPage,
+  loadedCount,
+  loadingLabel,
+  loadMoreLabel,
+  completedLabel,
+  onLoadMore,
+}: AdminLoadMoreFooterProps) => {
+  if (isFetchingNextPage) {
+    return <span>{loadingLabel}</span>;
+  }
+
+  if (hasNextPage) {
+    return (
+      <button
+        type="button"
+        onClick={onLoadMore}
+        className="rounded-[6px] border border-gray-200 px-3 py-1.5 text-black transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#57D8BE] focus:ring-offset-2"
+      >
+        {loadMoreLabel}
+      </button>
+    );
+  }
+
+  if (loadedCount > 0) {
+    return <span>{completedLabel}</span>;
+  }
+
+  return null;
 };
 
 export default function AdminLoadMoreFooter({
@@ -21,22 +53,22 @@ export default function AdminLoadMoreFooter({
   isError = false,
   onLoadMore,
 }: AdminLoadMoreFooterProps) {
+  const footerContent = getFooterContent({
+    hasNextPage,
+    isFetchingNextPage,
+    loadedCount,
+    loadingLabel,
+    loadMoreLabel,
+    completedLabel,
+    errorLabel,
+    isError,
+    onLoadMore,
+  });
+
   return (
     <>
       <div className="flex min-h-10 items-center justify-center py-2 text-[14px] text-gray-500">
-        {isFetchingNextPage ? (
-          <span>{loadingLabel}</span>
-        ) : hasNextPage ? (
-          <button
-            type="button"
-            onClick={onLoadMore}
-            className="rounded-[6px] border border-gray-200 px-3 py-1.5 text-black transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#57D8BE] focus:ring-offset-2"
-          >
-            {loadMoreLabel}
-          </button>
-        ) : loadedCount > 0 ? (
-          <span>{completedLabel}</span>
-        ) : null}
+        {footerContent}
       </div>
 
       {isError && loadedCount > 0 && errorLabel && (
