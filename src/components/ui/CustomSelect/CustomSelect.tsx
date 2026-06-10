@@ -75,7 +75,7 @@ export default function CustomSelect({
         <button
           type="button"
           disabled={disabled}
-          aria-haspopup="listbox"
+          aria-haspopup="menu"
           aria-expanded={isOpen}
           onClick={() => {
             if (disabled) return;
@@ -124,7 +124,7 @@ export default function CustomSelect({
       {isOpen && (
         <div
           ref={dropdownRef}
-          role="listbox"
+          role="menu"
           aria-label={label}
           className="
             absolute
@@ -147,8 +147,8 @@ export default function CustomSelect({
                 <button
                   key={option.value}
                   type="button"
-                  role="option"
-                  aria-selected={isSelected}
+                  role="menuitemradio"
+                  aria-checked={isSelected}
                   onClick={() => {
                     onChange(option.value);
                     onOpenChange(null);

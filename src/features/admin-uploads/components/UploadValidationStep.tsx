@@ -155,7 +155,9 @@ export default function UploadValidationStep({
                     <button
                       type="button"
                       disabled={isValidating}
-                      onClick={() => void handleValidateFile(file.id)}
+                      onClick={() => {
+                        handleValidateFile(file.id);
+                      }}
                       className="inline-flex h-[32px] items-center gap-2 rounded-[6px] bg-gray-100 px-3 text-[13px] font-semibold text-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
