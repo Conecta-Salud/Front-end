@@ -40,18 +40,12 @@ export default function ConfirmModal({
 
   if (!isOpen) return null;
 
-  const handleDialogClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-    if (isPending || event.target !== event.currentTarget) return;
-    onClose();
-  };
-
   return (
     <dialog
       open
       className="fixed inset-0 z-[9999] m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-black/40 px-6"
       aria-labelledby="confirm-modal-title"
       aria-describedby="confirm-modal-description"
-      onClick={handleDialogClick}
     >
       <div className="w-full max-w-[520px] rounded-[10px] bg-white p-6 shadow-lg">
         <h2

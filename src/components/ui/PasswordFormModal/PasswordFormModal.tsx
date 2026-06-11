@@ -64,12 +64,6 @@ function PasswordFormModalContent({
     onClose();
   };
 
-  const handleDialogClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-    if (event.target === event.currentTarget) {
-      handleClose();
-    }
-  };
-
   const handleChange = (
     field: "currentPassword" | "newPassword" | "confirmPassword",
     value: string
@@ -120,7 +114,6 @@ function PasswordFormModalContent({
       open
       className="fixed inset-0 z-[9999] m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-black/40 px-6"
       aria-labelledby="password-form-title"
-      onClick={handleDialogClick}
     >
       <div className="w-full max-w-[640px] rounded-[10px] bg-white p-6 shadow-lg">
         <div className="mb-7 flex flex-col gap-2">

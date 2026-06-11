@@ -227,18 +227,11 @@ function UserFormModalContent({
     onClose();
   };
 
-  const handleDialogClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-    if (event.target === event.currentTarget) {
-      handleClose();
-    }
-  };
-
   return (
     <dialog
       open
       className="fixed inset-0 z-[9999] m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-black/40 px-6"
       aria-labelledby="user-form-modal-title"
-      onClick={handleDialogClick}
     >
       <div className="w-full max-w-[720px] rounded-[10px] bg-white p-6 shadow-lg">
         <h2
