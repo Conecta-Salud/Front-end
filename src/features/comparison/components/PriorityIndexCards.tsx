@@ -3,12 +3,17 @@ import PriorityCard from "../../../components/charts/Priority/PriorityCard";
 import type { ComparisonPriorityResult } from "../types/comparisonSummary.types";
 import { adaptPriorityResultsToCards } from "../utils/comparisonPriority.adapter";
 
-type PriorityIndexCardsProps = {
+type PriorityIndexCardsProps = Readonly<{
   priority?: ComparisonPriorityResult[];
   isLoading?: boolean;
   isError?: boolean;
   emptyMessage?: string;
-};
+}>;
+
+const loadingPriorityIds = [
+  "priority-loading-1",
+  "priority-loading-2",
+];
 
 export default function PriorityIndexCards({
   priority = [],
@@ -21,9 +26,9 @@ export default function PriorityIndexCards({
   if (isLoading) {
     return (
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {Array.from({ length: 2 }).map((_, index) => (
+        {loadingPriorityIds.map((loadingPriorityId) => (
           <div
-            key={index}
+            key={loadingPriorityId}
             className="h-[280px] rounded-[10px] bg-white shadow-sm animate-pulse"
           />
         ))}

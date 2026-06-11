@@ -13,14 +13,13 @@ import {
 
 type ChartTone = "green" | "yellow" | "red" | "neutral" | "default";
 
-type CustomXAxisTickProps = {
+type CustomXAxisTickProps = Readonly<{
   x?: string | number;
   y?: string | number;
   payload?: {
     value?: string;
   };
-  data: ChartData[];
-};
+}>;
 
 interface ChartData {
   label: string;
@@ -40,7 +39,7 @@ interface ReferenceConfig {
   label: string;
 }
 
-interface ComparisonBarChartProps {
+type ComparisonBarChartProps = Readonly<{
   data: ChartData[];
   title?: string;
   rules?: StatusRule[];
@@ -48,8 +47,9 @@ interface ComparisonBarChartProps {
   yDomain?: [number | "auto", number | "auto"];
   chartHeight?: number;
   emptyMessage?: string;
+  footerNote?: string;
   valueFormatter?: (value: number) => string;
-}
+}>;
 
 const getShortLabel = (label: string, maxLength = 10) => {
   const cleanLabel = label.trim();
@@ -92,6 +92,7 @@ export default function ComparisonBarChart({
   yDomain = [0, "auto"],
   chartHeight = 320,
   emptyMessage = "No hay datos disponibles.",
+  footerNote,
   valueFormatter,
 }: ComparisonBarChartProps) {
   const chartId = useId();
@@ -108,6 +109,9 @@ export default function ComparisonBarChart({
         <div className="h-[220px] flex items-center justify-center text-gray-500 text-[16px]">
           {emptyMessage}
         </div>
+        {footerNote && (
+          <p className="mt-3 text-[13px] text-gray-500">{footerNote}</p>
+        )}
       </div>
     );
   }
@@ -180,7 +184,7 @@ export default function ComparisonBarChart({
               tickLine={false}
               interval={0}
               height={35}
-              tick={(props) => <CustomXAxisTick {...props} data={data} />}
+              tick={CustomXAxisTick}
             />
 
             <YAxis
@@ -191,7 +195,7 @@ export default function ComparisonBarChart({
             />
 
             <Tooltip
-              labelFormatter={(label) => String(label)}
+              labelFormatter={String}
               formatter={(value) => [
                 typeof value === "number"
                   ? valueFormatter?.(value) ?? value.toFixed(2)
@@ -229,12 +233,12 @@ export default function ComparisonBarChart({
                 }
               />
 
-              {data.map((entry, index) => {
+              {data.map((entry) => {
                 const tone = getToneForEntry(entry);
 
                 return (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`${entry.label}-${entry.value}`}
                     fill={`url(#${gradientIds[tone]})`}
                   />
                 );
@@ -243,6 +247,9 @@ export default function ComparisonBarChart({
           </BarChart>
         </ResponsiveContainer>
       </div>
+      {footerNote && (
+        <p className="mt-3 text-[13px] text-gray-500">{footerNote}</p>
+      )}
     </div>
   );
 }

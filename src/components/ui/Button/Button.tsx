@@ -2,7 +2,7 @@ import React, { type ButtonHTMLAttributes, type ReactNode } from "react";
 import plusIcon from "../../../assets/icons/button/plusIcon.svg";
 import downloadIcon from "../../../assets/icons/button/downloadIcon.svg";
 
-type CustomButtonProps = {
+type CustomButtonProps = Readonly<{
   label: string;
   tone?: "green" | "blue" | "red";
   height?: "40" | "60";
@@ -12,7 +12,7 @@ type CustomButtonProps = {
   textSize?: "md" | "lg";
   loading?: boolean;
   className?: string;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+} & ButtonHTMLAttributes<HTMLButtonElement>>;
 
 const CustomButton: React.FC<CustomButtonProps> = ({
   label,
@@ -66,17 +66,18 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     },
   };
 
-  const resolvedPreset = buttonType ? presetConfig[buttonType] : null;
+  const resolvedPreset = buttonType ? presetConfig[buttonType] : undefined;
+  let resolvedIcon = icon;
 
-  const resolvedIcon = icon ? (
-    icon
-  ) : resolvedPreset ? (
-    <img
-      src={resolvedPreset.src}
-      alt={resolvedPreset.alt}
-      className="w-[18px] h-[18px] object-contain"
-    />
-  ) : null;
+  if (!resolvedIcon && resolvedPreset) {
+    resolvedIcon = (
+      <img
+        src={resolvedPreset.src}
+        alt={resolvedPreset.alt}
+        className="w-[18px] h-[18px] object-contain"
+      />
+    );
+  }
 
   const resolvedPlacement = resolvedPreset
     ? resolvedPreset.placement

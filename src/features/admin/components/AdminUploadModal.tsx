@@ -6,10 +6,10 @@ import { ADMIN_UPLOAD_OPTIONS } from "../constants/adminUploads.constants";
 import { useAdminUploadCsvMutation } from "../queries/adminUploads.queries";
 import type { AdminUploadDataset } from "../types/adminUploads.types";
 
-type AdminUploadModalProps = {
+type AdminUploadModalProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
-};
+}>;
 
 export default function AdminUploadModal({
   isOpen,

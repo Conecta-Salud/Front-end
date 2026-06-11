@@ -14,9 +14,9 @@ import {
   uploadPresets,
 } from "./adminUploadsView.helpers";
 
-type UploadBatchCreatorProps = {
+type UploadBatchCreatorProps = Readonly<{
   onBatchCreated: (batch: UploadBatchSummary) => void;
-};
+}>;
 
 type BatchFormState = {
   sourceType: UploadSourceType;

@@ -6,7 +6,7 @@ import {
   ADMIN_ACTIVITY_RESULT_OPTIONS,
 } from "../constants/adminDisplay.constants";
 
-type AdminActivityToolbarProps = {
+type AdminActivityToolbarProps = Readonly<{
   searchTerm: string;
   actionFilter: string;
   moduleFilter: string;
@@ -17,7 +17,7 @@ type AdminActivityToolbarProps = {
   onModuleChange: (value: string) => void;
   onResultChange: (value: string) => void;
   onOpenFilterChange: (id: string | null) => void;
-};
+}>;
 
 export default function AdminActivityToolbar({
   searchTerm,

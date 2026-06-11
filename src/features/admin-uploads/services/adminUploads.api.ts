@@ -1,7 +1,6 @@
 import api from "../../../services/api";
 import type {
   CreateUploadBatchRequest,
-  CsvFileRole,
   PaginatedResponse,
   ProcessBatchRequest,
   ProcessBatchResponse,
@@ -39,7 +38,7 @@ export async function createUploadBatch(
 export async function uploadBatchFile(
   batchId: number,
   file: File,
-  fileRole: CsvFileRole | string,
+  fileRole: string,
   options?: RequestOptions
 ) {
   const formData = new FormData();

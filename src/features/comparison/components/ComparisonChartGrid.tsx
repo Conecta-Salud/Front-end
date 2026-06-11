@@ -10,12 +10,19 @@ import {
 } from "../utils/comparisonChart.adapter";
 import { formatComparisonChartValue } from "../utils/comparisonFormatters";
 
-type ComparisonChartGridProps = {
+type ComparisonChartGridProps = Readonly<{
   charts?: ComparisonChart[];
   isLoading?: boolean;
   isError?: boolean;
   emptyMessage?: string;
-};
+}>;
+
+const loadingChartIds = [
+  "comparison-chart-loading-1",
+  "comparison-chart-loading-2",
+  "comparison-chart-loading-3",
+  "comparison-chart-loading-4",
+];
 
 const getEmptyMessageForChart = (
   availabilityState: ReturnType<typeof getComparisonChartAvailabilityState>
@@ -64,9 +71,9 @@ export default function ComparisonChartGrid({
   if (isLoading) {
     return (
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
+        {loadingChartIds.map((loadingChartId) => (
           <div
-            key={index}
+            key={loadingChartId}
             className="h-[260px] rounded-[10px] bg-white shadow-sm animate-pulse"
           />
         ))}

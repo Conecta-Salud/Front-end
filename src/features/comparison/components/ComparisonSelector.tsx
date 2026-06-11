@@ -4,7 +4,7 @@ import LocationInput, {
   type LocationOption,
 } from "../../../components/ui/LocationInput/LocationInput";
 
-type ComparisonSelectorProps = {
+type ComparisonSelectorProps = Readonly<{
   level: ComparisonLevel;
   firstLocation: LocationOption | null;
   secondLocation: LocationOption | null;
@@ -12,7 +12,7 @@ type ComparisonSelectorProps = {
   onLevelChange: (level: ComparisonLevel) => void;
   onFirstLocationChange: (location: LocationOption | null) => void;
   onSecondLocationChange: (location: LocationOption | null) => void;
-};
+}>;
 
 const levelOptions: Array<{
   value: ComparisonLevel;
@@ -49,10 +49,11 @@ export default function ComparisonSelector({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        levelDropdownRef.current &&
-        !levelDropdownRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      if (!levelDropdownRef.current?.contains(target)) {
         setLevelDropdownOpen(false);
       }
     };

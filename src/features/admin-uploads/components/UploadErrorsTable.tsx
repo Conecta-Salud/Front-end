@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useUploadBatchErrorsQuery } from "../queries/adminUploads.queries";
 import { translateUploadMessage } from "../utils/uploadMessageTranslation";
 
-type UploadErrorsTableProps = {
+type UploadErrorsTableProps = Readonly<{
   batchId?: number | null;
-};
+}>;
 
 const PAGE_SIZE = 20;
 
@@ -47,7 +47,9 @@ export default function UploadErrorsTable({ batchId }: UploadErrorsTableProps) {
         {batchId && (
           <button
             type="button"
-            onClick={() => void errorsQuery.refetch()}
+            onClick={() => {
+              errorsQuery.refetch();
+            }}
             className="h-[34px] rounded-[6px] bg-gray-100 px-3 text-[13px] font-semibold text-gray-700"
           >
             Actualizar

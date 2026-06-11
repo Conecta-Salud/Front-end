@@ -8,10 +8,10 @@ import {
   uploadStatusLabels,
 } from "./adminUploadsView.helpers";
 
-type UploadBatchHistoryProps = {
+type UploadBatchHistoryProps = Readonly<{
   selectedBatchId?: number | null;
   onSelectBatch: (batch: UploadBatchSummary) => void;
-};
+}>;
 
 export default function UploadBatchHistory({
   selectedBatchId,
@@ -40,7 +40,9 @@ export default function UploadBatchHistory({
 
         <button
           type="button"
-          onClick={() => void batchesQuery.refetch()}
+          onClick={() => {
+            batchesQuery.refetch();
+          }}
           className="inline-flex h-[32px] items-center gap-2 rounded-[6px] bg-gray-100 px-3 text-[13px] font-semibold text-gray-700"
         >
           <RefreshCw className="h-4 w-4" aria-hidden="true" />
@@ -50,9 +52,9 @@ export default function UploadBatchHistory({
 
       {batchesQuery.isLoading && (
         <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: 4 }, (_, index) => (
             <div
-              key={index}
+              key={`batch-history-skeleton-${index}`}
               className="h-[56px] animate-pulse rounded-[8px] bg-gray-100"
             />
           ))}

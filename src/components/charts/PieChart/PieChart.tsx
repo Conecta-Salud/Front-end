@@ -14,7 +14,7 @@ export type PieChartDataItem = {
   colorToken?: "green" | "yellow" | "red" | "neutral";
 };
 
-type CustomPieChartProps = {
+type CustomPieChartProps = Readonly<{
   data?: PieChartDataItem[];
   title?: string;
   chartHeight?: number;
@@ -23,7 +23,7 @@ type CustomPieChartProps = {
   showTitle?: boolean;
   isAnimationActive?: boolean;
   emptyMessage?: string;
-};
+}>;
 
 const DEFAULT_COLORS = [
   "var(--color-pie-1)",

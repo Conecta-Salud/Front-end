@@ -1,6 +1,6 @@
 import searchIcon from "../../../assets/icons/searchIcon.svg";
 
-interface SearchBarProps {
+type SearchBarProps = Readonly<{
   searchTerm?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -10,7 +10,7 @@ interface SearchBarProps {
   onSearch: (term: string) => void;
   onSubmit?: (term: string) => void;
   onFocus?: () => void;
-}
+}>;
 
 export default function SearchBar({
   searchTerm = "",

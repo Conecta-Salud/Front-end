@@ -6,7 +6,7 @@ import type {
   AdminUserStatusAction,
 } from "../types/adminUsers.types";
 
-type UserStatusConfirmModalProps = {
+type UserStatusConfirmModalProps = Readonly<{
   user: AdminUser | null;
   action: AdminUserStatusAction | null;
   isOpen: boolean;
@@ -14,7 +14,7 @@ type UserStatusConfirmModalProps = {
   isError?: boolean;
   onClose: () => void;
   onConfirm: (user: AdminUser, action: AdminUserStatusAction) => void;
-};
+}>;
 
 const actionConfig = {
   deactivate: {
@@ -66,18 +66,13 @@ export default function UserStatusConfirmModal({
   const config = actionConfig[action];
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-6"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      open
+      className="fixed inset-0 z-[9999] m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-black/40 px-6"
       aria-labelledby="user-status-title"
       aria-describedby="user-status-description"
-      onMouseDown={isPending ? undefined : onClose}
     >
-      <div
-        className="w-full max-w-[520px] rounded-[10px] bg-white p-6 shadow-lg"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
+      <div className="w-full max-w-[520px] rounded-[10px] bg-white p-6 shadow-lg">
         <h2
           id="user-status-title"
           className="text-brand-blue mb-3 text-[24px] font-bold"
@@ -116,6 +111,6 @@ export default function UserStatusConfirmModal({
           />
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

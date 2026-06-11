@@ -1,5 +1,4 @@
 import type {
-  CsvFileRole,
   ProcessingMode,
   UploadSourceType,
   UploadStatus,
@@ -43,7 +42,7 @@ export type UploadBatchSummary = {
 
 export type DataUploadFile = {
   id: number;
-  fileRole: CsvFileRole | string;
+  fileRole: string;
   originalFileName: string;
   storedFileName?: string | null;
   fileSize?: number | null;

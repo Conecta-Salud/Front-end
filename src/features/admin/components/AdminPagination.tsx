@@ -1,12 +1,12 @@
 import CustomButton from "../../../components/ui/Button/Button";
 
-type AdminPaginationProps = {
+type AdminPaginationProps = Readonly<{
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isLoading?: boolean;
   onNextPage: () => void;
   onPreviousPage: () => void;
-};
+}>;
 
 export default function AdminPagination({
   hasNextPage,

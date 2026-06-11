@@ -29,6 +29,7 @@ dist-ssr
 *storybook.log
 storybook-static
 *.zip
+.scannerwork/
 
 # Python tooling
 __pycache__/

@@ -8,7 +8,7 @@ import { useLocationSearchQuery } from "../../../features/locations/queries/loca
 import { useDebouncedValue } from "../../../features/locations/hooks/useDebouncedValue";
 import { formatLocationDisplayText } from "../../../features/locations/utils/locationDisplay.utils";
 
-type LocationAutocompleteProps = {
+type LocationAutocompleteProps = Readonly<{
   value?: LocationSearchResult | null;
   placeholder?: string;
   limit?: number;
@@ -17,7 +17,7 @@ type LocationAutocompleteProps = {
   error?: string | null;
   className?: string;
   onChange: (location: LocationSearchResult | null) => void;
-};
+}>;
 
 const typeLabels: Record<LocationSearchType, string> = {
   state: "Estado",
@@ -60,10 +60,11 @@ export default function LocationAutocomplete({
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      if (!containerRef.current?.contains(target)) {
         setIsOpen(false);
         setSearch(value?.displayName ?? "");
       }

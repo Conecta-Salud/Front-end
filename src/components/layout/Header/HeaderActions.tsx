@@ -4,19 +4,20 @@ import type { HealthMapIndicator } from "../../../features/health-map/types/heal
 import type { LocationSearchResult } from "../../../features/locations/types/locationSearch.types";
 import LocationAutocomplete from "../../ui/LocationAutocomplete/LocationAutocomplete";
 
-type HeaderActionsProps = {
+type HeaderActionsProps = Readonly<{
   showCategoryFilter?: boolean;
   showYearFilter?: boolean;
   showSearchBar?: boolean;
 
   category?: HealthMapIndicator;
   year?: string;
+  yearOptions?: Array<{ name: string; value: string }>;
   selectedLocation?: LocationSearchResult | null;
 
   onCategoryChange?: (value: HealthMapIndicator) => void;
   onYearChange?: (value: string) => void;
   onLocationChange?: (location: LocationSearchResult | null) => void;
-};
+}>;
 
 type HeaderDropdownId = "category" | "year";
 
@@ -29,7 +30,7 @@ const indicatorOptions: { name: string; value: HealthMapIndicator }[] = [
   },
 ];
 
-const yearOptions = [
+const defaultYearOptions = [
   { name: "2024", value: "2024" },
   { name: "2025", value: "2025" },
   { name: "2026", value: "2026" },
@@ -39,6 +40,9 @@ const isHealthMapIndicator = (value: string): value is HealthMapIndicator => {
   return indicatorOptions.some((option) => option.value === value);
 };
 
+const isHeaderDropdownId = (id: string | null): id is HeaderDropdownId | null => {
+  return id === null || id === "category" || id === "year";
+};
 
 export default function HeaderActions({
   showCategoryFilter = false,
@@ -47,6 +51,7 @@ export default function HeaderActions({
 
   category = "medical_coverage",
   year = "2024",
+  yearOptions = defaultYearOptions,
   selectedLocation = null,
 
   onCategoryChange,
@@ -61,6 +66,12 @@ export default function HeaderActions({
     if (!isHealthMapIndicator(value)) return;
     onCategoryChange?.(value);
   };
+
+  const handleOpenDropdownChange = (id: string | null) => {
+    if (isHeaderDropdownId(id)) {
+      setOpenDropdown(id);
+    }
+  };
   
   return (
     <div className="flex w-full flex-wrap items-center justify-end gap-3">
@@ -70,7 +81,7 @@ export default function HeaderActions({
           title="Categoría"
           values={category}
           isOpen={openDropdown === "category"}
-          onOpenChange={(id) => setOpenDropdown(id as HeaderDropdownId | null)}
+          onOpenChange={handleOpenDropdownChange}
           onChange={handleCategoryChange}
           allowClear={false}
           className="w-fit max-sm:w-full"
@@ -84,7 +95,7 @@ export default function HeaderActions({
           title="Año"
           values={year}
           isOpen={openDropdown === "year"}
-          onOpenChange={(id) => setOpenDropdown(id as HeaderDropdownId | null)}
+          onOpenChange={handleOpenDropdownChange}
           onChange={(value) => onYearChange?.(value)}
           allowClear={false}
           className="w-fit max-sm:w-full"

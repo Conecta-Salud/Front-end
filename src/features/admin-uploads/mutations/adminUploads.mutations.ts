@@ -8,7 +8,6 @@ import {
 import { adminUploadsQueryKeys } from "../queries/adminUploads.queries";
 import type {
   CreateUploadBatchRequest,
-  CsvFileRole,
   ProcessBatchRequest,
 } from "../types/adminUploads.types";
 
@@ -55,7 +54,7 @@ export function useUploadBatchFileMutation() {
     }: {
       batchId: number;
       file: File;
-      fileRole: CsvFileRole | string;
+      fileRole: string;
     }) => uploadBatchFile(batchId, file, fileRole),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
