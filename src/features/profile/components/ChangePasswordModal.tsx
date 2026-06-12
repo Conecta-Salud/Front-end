@@ -1,10 +1,10 @@
 import PasswordFormModal from "../../../components/ui/PasswordFormModal/PasswordFormModal";
 import { useChangePasswordMutation } from "../mutations/useChangePasswordMutation";
 
-type ChangePasswordModalProps = {
+type ChangePasswordModalProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
-};
+}>;
 
 function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
   if (!isOpen) return null;
@@ -12,9 +12,9 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
   return <ChangePasswordModalContent onClose={onClose} />;
 }
 
-type ChangePasswordModalContentProps = {
+type ChangePasswordModalContentProps = Readonly<{
   onClose: () => void;
-};
+}>;
 
 function ChangePasswordModalContent({
   onClose,

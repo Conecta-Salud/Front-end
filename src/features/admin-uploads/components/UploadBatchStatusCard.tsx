@@ -12,11 +12,11 @@ import {
   uploadStatusLabels,
 } from "./adminUploadsView.helpers";
 
-type UploadBatchStatusCardProps = {
+type UploadBatchStatusCardProps = Readonly<{
   detail?: UploadBatchDetail;
   batch?: UploadBatchSummary;
   isLoading?: boolean;
-};
+}>;
 
 export default function UploadBatchStatusCard({
   detail,

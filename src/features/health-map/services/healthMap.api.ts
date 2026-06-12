@@ -57,7 +57,7 @@ export async function fetchStateMapIndicators(params: {
   });
 
   if (!Array.isArray(response.data)) {
-    throw new Error("Invalid state map indicators response.");
+    throw new TypeError("Invalid state map indicators response.");
   }
 
   return response.data as HealthMapIndicatorResponse[];
@@ -79,7 +79,7 @@ export async function fetchMunicipalityMapIndicators(params: {
   });
 
   if (!Array.isArray(response.data)) {
-    throw new Error("Invalid municipality map indicators response.");
+    throw new TypeError("Invalid municipality map indicators response.");
   }
 
   return response.data as HealthMapIndicatorResponse[];

@@ -74,9 +74,13 @@ export function adaptSummaryRankingColumns(
 
             const translatedValue = translateDashboardValue(value);
 
-            return typeof translatedValue === "string"
-              ? translatedValue
-              : String(translatedValue ?? "Sin dato");
+            if (translatedValue === null || translatedValue === undefined) {
+              return "Sin dato";
+            }
+
+            return typeof translatedValue === "object"
+              ? JSON.stringify(translatedValue)
+              : String(translatedValue);
           }
         : undefined,
     }));
