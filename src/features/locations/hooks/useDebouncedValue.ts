@@ -4,12 +4,12 @@ export function useDebouncedValue<T>(value: T, delay = 350) {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
-    const timeoutId = globalThis.setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
 
     return () => {
-      globalThis.clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId);
     };
   }, [value, delay]);
 

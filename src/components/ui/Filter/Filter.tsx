@@ -86,12 +86,12 @@ export default function Filter({
       updateDropdownPosition();
     };
 
-    globalThis.addEventListener("resize", handleResize);
-    globalThis.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll, true);
 
     return () => {
-      globalThis.removeEventListener("resize", handleResize);
-      globalThis.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
     };
   }, [isOpen]);
 

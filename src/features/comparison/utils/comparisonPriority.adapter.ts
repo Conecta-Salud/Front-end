@@ -90,9 +90,7 @@ export function adaptPriorityResultsToCards(
         label: "Índice de prioridad",
         value: formatPriorityScore(item.score),
       },
-      ...(item.factors ?? []).map((factor, index) =>
-        adaptPriorityFactor(factor, index)
-      ),
+      ...(item.factors ?? []).map(adaptPriorityFactor),
     ],
   }));
 }

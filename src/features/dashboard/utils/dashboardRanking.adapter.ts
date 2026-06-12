@@ -43,6 +43,16 @@ function hasValueForColumn(rows: DashboardRankingRow[], key: string) {
   });
 }
 
+function formatTranslatedValue(value: unknown) {
+  if (value === null || value === undefined) return "Sin dato";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") {
+    return `${value}`;
+  }
+
+  return JSON.stringify(value);
+}
+
 export function adaptSummaryRankingTitle(ranking?: DashboardRanking) {
   if (!ranking?.title) return "";
   return translateDashboardRankingTitle(ranking.title);
@@ -74,13 +84,7 @@ export function adaptSummaryRankingColumns(
 
             const translatedValue = translateDashboardValue(value);
 
-            if (translatedValue === null || translatedValue === undefined) {
-              return "Sin dato";
-            }
-
-            return typeof translatedValue === "object"
-              ? JSON.stringify(translatedValue)
-              : String(translatedValue);
+            return formatTranslatedValue(translatedValue);
           }
         : undefined,
     }));

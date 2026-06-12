@@ -1,6 +1,7 @@
 import type {
   HealthMapColorToken,
   HealthMapFeatureCollection,
+  HealthMapIndicatorResponse,
   RawGeoJsonFeatureCollection,
 } from "../types/healthMap.types";
 
@@ -23,7 +24,7 @@ export function getHealthMapStrokeColor() {
 }
 
 export function createIndicatorLookup(
-  indicators: unknown
+  indicators: HealthMapIndicatorResponse[] | unknown
 ) {
   const safeIndicators = Array.isArray(indicators) ? indicators : [];
 
@@ -60,7 +61,7 @@ export function normalizeGeoJson(
 
 export function mergeGeoJsonWithIndicators(params: {
   geoJson: HealthMapFeatureCollection;
-  indicators: unknown;
+  indicators: HealthMapIndicatorResponse[] | unknown;
 }): HealthMapFeatureCollection {
   const indicatorLookup = createIndicatorLookup(params.indicators);
 

@@ -26,13 +26,13 @@ const pobrezaData = [
 
 const coberturaRules = [
   { min: 2.3, tone: "green" as const },
-  { min: 1, max: 2.29, tone: "yellow" as const },
+  { min: 1.0, max: 2.29, tone: "yellow" as const },
   { max: 0.99, tone: "red" as const },
 ];
 
 const invertedRules = [
   { max: 0.99, tone: "green" as const },
-  { min: 1, max: 2.29, tone: "yellow" as const },
+  { min: 1.0, max: 2.29, tone: "yellow" as const },
   { min: 2.3, tone: "red" as const },
 ];
 
