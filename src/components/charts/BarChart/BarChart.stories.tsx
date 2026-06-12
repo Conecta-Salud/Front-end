@@ -13,7 +13,7 @@ const longLabelData = [
   { label: "Estado de México", value: 2.9 },
   { label: "Baja California Sur", value: 3.1 },
   { label: "San Luis Potosí", value: 2.7 },
-  { label: "Aguascalientes", value: 3 },
+  { label: "Aguascalientes", value: 3.0 },
 ];
 
 const largeValuesData = [

@@ -210,7 +210,7 @@ export default function UploadBatchCreator({
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Tipo de fuente</span>
+            Tipo de fuente
             <select
               value={form.sourceType}
               onChange={(event) =>
@@ -227,7 +227,7 @@ export default function UploadBatchCreator({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Código de fuente</span>
+            Código de fuente
             <input
               value={form.dataSourceCode}
               onChange={(event) =>
@@ -238,7 +238,7 @@ export default function UploadBatchCreator({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Versión del batch</span>
+            Versión del batch
             <input
               value={form.batchVersion}
               onChange={(event) =>
@@ -251,7 +251,7 @@ export default function UploadBatchCreator({
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Año fuente</span>
+            Año fuente
             <input
               type="number"
               min={1900}
