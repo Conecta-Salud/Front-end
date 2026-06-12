@@ -2,14 +2,13 @@ import L from "leaflet";
 import { useMemo } from "react";
 import { CircleMarker, Tooltip } from "react-leaflet";
 import type {
-  HealthMapFeature,
   HealthMapFeatureCollection,
 } from "../types/healthMap.types";
 
-type HealthMapSelectedMarkerProps = {
+type HealthMapSelectedMarkerProps = Readonly<{
   data: HealthMapFeatureCollection;
   selectedCode?: string | null;
-};
+}>;
 
 export default function HealthMapSelectedMarker({
   data,
@@ -18,9 +17,9 @@ export default function HealthMapSelectedMarker({
   const selectedFeature = useMemo(
     () =>
       selectedCode
-        ? (data.features.find(
+        ? data.features.find(
             (feature) => feature.properties.code === selectedCode
-          ) as HealthMapFeature | undefined)
+          )
         : undefined,
     [data, selectedCode]
   );

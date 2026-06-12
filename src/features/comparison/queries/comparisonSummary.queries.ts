@@ -23,7 +23,7 @@ export const comparisonSummaryQueryKeys = {
 };
 
 const hasValidCodes = (codes?: string[]): codes is [string, string] => {
-  if (!codes || codes.length !== 2) return false;
+  if (codes?.length !== 2) return false;
 
   const [firstCode, secondCode] = codes;
 

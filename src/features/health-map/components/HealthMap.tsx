@@ -24,7 +24,7 @@ import HealthMapFitBounds from "./HealthMapFitBounds";
 import HealthMapSelectedMarker from "./HealthMapSelectedMarker";
 import HealthMapLegend from "./HealthMapLegend";
 
-type HealthMapProps = {
+type HealthMapProps = Readonly<{
   indicator: HealthMapIndicator;
   year: string;
   navigation: HealthMapNavigationState;
@@ -33,7 +33,7 @@ type HealthMapProps = {
   isAvailabilityLoading?: boolean;
   availabilityMessage?: string;
   className?: string;
-};
+}>;
 
 export default function HealthMap({
   indicator,

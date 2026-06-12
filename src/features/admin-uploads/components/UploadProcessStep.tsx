@@ -13,9 +13,9 @@ import {
   uploadStatusLabels,
 } from "./adminUploadsView.helpers";
 
-type UploadProcessStepProps = {
+type UploadProcessStepProps = Readonly<{
   detail?: UploadBatchDetail;
-};
+}>;
 
 const processingModeOptions: ProcessingMode[] = [
   "upsert",
@@ -97,7 +97,7 @@ export default function UploadProcessStep({ detail }: UploadProcessStepProps) {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            Modo de procesamiento
+            <span>Modo de procesamiento</span>
             <select
               value={mode}
               disabled={!batch}
@@ -124,7 +124,7 @@ export default function UploadProcessStep({ detail }: UploadProcessStepProps) {
               }
               className="h-4 w-4 accent-emerald-600 disabled:cursor-not-allowed"
             />
-            Reemplazar registros del año
+            <span>Reemplazar registros del año</span>
           </label>
 
           <label className="flex items-center gap-3 rounded-[8px] border border-gray-200 px-3 py-2 text-[14px] font-semibold text-black">
@@ -135,7 +135,7 @@ export default function UploadProcessStep({ detail }: UploadProcessStepProps) {
               onChange={(event) => setFailOnErrors(event.target.checked)}
               className="h-4 w-4 accent-emerald-600 disabled:cursor-not-allowed"
             />
-            Detener si hay errores
+            <span>Detener si hay errores</span>
           </label>
         </div>
 
