@@ -1,4 +1,6 @@
-export type DashboardTerritoryLevel = "country" | "state" | "municipality";
+import type { TerritoryLevel } from "../../shared/types/apiContracts.types";
+
+export type DashboardTerritoryLevel = TerritoryLevel;
 
 export type DashboardScope = {
   level: DashboardTerritoryLevel;
@@ -12,7 +14,7 @@ export type DashboardScope = {
 export type DashboardTerritoryDto = {
   id: number | null;
   name: string;
-  type: DashboardTerritoryLevel | string;
+  type: string;
 };
 
 export type DashboardPeriodDto = {

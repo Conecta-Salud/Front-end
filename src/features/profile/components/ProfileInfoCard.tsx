@@ -1,8 +1,6 @@
-// ICONOS
-import MedicalIcon from "../../../assets/icons/MedicalBriefcase.svg";
 import PencilIcon from "../../../assets/icons/Pencil.svg";
 
-interface ProfileInfoCardProps {
+type ProfileInfoCardProps = Readonly<{
   title: string;
   lastLoginAt: string;
   email: string;
@@ -11,12 +9,12 @@ interface ProfileInfoCardProps {
   isLoading?: boolean;
   isError?: boolean;
   onEditPassword: () => void;
-}
+}>;
 
-interface InfoRowProps {
+type InfoRowProps = Readonly<{
   label: string;
   value?: string | null;
-}
+}>;
 
 function InfoRow({ label, value }: InfoRowProps) {
   return (
@@ -95,14 +93,9 @@ function ProfileInfoCard({
     >
       {/* HEADER */}
       <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl">
-          <img src={MedicalIcon} alt="medical-icon" className="h-7 w-7" />
-        </div>
-
         <h2
-          className="text-[24px]"
+          className="text-brand-blue text-[24px]"
           style={{
-            color: "var(--color-green-end)",
             fontWeight: "var(--font-weight-bold)",
           }}
         >
@@ -123,9 +116,7 @@ function ProfileInfoCard({
 
         <p
           className="text-[16px]"
-          style={{
-            color: "var(--color-text-secundary)",
-          }}
+          style={{ color: "var(--color-gray)" }}
         >
           {lastLoginAt}
         </p>

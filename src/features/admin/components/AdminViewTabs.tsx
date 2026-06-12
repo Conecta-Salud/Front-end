@@ -1,9 +1,9 @@
 import type { AdminTab } from "../types/admin.types";
 
-type AdminViewTabsProps = {
+type AdminViewTabsProps = Readonly<{
   activeTab: AdminTab;
   onTabChange: (tab: AdminTab) => void;
-};
+}>;
 
 const tabs: Array<{ value: AdminTab; label: string }> = [
   { value: "users", label: "Usuarios" },

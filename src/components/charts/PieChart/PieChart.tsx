@@ -14,7 +14,7 @@ export type PieChartDataItem = {
   colorToken?: "green" | "yellow" | "red" | "neutral";
 };
 
-type CustomPieChartProps = {
+type CustomPieChartProps = Readonly<{
   data?: PieChartDataItem[];
   title?: string;
   chartHeight?: number;
@@ -23,7 +23,7 @@ type CustomPieChartProps = {
   showTitle?: boolean;
   isAnimationActive?: boolean;
   emptyMessage?: string;
-};
+}>;
 
 const DEFAULT_COLORS = [
   "var(--color-pie-1)",
@@ -125,12 +125,7 @@ export default function CustomPieChart({
       <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
         {showTitle && (
           <h2
-            className="mb-4 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-4 text-[20px] font-semibold"
           >
             {title}
           </h2>
@@ -147,12 +142,7 @@ export default function CustomPieChart({
     <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
       {showTitle && (
         <h2
-          className="mb-4 text-[20px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          className="text-brand-blue mb-4 text-[20px] font-semibold"
         >
           {title}
         </h2>

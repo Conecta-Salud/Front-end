@@ -10,7 +10,7 @@ interface Option {
   value: string;
 }
 
-interface FilterProps {
+type FilterProps = Readonly<{
   id: string;
   title: string;
   options: Option[];
@@ -20,7 +20,7 @@ interface FilterProps {
   onChange: (value: string) => void;
   className?: string;
   allowClear?: boolean;
-}
+}>;
 
 type DropdownPosition = {
   top: number;
@@ -99,13 +99,12 @@ export default function Filter({
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+      const target = event.target;
 
-      const clickedInsideButton =
-        containerRef.current && containerRef.current.contains(target);
+      if (!(target instanceof Node)) return;
 
-      const clickedInsideDropdown =
-        dropdownRef.current && dropdownRef.current.contains(target);
+      const clickedInsideButton = containerRef.current?.contains(target);
+      const clickedInsideDropdown = dropdownRef.current?.contains(target);
 
       if (!clickedInsideButton && !clickedInsideDropdown) {
         onOpenChange(null);
@@ -132,7 +131,7 @@ export default function Filter({
       <button
         ref={buttonRef}
         type="button"
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
         aria-expanded={isOpen}
         onClick={() => onOpenChange(isOpen ? null : id)}
         className="flex h-11 w-full items-center gap-2 rounded-xl border-2 bg-white px-[10px] shadow-sm"
@@ -170,7 +169,7 @@ export default function Filter({
         createPortal(
           <div
             ref={dropdownRef}
-            role="listbox"
+            role="menu"
             aria-label={title}
             className="fixed rounded-xl shadow-lg border-2 border-gray-200 bg-white"
             style={{
@@ -187,8 +186,8 @@ export default function Filter({
                 <button
                   key={option.value}
                   type="button"
-                  role="option"
-                  aria-selected={option.value === selectedValue}
+                  role="menuitemradio"
+                  aria-checked={option.value === selectedValue}
                   onClick={() => toggleValue(option.value)}
                   className="w-full cursor-pointer whitespace-nowrap rounded-md px-3 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#57D8BE]"
                 >

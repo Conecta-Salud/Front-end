@@ -60,7 +60,7 @@ const formatCellValue = (value: unknown) => {
       .replace(/^\w/, (letter) => letter.toUpperCase());
   }
 
-  return String(value);
+  return JSON.stringify(value) ?? "Sin dato";
 };
 
 export const RankingTable = <T extends RankingTableBaseRow>({

@@ -14,8 +14,13 @@ a {
   color: inherit;
 }
 
-.text-gradient {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-  }
+.text-brand-blue {
+  color: var(--color-blue);
+}
+
+.text-gradient-green {
+  background-image: var(--gradient-primary-green);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

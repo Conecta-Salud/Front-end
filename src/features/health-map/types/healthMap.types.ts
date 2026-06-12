@@ -1,11 +1,12 @@
 import type { Feature, FeatureCollection, Geometry } from "geojson";
+import type {
+  DashboardCategory,
+  TerritoryLevel,
+} from "../../shared/types/apiContracts.types";
 
-export type HealthMapViewLevel = "country" | "state" | "municipality";
+export type HealthMapViewLevel = TerritoryLevel;
 
-export type HealthMapIndicator =
-  | "medical_coverage"
-  | "hospital_beds"
-  | "healthcare_access_deficiency";
+export type HealthMapIndicator = DashboardCategory;
 
 export type HealthMapStatusLevel =
   | "good"
@@ -25,6 +26,11 @@ export type HealthMapIndicatorResponse = {
   value: number | null;
   level: HealthMapStatusLevel;
   colorToken: HealthMapColorToken;
+  sourceYear?: number | null;
+  unit?: string | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
+  dataSourceName?: string | null;
 };
 
 export type HealthMapFeatureProperties = {

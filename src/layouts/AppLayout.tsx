@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 import Header from "../components/layout/Header/Header";
@@ -11,6 +11,8 @@ import {
   headerConfigByPath,
   defaultHeaderConfig,
 } from "../config/header.config";
+import { usePeriodsCatalogQuery } from "../features/catalogs/queries/catalog.queries";
+import type { PeriodCatalogItem } from "../features/catalogs/types/catalog.types";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -19,6 +21,14 @@ type AppLayoutProps = {
 
 const HEADER_HEIGHT = 120;
 const SIDEBAR_WIDTH = 100;
+
+const knownPeriodStatuses = new Set(["open", "closed", "published"]);
+
+const canUsePeriodAsYearOption = (period: PeriodCatalogItem) => {
+  if (!period.status) return true;
+  if (!knownPeriodStatuses.has(period.status)) return true;
+  return period.status === "published";
+};
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
@@ -41,6 +51,42 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     headerConfig.showYearFilter ||
     headerConfig.showSearchBar;
 
+  const periodsQuery = usePeriodsCatalogQuery({
+    enabled: headerConfig.showYearFilter,
+  });
+
+  const availableYears = useMemo(() => {
+    return Array.from(
+      new Set(
+        (periodsQuery.data ?? [])
+          .filter(canUsePeriodAsYearOption)
+          .map((period) => period.year)
+          .filter((item) => Number.isFinite(Number(item)))
+      )
+    )
+      .map(Number)
+      .sort((a, b) => b - a);
+  }, [periodsQuery.data]);
+
+  const yearOptions = useMemo(
+    () =>
+      availableYears.map((availableYear) => ({
+        name: String(availableYear),
+        value: String(availableYear),
+      })),
+    [availableYears]
+  );
+
+  useEffect(() => {
+    if (!availableYears.length) return;
+
+    const selectedYear = Number(year);
+
+    if (availableYears.includes(selectedYear)) return;
+
+    setYear(String(availableYears[0]));
+  }, [availableYears, setYear, year]);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#F5F7F8]">
       {/* Header fijo */}
@@ -58,6 +104,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 showSearchBar={headerConfig.showSearchBar}
                 category={category}
                 year={year}
+                yearOptions={yearOptions}
                 selectedLocation={selectedLocation}
                 onCategoryChange={setCategory}
                 onYearChange={setYear}

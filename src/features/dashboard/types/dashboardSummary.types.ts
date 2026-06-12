@@ -1,11 +1,13 @@
-import type { HealthMapIndicator } from "../../health-map/types/healthMap.types";
+import type { DashboardCategory } from "../../shared/types/apiContracts.types";
 import type { DashboardTerritoryLevel } from "./dashboard.types";
 
-export type DashboardCategory = HealthMapIndicator;
+export type { DashboardCategory } from "../../shared/types/apiContracts.types";
 
 export type DashboardKpiVariant =
   | "green"
   | "red"
+  | "yellow"
+  | "neutral"
   | "default"
 
 export type DashboardStatusLevel =
@@ -16,7 +18,9 @@ export type DashboardStatusLevel =
 
 export type DashboardColorToken =
   | "green"
+  | "yellow"
   | "red"
+  | "neutral"
 
 export type DashboardChartType = "bar" | "pie" | "scatter";
 
@@ -39,6 +43,9 @@ export type DashboardKpi = {
   unit: string;
   variant: DashboardKpiVariant;
   order: number;
+  sourceYear?: number | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
 };
 
 export type DashboardRankingColumn = {
@@ -88,6 +95,9 @@ export type DashboardChartDataPoint = {
 
   level?: DashboardStatusLevel;
   colorToken?: DashboardColorToken;
+  sourceYear?: number | null;
+  availabilityStatus?: string | null;
+  methodologyNote?: string | null;
 
   extra?: Record<string, unknown>;
 };

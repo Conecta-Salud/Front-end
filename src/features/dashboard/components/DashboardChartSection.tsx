@@ -12,12 +12,12 @@ import {
 } from "../utils/dashboardChart.adapter";
 import DashboardScatterChart from "./DashboardScatterChart";
 
-type DashboardChartSectionProps = {
+type DashboardChartSectionProps = Readonly<{
   chart?: DashboardChart;
   isLoading?: boolean;
   isError?: boolean;
   height?: number;
-};
+}>;
 
 type DashboardChartView =
   | {
@@ -103,7 +103,10 @@ export default function DashboardChartSection({
   if (!chartView) {
     return (
       <div className="rounded-[10px] bg-white p-6 shadow-sm">
-        <p className="text-[16px] text-gray-500">
+        <p
+          className="text-[16px]"
+          style={{ color: "var(--color-gray)" }}
+        >
           No hay datos graficos disponibles.
         </p>
       </div>
@@ -136,12 +139,7 @@ export default function DashboardChartSection({
     return (
       <section className="rounded-[10px] bg-white p-6 shadow-sm">
         <h2
-          className="mb-4 text-[20px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          className="text-brand-blue mb-4 text-[20px] font-semibold"
         >
           {chartView.title}
         </h2>
@@ -153,7 +151,10 @@ export default function DashboardChartSection({
 
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-sm">
-      <p className="text-[16px] text-gray-500">
+      <p
+        className="text-[16px]"
+        style={{ color: "var(--color-gray)" }}
+      >
         Tipo de grafico no soportado: {String(chartView.rawType)}
       </p>
     </div>

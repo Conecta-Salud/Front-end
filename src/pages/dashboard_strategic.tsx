@@ -1,6 +1,8 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 
-import type { HealthMapNavigationState } from "../features/health-map/types/healthMap.types";
+import type {
+  HealthMapNavigationState,
+} from "../features/health-map/types/healthMap.types";
 import DashboardRankingSection from "../features/dashboard/components/DashboardRankingSection";
 
 import { useHeaderFilterStore } from "../stores/headerFilterStore";
@@ -9,6 +11,14 @@ import { useDashboardSummary } from "../features/dashboard/hooks/useDashboardSum
 import DashboardKpiGrid from "../features/dashboard/components/DashboardKpiGrid";
 
 import { formatLocationDisplayText } from "../features/locations/utils/locationDisplay.utils";
+import type { LocationSearchResult } from "../features/locations/types/locationSearch.types";
+import { useDataAvailabilityQuery } from "../features/data-availability/queries/dataAvailability.queries";
+import {
+  getCategoryAvailabilityNote,
+  getCategoryCodeFromHeaderIndicator,
+  isCategoryAvailable,
+} from "../features/data-availability/utils/dataAvailability.utils";
+import type { TerritoryLevel } from "../features/shared/types/apiContracts.types";
 
 const HealthMap = lazy(() => import("../features/health-map/components/HealthMap"));
 const DashboardChartSection = lazy(
@@ -35,6 +45,58 @@ function ChartFallback() {
   );
 }
 
+function DataUnavailableNotice({ note }: Readonly<{ note: string }>) {
+  return (
+    <section className="rounded-[10px] border border-[#F8D7A4] bg-[#FFF8EC] p-5 shadow-sm">
+      <h2 className="text-[18px] font-semibold text-[#7A4A00]">
+        Datos no disponibles
+      </h2>
+
+      <p className="mt-2 text-[15px] leading-6 text-[#7A4A00]">
+        {note}
+      </p>
+    </section>
+  );
+}
+
+function getEffectiveMapTerritoryLevel(level: TerritoryLevel): TerritoryLevel {
+  if (level === "country") return "state";
+  return "municipality";
+}
+
+function getNavigationFromSelectedLocation(
+  selectedLocation: LocationSearchResult | null
+): HealthMapNavigationState | null {
+  if (!selectedLocation) return null;
+
+  if (selectedLocation.type === "state") {
+    return {
+      level: "state",
+      selectedState: {
+        code: selectedLocation.code,
+        name: selectedLocation.name,
+      },
+      selectedMunicipality: null,
+    };
+  }
+
+  if (!selectedLocation.stateCode || !selectedLocation.stateName) {
+    return null;
+  }
+
+  return {
+    level: "municipality",
+    selectedState: {
+      code: selectedLocation.stateCode,
+      name: selectedLocation.stateName,
+    },
+    selectedMunicipality: {
+      code: selectedLocation.code,
+      name: selectedLocation.name,
+    },
+  };
+}
+
 function DashboardStrategicPage() {
   const year = useHeaderFilterStore((state) => state.year);
   const indicator = useHeaderFilterStore((state) => state.category);
@@ -50,54 +112,94 @@ function DashboardStrategicPage() {
     selectedMunicipality: null,
   });
 
-  useEffect(() => {
-    if (!selectedLocation) return;
+  const selectedLocationNavigation = useMemo(
+    () => getNavigationFromSelectedLocation(selectedLocation),
+    [selectedLocation]
+  );
 
-    if (selectedLocation.type === "state") {
-      setMapNavigation({
-        level: "state",
-        selectedState: {
-          code: selectedLocation.code,
-          name: selectedLocation.name,
-        },
-        selectedMunicipality: null,
-      });
+  const activeNavigation = selectedLocationNavigation ?? mapNavigation;
 
-      return;
-    }
+  const selectedYear = Number(year);
+  const hasValidYear = Number.isFinite(selectedYear);
+  const categoryCode = getCategoryCodeFromHeaderIndicator(indicator);
 
-    if (selectedLocation.type === "municipality") {
-      if (!selectedLocation.stateCode || !selectedLocation.stateName) {
-        console.warn(
-          "Municipality result is missing parent state data",
-          selectedLocation
-        );
-        return;
-      }
+  const effectiveMapTerritoryLevel = useMemo(
+    () => getEffectiveMapTerritoryLevel(activeNavigation.level),
+    [activeNavigation.level]
+  );
 
-      setMapNavigation({
-        level: "municipality",
-        selectedState: {
-          code: selectedLocation.stateCode,
-          name: selectedLocation.stateName,
-        },
-        selectedMunicipality: {
-          code: selectedLocation.code,
-          name: selectedLocation.name,
-        },
-      });
-    }
-  }, [selectedLocation]);
+  const dashboardAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: activeNavigation.level,
+    analysisYear: selectedYear,
+    categoryCode,
+    enabled: hasValidYear,
+  });
+
+  const mapAvailabilityQuery = useDataAvailabilityQuery({
+    territoryLevel: effectiveMapTerritoryLevel,
+    analysisYear: selectedYear,
+    categoryCode,
+    enabled: hasValidYear,
+  });
+
+  const dashboardAvailabilityParams = {
+    items: dashboardAvailabilityQuery.data?.items ?? [],
+    territoryLevel: activeNavigation.level,
+    analysisYear: selectedYear,
+    headerIndicator: indicator,
+  };
+
+  const mapAvailabilityParams = {
+    items: mapAvailabilityQuery.data?.items ?? [],
+    territoryLevel: effectiveMapTerritoryLevel,
+    analysisYear: selectedYear,
+    headerIndicator: indicator,
+  };
+
+  const isDashboardCategoryAvailable =
+    dashboardAvailabilityQuery.isSuccess &&
+    isCategoryAvailable(dashboardAvailabilityParams);
+
+  const shouldEnableDashboardSummary =
+    dashboardAvailabilityQuery.isError ||
+    (dashboardAvailabilityQuery.isSuccess && isDashboardCategoryAvailable);
+
+  const isDashboardCategoryUnavailable =
+    dashboardAvailabilityQuery.isSuccess && !isDashboardCategoryAvailable;
+
+  const dashboardAvailabilityNote = getCategoryAvailabilityNote(
+    dashboardAvailabilityParams
+  );
+
+  const isMapCategoryAvailable =
+    mapAvailabilityQuery.isSuccess &&
+    isCategoryAvailable(mapAvailabilityParams);
+
+  const shouldEnableMapData =
+    mapAvailabilityQuery.isError ||
+    (mapAvailabilityQuery.isSuccess && isMapCategoryAvailable);
+
+  const isMapCategoryUnavailable =
+    mapAvailabilityQuery.isSuccess && !isMapCategoryAvailable;
+
+  const mapAvailabilityNote = getCategoryAvailabilityNote(
+    mapAvailabilityParams,
+    "No hay datos disponibles para pintar el mapa con la categoría y año seleccionados."
+  );
 
   const dashboardScope = useDashboardScope({
-    navigation: mapNavigation,
+    navigation: activeNavigation,
     year,
   });
 
   const dashboardSummary = useDashboardSummary({
     scope: dashboardScope,
     category: indicator,
+    enabled: shouldEnableDashboardSummary,
   });
+
+  const isDashboardAvailabilityLoading = dashboardAvailabilityQuery.isLoading;
+  const isMapAvailabilityLoading = mapAvailabilityQuery.isLoading;
 
   const handleMapNavigationChange = (navigation: HealthMapNavigationState) => {
     setSelectedLocation(null);
@@ -115,13 +217,13 @@ function DashboardStrategicPage() {
   };
 
   const goToState = () => {
-    if (!mapNavigation.selectedState) return;
+    if (!activeNavigation.selectedState) return;
 
     setSelectedLocation(null);
 
     setMapNavigation({
       level: "state",
-      selectedState: mapNavigation.selectedState,
+      selectedState: activeNavigation.selectedState,
       selectedMunicipality: null,
     });
   };
@@ -134,10 +236,10 @@ function DashboardStrategicPage() {
             <button
               type="button"
               onClick={goToCountry}
-              disabled={mapNavigation.level === "country"}
+              disabled={activeNavigation.level === "country"}
               className={[
                 "transition-opacity",
-                mapNavigation.level === "country"
+                activeNavigation.level === "country"
                   ? "cursor-default font-bold text-black"
                   : "cursor-pointer font-normal hover:opacity-70",
               ].join(" ")}
@@ -145,32 +247,32 @@ function DashboardStrategicPage() {
               México
             </button>
 
-            {mapNavigation.selectedState && (
+            {activeNavigation.selectedState && (
               <>
                 <span className="font-normal"> &gt; </span>
 
                 <button
                   type="button"
                   onClick={goToState}
-                  disabled={mapNavigation.level === "state"}
+                  disabled={activeNavigation.level === "state"}
                   className={[
                     "transition-opacity",
-                    mapNavigation.level === "state"
+                    activeNavigation.level === "state"
                       ? "cursor-default font-bold text-black"
                       : "cursor-pointer font-normal hover:opacity-70",
                   ].join(" ")}
                 >
-                  {formatLocationDisplayText(mapNavigation.selectedState.name)}
+                  {formatLocationDisplayText(activeNavigation.selectedState.name)}
                 </button>
               </>
             )}
 
-            {mapNavigation.selectedMunicipality && (
+            {activeNavigation.selectedMunicipality && (
               <>
                 <span className="font-normal"> &gt; </span>
 
                 <span className="font-bold text-black">
-                  {formatLocationDisplayText(mapNavigation.selectedMunicipality.name)}
+                  {formatLocationDisplayText(activeNavigation.selectedMunicipality.name)}
                 </span>
               </>
             )}
@@ -188,53 +290,74 @@ function DashboardStrategicPage() {
             <HealthMap
               indicator={indicator}
               year={year}
-              navigation={mapNavigation}
+              navigation={activeNavigation}
               onNavigationChange={handleMapNavigationChange}
+              isDataAvailable={shouldEnableMapData}
+              isAvailabilityLoading={isMapAvailabilityLoading}
+              availabilityMessage={
+                isMapCategoryUnavailable ? mapAvailabilityNote : undefined
+              }
             />
           </Suspense>
         </div>
 
         <aside className="col-span-12 flex min-h-0 flex-col gap-6 xl:col-span-5 xl:h-full">
-          <div className="shrink-0">
-            <DashboardKpiGrid
-              kpis={dashboardSummary.summary?.kpis}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-            />
-          </div>
+          {isDashboardCategoryUnavailable ? (
+            <DataUnavailableNotice note={dashboardAvailabilityNote} />
+          ) : (
+            <>
+              <div className="shrink-0">
+                <DashboardKpiGrid
+                  kpis={dashboardSummary.summary?.kpis}
+                  isLoading={
+                    isDashboardAvailabilityLoading || dashboardSummary.isLoading
+                  }
+                  isError={dashboardSummary.isError}
+                />
+              </div>
 
-          <DashboardRankingSection
-            ranking={dashboardSummary.summary?.ranking}
-            isLoading={dashboardSummary.isLoading}
-            isError={dashboardSummary.isError}
-            className="min-h-0 flex-1"
-          />
+              <DashboardRankingSection
+                ranking={dashboardSummary.summary?.ranking}
+                isLoading={
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                className="min-h-0 flex-1"
+              />
+            </>
+          )}
         </aside>
       </section>
 
-      <section className="mt-6 grid grid-cols-12 gap-6">
-        <div className="col-span-12 xl:col-span-7">
-          <Suspense fallback={<ChartFallback />}>
-            <DashboardChartSection
-              chart={dashboardSummary.summary?.mainChart}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-              height={340}
-            />
-          </Suspense>
-        </div>
+      {!isDashboardCategoryUnavailable && (
+        <section className="mt-6 grid grid-cols-12 gap-6">
+          <div className="col-span-12 xl:col-span-7">
+            <Suspense fallback={<ChartFallback />}>
+              <DashboardChartSection
+                chart={dashboardSummary.summary?.mainChart}
+                isLoading={
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                height={340}
+              />
+            </Suspense>
+          </div>
 
-        <div className="col-span-12 xl:col-span-5">
-          <Suspense fallback={<ChartFallback />}>
-            <DashboardChartSection
-              chart={dashboardSummary.summary?.secondaryChart}
-              isLoading={dashboardSummary.isLoading}
-              isError={dashboardSummary.isError}
-              height={340}
-            />
-          </Suspense>
-        </div>
-      </section>
+          <div className="col-span-12 xl:col-span-5">
+            <Suspense fallback={<ChartFallback />}>
+              <DashboardChartSection
+                chart={dashboardSummary.summary?.secondaryChart}
+                isLoading={
+                  isDashboardAvailabilityLoading || dashboardSummary.isLoading
+                }
+                isError={dashboardSummary.isError}
+                height={340}
+              />
+            </Suspense>
+          </div>
+        </section>
+      )}
 
       {dashboardSummary.isFetching && (
         <div className="fixed bottom-4 right-4 z-50 rounded-[10px] bg-white px-4 py-2 shadow-md">

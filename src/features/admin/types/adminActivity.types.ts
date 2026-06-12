@@ -8,7 +8,7 @@ export type AdminActivityLog = {
   createdAt: string;
   detail: string;
   module: string;
-  result: AdminActivityResult | string;
+  result: string;
   userEmail: string;
   userFullName: string;
   userId: string;

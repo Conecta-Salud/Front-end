@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchComparisonSummary } from "../services/comparisonSummary.api";
 import type {
   ComparisonLevel,
@@ -23,7 +23,7 @@ export const comparisonSummaryQueryKeys = {
 };
 
 const hasValidCodes = (codes?: string[]): codes is [string, string] => {
-  if (!codes || codes.length !== 2) return false;
+  if (codes?.length !== 2) return false;
 
   const [firstCode, secondCode] = codes;
 
@@ -58,6 +58,5 @@ export function useComparisonSummaryQuery(params: {
       ),
     enabled: canRun && (params.enabled ?? true),
     staleTime: 1000 * 60 * 10,
-    placeholderData: keepPreviousData,
   });
 }

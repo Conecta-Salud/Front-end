@@ -27,6 +27,12 @@ export const ADMIN_ACTIVITY_ACTION_LABELS: Record<string, string> = {
   DEACTIVATE_USER: "Desactivar usuario",
   REACTIVATE_USER: "Reactivar usuario",
   CHANGE_USER_PASSWORD: "Cambiar contraseña",
+  UPLOAD_BATCH_CREATED: "Crear lote de carga",
+  UPLOAD_FILE_UPLOADED: "Subir archivo de carga",
+  UPLOAD_FILE_VALIDATED: "Validar archivo de carga",
+  UPLOAD_BATCH_PROCESSED: "Procesar lote de carga",
+  UPLOAD_BATCH_COMPLETED: "Completar lote de carga",
+  UPLOAD_BATCH_FAILED: "Error en carga de datos",
 };
 
 export const ADMIN_ACTIVITY_MODULE_LABELS: Record<string, string> = {
@@ -38,6 +44,7 @@ export const ADMIN_ACTIVITY_MODULE_LABELS: Record<string, string> = {
 
 export const ADMIN_ACTIVITY_RESULT_LABELS: Record<string, string> = {
   success: "Exitoso",
+  warning: "Advertencia",
   error: "Error",
   failure: "Fallido",
 };

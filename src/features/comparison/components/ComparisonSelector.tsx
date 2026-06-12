@@ -4,7 +4,7 @@ import LocationInput, {
   type LocationOption,
 } from "../../../components/ui/LocationInput/LocationInput";
 
-type ComparisonSelectorProps = {
+type ComparisonSelectorProps = Readonly<{
   level: ComparisonLevel;
   firstLocation: LocationOption | null;
   secondLocation: LocationOption | null;
@@ -12,7 +12,7 @@ type ComparisonSelectorProps = {
   onLevelChange: (level: ComparisonLevel) => void;
   onFirstLocationChange: (location: LocationOption | null) => void;
   onSecondLocationChange: (location: LocationOption | null) => void;
-};
+}>;
 
 const levelOptions: Array<{
   value: ComparisonLevel;
@@ -37,7 +37,6 @@ export default function ComparisonSelector({
   onFirstLocationChange,
   onSecondLocationChange,
 }: ComparisonSelectorProps) {
-
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
   const levelDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -50,10 +49,11 @@ export default function ComparisonSelector({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        levelDropdownRef.current &&
-        !levelDropdownRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      if (!levelDropdownRef.current?.contains(target)) {
         setLevelDropdownOpen(false);
       }
     };
@@ -66,31 +66,24 @@ export default function ComparisonSelector({
   }, []);
 
   return (
-  <section className="rounded-[10px] bg-white p-5 shadow-sm">
-    <div className="grid grid-cols-12 items-center gap-4">
-      {/* Primer territorio */}
-      <div className="col-span-12 md:col-span-5">
-        {/*<label className="mb-2 block text-[14px] font-semibold text-black">
-          Primer territorio
-        </label>*/}
+    <section className="rounded-[10px] bg-white p-5 shadow-sm">
+      <div className="grid grid-cols-12 items-center gap-4">
+        <div className="col-span-12 md:col-span-5">
+          <LocationInput
+            value={firstLocation}
+            restrictedLevel={level}
+            useRemoteSearch
+            searchLimit={10}
+            placeholder={
+              level === "state"
+                ? "Selecciona un estado..."
+                : "Selecciona un municipio..."
+            }
+            onChange={onFirstLocationChange}
+          />
+        </div>
 
-        <LocationInput
-          value={firstLocation}
-          restrictedLevel={level}
-          useRemoteSearch
-          searchLimit={10}
-          excludeCodes={secondLocation?.code ? [secondLocation.code] : []}
-          placeholder={
-            level === "state"
-              ? "Selecciona un estado..."
-              : "Selecciona un municipio..."
-          }
-          onChange={onFirstLocationChange}
-        />
-      </div>
-
-      {/* Nivel territorial */}
-      <div className="col-span-12 md:col-span-2">
+        <div className="col-span-12 md:col-span-2">
           <div ref={levelDropdownRef} className="relative w-full">
             <button
               type="button"
@@ -150,7 +143,10 @@ export default function ComparisonSelector({
                         key={option.value}
                         type="button"
                         onClick={() => {
-                          onLevelChange(option.value);
+                          if (!isSelected) {
+                            onLevelChange(option.value);
+                          }
+
                           setLevelDropdownOpen(false);
                         }}
                         className={[
@@ -174,30 +170,24 @@ export default function ComparisonSelector({
               </div>
             )}
           </div>
-      </div>
+        </div>
 
-      {/* Segundo territorio */}
-      <div className="col-span-12 md:col-span-5">
-        {/* <label className="mb-2 flex justify-end text-[14px] font-semibold text-black">          
-        Segundo territorio
-        </label>*/}
-
-        <LocationInput
-          value={secondLocation}
-          restrictedLevel={level}
-          useRemoteSearch
-          searchLimit={10}
-          excludeCodes={firstLocation?.code ? [firstLocation.code] : []}
-          placeholder={
-            level === "state"
-              ? "Selecciona otro estado..."
-              : "Selecciona otro municipio..."
-          }
-          error={error ?? undefined}
-          onChange={onSecondLocationChange}
-        />
+        <div className="col-span-12 md:col-span-5">
+          <LocationInput
+            value={secondLocation}
+            restrictedLevel={level}
+            useRemoteSearch
+            searchLimit={10}
+            placeholder={
+              level === "state"
+                ? "Selecciona otro estado..."
+                : "Selecciona otro municipio..."
+            }
+            error={error ?? undefined}
+            onChange={onSecondLocationChange}
+          />
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 }

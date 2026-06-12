@@ -4,13 +4,13 @@ import { createPortal } from "react-dom";
 
 import type { AdminUser } from "../types/adminUsers.types";
 
-type UserActionsMenuProps = {
+type UserActionsMenuProps = Readonly<{
   user: AdminUser;
   onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
   onReactivate: (user: AdminUser) => void;
   onChangePassword: (user: AdminUser) => void;
-};
+}>;
 
 type MenuPosition = {
   top: number;
@@ -47,7 +47,9 @@ export default function UserActionsMenu({
     updateMenuPosition();
 
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
 
       const clickedButton = buttonRef.current?.contains(target);
       const clickedMenu = menuRef.current?.contains(target);

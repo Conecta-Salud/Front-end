@@ -22,7 +22,7 @@ export interface ChartReferenceLine {
   label: string;
 }
 
-interface CustomBarChartProps {
+type CustomBarChartProps = Readonly<{
   data: ChartData[];
   title?: string;
   barColor?: string;
@@ -32,7 +32,21 @@ interface CustomBarChartProps {
   showAverageLine?: boolean;
   showTitle?: boolean;
   emptyMessage?: string;
-}
+}>;
+
+const getXAxisInterval = (dataLength: number) => {
+  if (dataLength <= 8) return 0;
+  if (dataLength <= 15) return 1;
+  return "preserveStartEnd";
+};
+
+const formatXAxisTick = (value: unknown, maxLabelLength: number) => {
+  const label = String(value);
+
+  return label.length > maxLabelLength
+    ? `${label.slice(0, maxLabelLength)}...`
+    : label;
+};
 
 const getBarColor = (item: ChartData, fallbackColor?: string) => {
   if (item.color) return item.color;
@@ -75,8 +89,7 @@ export default function CustomBarChart({
   const xAxisAngle = dataLength > 10 ? -45 : -35;
   const xAxisHeight = dataLength > 10 ? 85 : 70;
 
-  const xAxisInterval =
-    dataLength <= 8 ? 0 : dataLength <= 15 ? 1 : "preserveStartEnd";
+  const xAxisInterval = getXAxisInterval(dataLength);
 
   const maxLabelLength = dataLength > 10 ? 10 : 18;
 
@@ -90,12 +103,7 @@ export default function CustomBarChart({
       <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
         {showTitle && (
           <h2
-            className="mb-4 text-[20px] font-semibold"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-4 text-[20px] font-semibold"
           >
             {title}
           </h2>
@@ -112,12 +120,7 @@ export default function CustomBarChart({
     <div className="w-full rounded-[10px] bg-white p-6 shadow-sm">
       {showTitle && (
         <h2
-          className="mb-4 text-[20px] font-semibold"
-          style={{
-            backgroundImage: "var(--gradient-primary-green)",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-          }}
+          className="text-brand-blue mb-4 text-[20px] font-semibold"
         >
           {title}
         </h2>
@@ -149,18 +152,14 @@ export default function CustomBarChart({
               interval={xAxisInterval}
               height={xAxisHeight}
               tick={{ fontSize: 12, fill: "#111827" }}
-              tickFormatter={(value) =>
-                String(value).length > maxLabelLength
-                  ? `${String(value).slice(0, maxLabelLength)}...`
-                  : String(value)
-              }
+              tickFormatter={(value) => formatXAxisTick(value, maxLabelLength)}
             />
 
             <YAxis domain={yDomain} tick={{ fontSize: 12, fill: "#4B5563" }} />
 
             <Tooltip
               formatter={(value) => [value, "Valor"]}
-              labelFormatter={(label) => String(label)}
+              labelFormatter={String}
             />
 
             {referenceLine && (

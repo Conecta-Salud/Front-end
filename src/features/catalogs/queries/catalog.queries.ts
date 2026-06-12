@@ -11,7 +11,8 @@ export const catalogQueryKeys = {
 
   states: () => [...catalogQueryKeys.all, "states"] as const,
 
-  municipalities: () => [...catalogQueryKeys.all, "municipalities"] as const,
+  municipalities: (stateId?: number | null) =>
+    [...catalogQueryKeys.all, "municipalities", stateId ?? "all"] as const,
 
   periods: () => [...catalogQueryKeys.all, "periods"] as const,
 
@@ -20,6 +21,10 @@ export const catalogQueryKeys = {
 
 type CatalogQueryOptions = {
   enabled?: boolean;
+};
+
+type MunicipalitiesCatalogQueryOptions = CatalogQueryOptions & {
+  stateId?: number;
 };
 
 export function useStatesCatalogQuery(options?: CatalogQueryOptions) {
@@ -32,10 +37,16 @@ export function useStatesCatalogQuery(options?: CatalogQueryOptions) {
   });
 }
 
-export function useMunicipalitiesCatalogQuery(options?: CatalogQueryOptions) {
+export function useMunicipalitiesCatalogQuery(
+  options?: MunicipalitiesCatalogQueryOptions
+) {
   return useQuery({
-    queryKey: catalogQueryKeys.municipalities(),
-    queryFn: ({ signal }) => fetchMunicipalitiesCatalog(signal),
+    queryKey: catalogQueryKeys.municipalities(options?.stateId),
+    queryFn: ({ signal }) =>
+      fetchMunicipalitiesCatalog({
+        stateId: options?.stateId,
+        signal,
+      }),
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 60 * 24,

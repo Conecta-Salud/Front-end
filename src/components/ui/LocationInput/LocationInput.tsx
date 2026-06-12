@@ -153,10 +153,11 @@ const LocationInput: React.FC<LocationInputProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      if (!containerRef.current?.contains(target)) {
         setOpen(false);
         setSearch(value ? getDisplayLabel(value) : "");
       }

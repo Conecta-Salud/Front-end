@@ -59,12 +59,7 @@ function LoginPage() {
 
           {/* Título */}
           <h1
-            className="mb-[50px] text-center text-[64px] font-bold leading-none"
-            style={{
-              backgroundImage: "var(--gradient-primary-green)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mb-[50px] text-center text-[64px] font-bold leading-none"
           >
             Inicio de Sesión
           </h1>
@@ -111,12 +106,7 @@ function LoginPage() {
           {/* Recuperar contraseña */}
           <button
             type="button"
-            className="mt-[25px] text-[16px] font-medium"
-            style={{
-              backgroundImage: "var(--gradient-primary-blue)",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
+            className="text-brand-blue mt-[25px] text-[16px] font-medium"
           >
             ¿Olvidaste la contraseña?
           </button>
