@@ -45,7 +45,7 @@ function ChartFallback() {
   );
 }
 
-function DataUnavailableNotice({ note }: { note: string }) {
+function DataUnavailableNotice({ note }: Readonly<{ note: string }>) {
   return (
     <section className="rounded-[10px] border border-[#F8D7A4] bg-[#FFF8EC] p-5 shadow-sm">
       <h2 className="text-[18px] font-semibold text-[#7A4A00]">

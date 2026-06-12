@@ -227,6 +227,115 @@ function UserFormModalContent({
     onClose();
   };
 
+  let formContent = (
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <CustomInputField
+        name="firstName"
+        label="Nombre"
+        value={form.firstName}
+        autoComplete="given-name"
+        maxLength={80}
+        disabled={isSaving}
+        showIcon={false}
+        onChange={(value) => handleChange("firstName", value)}
+      />
+
+      <CustomInputField
+        name="lastName"
+        label="Apellido"
+        value={form.lastName}
+        autoComplete="family-name"
+        maxLength={120}
+        disabled={isSaving}
+        showIcon={false}
+        onChange={(value) => handleChange("lastName", value)}
+      />
+
+      <div className="md:col-span-2">
+        <CustomInputField
+          name="email"
+          label="Correo electrónico"
+          type="email"
+          value={form.email}
+          autoComplete="email"
+          maxLength={180}
+          disabled={isSaving}
+          showIcon={false}
+          onChange={(value) => handleChange("email", value)}
+        />
+      </div>
+
+      {!isEditMode && (
+        <>
+          <CustomInputField
+            name="password"
+            label="Contraseña"
+            type="password"
+            value={form.password}
+            autoComplete="new-password"
+            maxLength={PASSWORD_MAX_LENGTH}
+            disabled={isSaving}
+            onChange={(value) => handleChange("password", value)}
+          />
+
+          <CustomInputField
+            name="confirmPassword"
+            label="Confirmar contraseña"
+            type="password"
+            value={form.confirmPassword}
+            autoComplete="new-password"
+            maxLength={PASSWORD_MAX_LENGTH}
+            disabled={isSaving}
+            onChange={(value) => handleChange("confirmPassword", value)}
+          />
+        </>
+      )}
+
+      <CustomSelect
+        id="department"
+        label="Departamento"
+        value={form.departmentId}
+        options={departments.map((department) => ({
+          label: department.name,
+          value: String(department.id),
+        }))}
+        placeholder="Selecciona un departamento"
+        disabled={isSaving}
+        isOpen={openSelectId === "department"}
+        onOpenChange={setOpenSelectId}
+        onChange={(value) => handleChange("departmentId", value)}
+      />
+
+      <CustomSelect
+        id="role"
+        label="Rol"
+        value={form.role}
+        options={ADMIN_ROLE_OPTIONS.map((roleOption) => ({
+          label: roleOption.name,
+          value: roleOption.value,
+        }))}
+        disabled={isSaving}
+        isOpen={openSelectId === "role"}
+        onOpenChange={setOpenSelectId}
+        onChange={(value) => handleChange("role", value)}
+      />
+    </div>
+  );
+
+  if (isEditMode && isLoadingUser) {
+    formContent = (
+      <div className="py-10 text-center text-[15px] text-gray-500">
+        Cargando información del usuario...
+      </div>
+    );
+  } else if (isEditMode && !user) {
+    formContent = (
+      <div className="py-10 text-center text-[15px] text-red-500">
+        No se pudo cargar la informacion del usuario.
+      </div>
+    );
+  }
+
   return (
     <dialog
       open
@@ -252,108 +361,7 @@ function UserFormModalContent({
         </p>
 
         <form onSubmit={handleSubmit}>
-          {isEditMode && isLoadingUser ? (
-          <div className="py-10 text-center text-[15px] text-gray-500">
-            Cargando información del usuario...
-          </div>
-        ) : isEditMode && !user ? (
-          <div className="py-10 text-center text-[15px] text-red-500">
-            No se pudo cargar la informacion del usuario.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <CustomInputField
-              name="firstName"
-              label="Nombre"
-              value={form.firstName}
-              autoComplete="given-name"
-              maxLength={80}
-              disabled={isSaving}
-              showIcon={false}
-              onChange={(value) => handleChange("firstName", value)}
-            />
-
-            <CustomInputField
-              name="lastName"
-              label="Apellido"
-              value={form.lastName}
-              autoComplete="family-name"
-              maxLength={120}
-              disabled={isSaving}
-              showIcon={false}
-              onChange={(value) => handleChange("lastName", value)}
-            />
-
-            <div className="md:col-span-2">
-              <CustomInputField
-                name="email"
-                label="Correo electrónico"
-                type="email"
-                value={form.email}
-                autoComplete="email"
-                maxLength={180}
-                disabled={isSaving}
-                showIcon={false}
-                onChange={(value) => handleChange("email", value)}
-              />
-            </div>
-
-            {!isEditMode && (
-              <>
-                <CustomInputField
-                  name="password"
-                  label="Contraseña"
-                  type="password"
-                  value={form.password}
-                  autoComplete="new-password"
-                  maxLength={PASSWORD_MAX_LENGTH}
-                  disabled={isSaving}
-                  onChange={(value) => handleChange("password", value)}
-                />
-
-                <CustomInputField
-                  name="confirmPassword"
-                  label="Confirmar contraseña"
-                  type="password"
-                  value={form.confirmPassword}
-                  autoComplete="new-password"
-                  maxLength={PASSWORD_MAX_LENGTH}
-                  disabled={isSaving}
-                  onChange={(value) => handleChange("confirmPassword", value)}
-                />
-              </>
-            )}
-
-            <CustomSelect
-              id="department"
-              label="Departamento"
-              value={form.departmentId}
-              options={departments.map((department) => ({
-                label: department.name,
-                value: String(department.id),
-              }))}
-              placeholder="Selecciona un departamento"
-              disabled={isSaving}
-              isOpen={openSelectId === "department"}
-              onOpenChange={setOpenSelectId}
-              onChange={(value) => handleChange("departmentId", value)}
-            />
-
-            <CustomSelect
-              id="role"
-              label="Rol"
-              value={form.role}
-              options={ADMIN_ROLE_OPTIONS.map((roleOption) => ({
-                label: roleOption.name,
-                value: roleOption.value,
-              }))}
-              disabled={isSaving}
-              isOpen={openSelectId === "role"}
-              onOpenChange={setOpenSelectId}
-              onChange={(value) => handleChange("role", value)}
-            />
-          </div>
-        )}
+          {formContent}
 
         {validationErrors.length > 0 && (
           <div className="mt-5 text-[14px] font-medium text-red-500">

@@ -3,11 +3,13 @@ import CustomKPI from "../../../components/ui/KPI/CustomKPI";
 import type { DashboardKpi } from "../types/dashboardSummary.types";
 import { adaptSummaryKpisToCards } from "../utils/dashboardKpiSummary.adapter";
 
-type DashboardKpiGridProps = {
+type DashboardKpiGridProps = Readonly<{
   kpis?: DashboardKpi[];
   isLoading?: boolean;
   isError?: boolean;
-};
+}>;
+
+const loadingKpiIds = ["kpi-1", "kpi-2", "kpi-3", "kpi-4"];
 
 export default function DashboardKpiGrid({
   kpis = [],
@@ -19,9 +21,9 @@ export default function DashboardKpiGrid({
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-[18px]">
-        {Array.from({ length: 4 }).map((_, index) => (
+        {loadingKpiIds.map((loadingKpiId) => (
           <div
-            key={index}
+            key={loadingKpiId}
             className="h-[110px] rounded-[10px] bg-white shadow-sm animate-pulse"
           />
         ))}

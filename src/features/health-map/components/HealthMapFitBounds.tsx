@@ -8,13 +8,13 @@ import {
 } from "../constants/healthMap.constants";
 
 
-type HealthMapFitBoundsProps = {
+type HealthMapFitBoundsProps = Readonly<{
   data: HealthMapFeatureCollection;
   enabled: boolean;
   navigationKey: string;
   viewLevel: "country" | "state" | "municipality";
   maxZoom?: number;
-};
+}>;
 
 export default function HealthMapFitBounds({
   data,
@@ -28,7 +28,7 @@ export default function HealthMapFitBounds({
   useEffect(() => {
     if (!enabled) return;
 
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId = globalThis.setTimeout(() => {
       map.invalidateSize();
 
       if (viewLevel === "country") {
@@ -52,7 +52,7 @@ export default function HealthMapFitBounds({
     }, 120);
 
     return () => {
-      window.clearTimeout(timeoutId);
+      globalThis.clearTimeout(timeoutId);
     };
   }, [data, enabled, navigationKey, viewLevel, map, maxZoom]);
 

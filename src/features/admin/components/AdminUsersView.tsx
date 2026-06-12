@@ -28,6 +28,13 @@ import AdminUsersToolbar from "./AdminUsersToolBar";
 import UserFormModal from "./UserFormModal";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
 
+const getActiveQueryFilter = (activeFilter: string) => {
+  if (activeFilter === "active") return true;
+  if (activeFilter === "inactive") return false;
+
+  return undefined;
+};
+
 export default function AdminUsersView() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebouncedValue(searchTerm.trim(), 350);
@@ -44,12 +51,7 @@ export default function AdminUsersView() {
     () => ({
       search: debouncedSearchTerm || undefined,
       role: roleFilter ? (roleFilter as AdminUserRole) : undefined,
-      active:
-        activeFilter === "active"
-          ? true
-          : activeFilter === "inactive"
-          ? false
-          : undefined,
+      active: getActiveQueryFilter(activeFilter),
       departmentId: departmentFilter ? Number(departmentFilter) : undefined,
       page,
       size: ADMIN_PAGE_SIZE,
@@ -298,7 +300,7 @@ export default function AdminUsersView() {
               <span className="font-semibold">
                 {userToChangePassword.fullName || userToChangePassword.email}
               </span>
-              .
+              <span>.</span>
             </>
           ) : undefined
         }
