@@ -24,12 +24,21 @@ const PriorityIndexCards = lazy(
   () => import("../features/comparison/components/PriorityIndexCards")
 );
 
+const comparisonChartFallbackIds = [
+  "comparison-chart-1",
+  "comparison-chart-2",
+  "comparison-chart-3",
+  "comparison-chart-4",
+];
+
+const priorityFallbackIds = ["priority-1", "priority-2"];
+
 function ComparisonChartsFallback() {
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {Array.from({ length: 4 }).map((_, index) => (
+      {comparisonChartFallbackIds.map((fallbackId) => (
         <div
-          key={index}
+          key={fallbackId}
           className="h-[260px] rounded-[10px] bg-white shadow-sm animate-pulse"
         />
       ))}
@@ -40,9 +49,9 @@ function ComparisonChartsFallback() {
 function PriorityFallback() {
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      {Array.from({ length: 2 }).map((_, index) => (
+      {priorityFallbackIds.map((fallbackId) => (
         <div
-          key={index}
+          key={fallbackId}
           className="h-[280px] rounded-[10px] bg-white shadow-sm animate-pulse"
         />
       ))}

@@ -14,7 +14,7 @@ export type DashboardScope = {
 export type DashboardTerritoryDto = {
   id: number | null;
   name: string;
-  type: DashboardTerritoryLevel | string;
+  type: string;
 };
 
 export type DashboardPeriodDto = {

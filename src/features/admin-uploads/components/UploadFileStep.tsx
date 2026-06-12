@@ -14,10 +14,10 @@ import {
   uploadStatusLabels,
 } from "./adminUploadsView.helpers";
 
-type UploadFileStepProps = {
+type UploadFileStepProps = Readonly<{
   detail?: UploadBatchDetail;
   allowedRoles: CsvFileRole[];
-};
+}>;
 
 export default function UploadFileStep({
   detail,
@@ -105,7 +105,7 @@ export default function UploadFileStep({
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            Rol del archivo
+            <span>Rol del archivo</span>
             <select
               value={effectiveRole}
               disabled={!batch || allowedRoles.length === 0}
@@ -123,7 +123,7 @@ export default function UploadFileStep({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            Archivo CSV
+            <span>Archivo CSV</span>
             <input
               ref={fileInputRef}
               type="file"

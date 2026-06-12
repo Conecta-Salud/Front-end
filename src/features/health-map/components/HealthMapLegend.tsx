@@ -7,11 +7,11 @@ import type {
 } from "../types/healthMap.types";
 import { healthMapLegendConfig } from "../constants/healthMapLegend.config";
 
-type HealthMapLegendProps = {
+type HealthMapLegendProps = Readonly<{
   indicator: HealthMapIndicator;
   indicators?: HealthMapIndicatorResponse[];
   level: HealthMapViewLevel;
-};
+}>;
 
 const getTerritoryLabel = (level: HealthMapViewLevel) => {
   if (level === "country") return "Estados";
@@ -52,7 +52,7 @@ export default function HealthMapLegend({
             key={item.status}
             className={[
               "flex flex-col items-center justify-center",
-              index !== 0 ? "border-l border-[#C6C6C6]" : "",
+              index === 0 ? "" : "border-l border-[#C6C6C6]",
             ].join(" ")}
           >
             <p className="text-[20px] font-semibold leading-none">
@@ -82,6 +82,13 @@ export default function HealthMapLegend({
           {config.ticks.map((tick, index) => {
             const isFirst = index === 0;
             const isLast = index === config.ticks.length - 1;
+            let transform = "translateX(-50%)";
+
+            if (isFirst) {
+              transform = "translateX(0)";
+            } else if (isLast) {
+              transform = "translateX(-100%)";
+            }
 
             return (
               <div
@@ -89,11 +96,7 @@ export default function HealthMapLegend({
                 className="absolute top-[21px] flex flex-col items-center"
                 style={{
                   left: tickPositions[index],
-                  transform: isFirst
-                    ? "translateX(0)"
-                    : isLast
-                    ? "translateX(-100%)"
-                    : "translateX(-50%)",
+                  transform,
                 }}
               >
                 <div
