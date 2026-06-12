@@ -11,7 +11,7 @@ import {
   getHealthMapStrokeColor,
 } from "../utils/healthMap.utils";
 
-type HealthMapLayerProps = Readonly<{
+type HealthMapLayerProps = {
   data: HealthMapFeatureCollection;
   mapLevel: HealthMapViewLevel;
   layerKey: string;
@@ -21,7 +21,7 @@ type HealthMapLayerProps = Readonly<{
     municipalityCode: string,
     municipalityName: string
   ) => void;
-}>;
+};
 
 const healthMapLevelLabelsEs: Record<string, string> = {
   good: "Bueno",
@@ -110,12 +110,15 @@ export default function HealthMapLayer({
           mouseover: () => {
             if (!isPathLayer(layer)) return;
 
+            const isSelected =
+              selectedMunicipalityCode === typedFeature.properties.code;
+
             layer.setStyle({
-              weight: 2,
+              weight: isSelected ? 2 : 2,
               fillOpacity: 1,
             });
 
-            if (selectedMunicipalityCode === typedFeature.properties.code) {
+            if (isSelected) {
               layer.bringToFront();
             }
           },

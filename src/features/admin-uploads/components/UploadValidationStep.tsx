@@ -13,9 +13,9 @@ import {
   uploadStatusLabels,
 } from "./adminUploadsView.helpers";
 
-type UploadValidationStepProps = Readonly<{
+type UploadValidationStepProps = {
   detail?: UploadBatchDetail;
-}>;
+};
 
 export default function UploadValidationStep({
   detail,

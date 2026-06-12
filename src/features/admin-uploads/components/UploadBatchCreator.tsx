@@ -262,7 +262,7 @@ export default function UploadBatchCreator({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Año análisis</span>
+            Año análisis
             <input
               type="number"
               min={1900}
@@ -275,7 +275,7 @@ export default function UploadBatchCreator({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Archivos esperados</span>
+            Archivos esperados
             <input
               type="number"
               min={1}
@@ -288,7 +288,7 @@ export default function UploadBatchCreator({
           </label>
 
           <label className="flex flex-col gap-1 text-[14px] font-semibold text-black">
-            <span>Modo</span>
+            Modo
             <select
               value={form.processingMode}
               onChange={(event) =>

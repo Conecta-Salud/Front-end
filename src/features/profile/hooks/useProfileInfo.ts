@@ -1,13 +1,6 @@
 import { useMemo } from "react";
 import { useCurrentUserQuery } from "../../auth/queries/useCurrentUserQuery";
 
-const getRoleLabel = (role?: string | null) => {
-  if (role === "admin") return "Administrador";
-  if (role === "strategic") return "Usuario estratégico";
-
-  return "";
-};
-
 export function useProfileInfo() {
   const query = useCurrentUserQuery();
 
@@ -18,7 +11,12 @@ export function useProfileInfo() {
       ? [user.firstName, user.lastName].filter(Boolean).join(" ").trim()
       : "";
 
-    const roleLabel = getRoleLabel(user?.role);
+    const roleLabel =
+      user?.role === "admin"
+        ? "Administrador"
+        : user?.role === "strategic"
+        ? "Usuario estratégico"
+        : "";
 
     return {
       title: fullName || "Usuario",

@@ -12,12 +12,12 @@ import {
 } from "../utils/dashboardChart.adapter";
 import DashboardScatterChart from "./DashboardScatterChart";
 
-type DashboardChartSectionProps = Readonly<{
+type DashboardChartSectionProps = {
   chart?: DashboardChart;
   isLoading?: boolean;
   isError?: boolean;
   height?: number;
-}>;
+};
 
 type DashboardChartView =
   | {

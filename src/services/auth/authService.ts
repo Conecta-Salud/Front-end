@@ -22,7 +22,7 @@ export const changeFirebasePassword = async (
 ) => {
   const firebaseUser = auth.currentUser;
 
-  if (!firebaseUser?.email) {
+  if (!firebaseUser || !firebaseUser.email) {
     throw new Error("No hay usuario autenticado.");
   }
 

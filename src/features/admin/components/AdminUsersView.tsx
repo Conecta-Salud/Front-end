@@ -28,13 +28,6 @@ import AdminUsersToolbar from "./AdminUsersToolBar";
 import UserFormModal from "./UserFormModal";
 import UserStatusConfirmModal from "./UserStatusConfirmModal";
 
-const getActiveQueryFilter = (activeFilter: string) => {
-  if (activeFilter === "active") return true;
-  if (activeFilter === "inactive") return false;
-
-  return undefined;
-};
-
 export default function AdminUsersView() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebouncedValue(searchTerm.trim(), 350);
@@ -47,18 +40,21 @@ export default function AdminUsersView() {
   const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [page, setPage] = useState(0);
-  const activeQueryFilter = getActiveQueryFilter(activeFilter);
-
   const usersQueryParams = useMemo(
     () => ({
       search: debouncedSearchTerm || undefined,
       role: roleFilter ? (roleFilter as AdminUserRole) : undefined,
-      active: activeQueryFilter,
+      active:
+        activeFilter === "active"
+          ? true
+          : activeFilter === "inactive"
+          ? false
+          : undefined,
       departmentId: departmentFilter ? Number(departmentFilter) : undefined,
       page,
       size: ADMIN_PAGE_SIZE,
     }),
-    [debouncedSearchTerm, roleFilter, activeQueryFilter, departmentFilter, page]
+    [debouncedSearchTerm, roleFilter, activeFilter, departmentFilter, page]
   );
   const {
     data: usersData,
@@ -302,7 +298,7 @@ export default function AdminUsersView() {
               <span className="font-semibold">
                 {userToChangePassword.fullName || userToChangePassword.email}
               </span>
-              <span>.</span>
+              .
             </>
           ) : undefined
         }

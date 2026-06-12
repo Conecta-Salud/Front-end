@@ -11,10 +11,10 @@ import {
 import type { DashboardChart } from "../types/dashboardSummary.types";
 import { adaptSummaryChartToScatterData } from "../utils/dashboardChart.adapter";
 
-type DashboardScatterChartProps = Readonly<{
+type DashboardScatterChartProps = {
   chart: DashboardChart;
   height?: number;
-}>;
+};
 
 const getColor = (colorToken?: string) => {
   switch (colorToken) {

@@ -1,6 +1,6 @@
 import PencilIcon from "../../../assets/icons/Pencil.svg";
 
-type ProfileInfoCardProps = Readonly<{
+interface ProfileInfoCardProps {
   title: string;
   lastLoginAt: string;
   email: string;
@@ -9,12 +9,12 @@ type ProfileInfoCardProps = Readonly<{
   isLoading?: boolean;
   isError?: boolean;
   onEditPassword: () => void;
-}>;
+}
 
-type InfoRowProps = Readonly<{
+interface InfoRowProps {
   label: string;
   value?: string | null;
-}>;
+}
 
 function InfoRow({ label, value }: InfoRowProps) {
   return (

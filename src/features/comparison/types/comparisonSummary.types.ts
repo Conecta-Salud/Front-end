@@ -1,3 +1,5 @@
+import type { AvailabilityStatus } from "../../shared/types/apiContracts.types";
+
 export type ComparisonLevel = "state" | "municipality";
 
 export type ComparisonChartId =
@@ -48,7 +50,7 @@ export type ComparisonChartDataPoint = {
   variant: ComparisonVariant;
   extra?: {
     sourceYear?: number | null;
-    availabilityStatus?: string | null;
+    availabilityStatus?: AvailabilityStatus | string | null;
     methodologyNote?: string | null;
     dataSourceName?: string | null;
     [key: string]: unknown;

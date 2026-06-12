@@ -8,12 +8,12 @@ import {
   adaptSummaryRankingTitle,
 } from "../utils/dashboardRanking.adapter";
 
-type DashboardRankingSectionProps = Readonly<{
+type DashboardRankingSectionProps = {
   ranking?: DashboardRanking;
   isLoading?: boolean;
   isError?: boolean;
   className?: string;
-}>;
+};
 
 export default function DashboardRankingSection({
   ranking,

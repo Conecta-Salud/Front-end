@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type {
+  AvailabilityStatus,
   DashboardCategory,
   TerritoryLevel,
 } from "../../shared/types/apiContracts.types";
@@ -28,7 +29,7 @@ export type HealthMapIndicatorResponse = {
   colorToken: HealthMapColorToken;
   sourceYear?: number | null;
   unit?: string | null;
-  availabilityStatus?: string | null;
+  availabilityStatus?: AvailabilityStatus | string | null;
   methodologyNote?: string | null;
   dataSourceName?: string | null;
 };

@@ -75,14 +75,14 @@ export default function UserActionsMenu({
 
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
-    globalThis.addEventListener("resize", handleResize);
-    globalThis.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
-      globalThis.removeEventListener("resize", handleResize);
-      globalThis.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
     };
   }, [isOpen, updateMenuPosition]);
 
