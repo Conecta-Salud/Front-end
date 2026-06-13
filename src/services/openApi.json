@@ -1,0 +1,121 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ConectaSalud Core API",
+    "version": "1.0.0",
+    "description": "Documentación oficial de los endpoints basada en los servicios de interceptores de Axios y Firebase Auth para ConectaSalud."
+  },
+  "paths": {
+    "/api/dashboard/summary": {
+      "get": {
+        "summary": "Obtener resumen estratégico de KPIs e indicadores",
+        "description": "Retorna los indicadores analíticos de infraestructura hospitalaria. Requiere token Bearer de Firebase en las cabeceras.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token de identidad provisto por Firebase Auth en formato 'Bearer <token>'.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "description": "Año de filtrado para los indicadores analíticos (Ej. 2026).",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": true,
+            "description": "Categoría de desabasto o cobertura médica a evaluar.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa. Retorna el listado estructurado de KPIs de salud.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "kpis": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": { "type": "string" },
+                              "title": { "type": "string" },
+                              "value": { "type": "string" },
+                              "trend": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado. El token de Firebase es inválido o expiró. El cliente frontend limpiará el queryClient y forzará el signOut."
+          },
+          "500": {
+            "description": "Error interno del servidor. Error de comunicación con la base de datos MySQL o falla en la API."
+          }
+        }
+      }
+    },
+    "/api/health-map/infrastructure": {
+      "get": {
+        "summary": "Obtener infraestructura hospitalaria para el mapa",
+        "description": "Retorna las coordenadas y datos geográficos de los déficits de salud en México.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token Bearer de Firebase Auth.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Éxito. Retorna la colección de puntos de infraestructura en formato GeoJSON.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "features": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente o corrupto. Dispara la redirección automática al Login en el Frontend."
+          },
+          "500": {
+            "description": "Falla al procesar los datos de mapeo geográfico."
+          }
+        }
+      }
+    }
+  }
+}
