@@ -1,0 +1,14 @@
+/// <reference types="cypress" />
+
+describe('Pruebas E2E: Flujo de Autenticación Exitoso', () => {
+  beforeEach(() => {
+    Cypress.on('uncaught:exception', () => false);
+  });
+
+  it('Debe iniciar sesión correctamente y visualizar el dashboard', () => {
+    cy.login('gael@gmail.com', 'Contra123');
+    
+    cy.url().should('include', '/dashboard');
+    cy.get('h1').should('contain', 'México');
+  });
+});
